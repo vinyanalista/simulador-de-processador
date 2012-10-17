@@ -3,7 +3,6 @@ package br.com.vinyanalista.simulador.hardware;
 import br.com.vinyanalista.simulador.software.Instruction;
 
 public class InstructionRegister extends Register {
-
 	private static final String NAME = "IR";
 	private static final String COMPLETE_NAME = "Instruction Register";
 	private static final String DESCRIPTION = "Stores the instruction being processed.";
@@ -37,5 +36,4 @@ public class InstructionRegister extends Register {
 	public Byte getValue() {
 		return null;
 	}
-
 }

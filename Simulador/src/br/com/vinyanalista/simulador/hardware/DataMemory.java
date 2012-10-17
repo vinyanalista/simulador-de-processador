@@ -1,7 +1,6 @@
 package br.com.vinyanalista.simulador.hardware;
 
 public class DataMemory extends Memory {
-
 	@Override
 	public int getMaxAddress() {
 		return 255;
@@ -11,5 +10,4 @@ public class DataMemory extends Memory {
 	public int getMinAddress() {
 		return 128;
 	}
-
 }

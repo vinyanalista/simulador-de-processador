@@ -1,7 +1,6 @@
 package br.com.vinyanalista.simulador.hardware;
 
 public class Register extends ProcessorUnit {
-	
 	public String ACC_NAME = "ACC";
 	public String ACC_COMPLETE_NAME = "";
 	public String ACC_DESCRIPTION = "Not defined yet.";

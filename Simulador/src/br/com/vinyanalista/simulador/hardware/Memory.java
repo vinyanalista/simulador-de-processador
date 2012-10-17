@@ -4,7 +4,6 @@ import br.com.vinyanalista.simulador.data.Byte;
 import br.com.vinyanalista.simulador.data.OutOfRangeException;
 
 public abstract class Memory {
-
 	public abstract int getMinAddress();
 
 	public abstract int getMaxAddress();
@@ -19,14 +18,4 @@ public abstract class Memory {
 					getMaxAddress());
 		}
 	}
-
-	public static void main(String[] args) {
-		Memory teste = new DataMemory();
-		try {
-			Byte byte1 = teste.getByte(127);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
 }
