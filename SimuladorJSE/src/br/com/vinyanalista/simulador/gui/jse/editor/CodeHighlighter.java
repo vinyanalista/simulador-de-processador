@@ -6,6 +6,7 @@ import br.com.vinyanalista.simulador.data.OpCode;
 
 import com.trolltech.qt.core.QRegExp;
 import com.trolltech.qt.core.Qt;
+import com.trolltech.qt.core.Qt.CaseSensitivity;
 import com.trolltech.qt.gui.QBrush;
 import com.trolltech.qt.gui.QColor;
 import com.trolltech.qt.gui.QFont;
@@ -55,6 +56,7 @@ public class CodeHighlighter extends QSyntaxHighlighter {
 
 		for (String keyword : keywords) {
 			pattern = new QRegExp("\\b" + keyword + "\\b");
+			pattern.setCaseSensitivity(CaseSensitivity.CaseInsensitive);
 			rule = new HighlightingRule(pattern, keywordFormat);
 			highlightingRules.add(rule);
 		}
