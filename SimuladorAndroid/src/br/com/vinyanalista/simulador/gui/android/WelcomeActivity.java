@@ -49,10 +49,10 @@ public class WelcomeActivity extends Activity {
 
 		String[] from = { ICONE, ROTULO };
 
-		int[] to = { R.id.welcome_menu_icone, R.id.welcome_menu_rotulo };
+		int[] to = { R.id.list_view_icon, R.id.list_view_label };
 
 		SimpleAdapter adapter = new SimpleAdapter(getBaseContext(), aList,
-				R.layout.list_view_icon_text_layout, from, to);
+				R.layout.list_view_icon_label_layout, from, to);
 
 		menu = (ListView) findViewById(R.id.welcome_menu);
 		menu.setAdapter(adapter);
@@ -82,11 +82,14 @@ public class WelcomeActivity extends Activity {
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		switch (requestCode) {
 		case OPCAO_ABRIR:
-			Toast.makeText(
-					this,
-					"File Clicked: "
-							+ data.getStringExtra(FileChooserActivity.FILE_NAME),
-					Toast.LENGTH_SHORT).show();
+			if (resultCode == RESULT_OK) {
+				Toast.makeText(
+						this,
+						"File Clicked: "
+								+ data.getStringExtra(FileChooserActivity.FILE_NAME),
+						Toast.LENGTH_SHORT).show();
+				startActivity(new Intent(this, SimulationActivity.class));
+			}
 			break;
 		}
 	}

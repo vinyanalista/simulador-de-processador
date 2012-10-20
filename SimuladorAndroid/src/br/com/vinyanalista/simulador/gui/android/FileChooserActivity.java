@@ -16,32 +16,40 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
 public class FileChooserActivity extends ListActivity {
 
 	private class Option implements Comparable<Option> {
-		private String name;
-		private String data;
-		private String path;
 
-		public Option(String n, String d, String p) {
-			name = n;
-			data = d;
-			path = p;
+		public static final int TYPE_FOLDER = 0;
+		public static final int TYPE_FILE = 1;
+		public static final int TYPE_PARENT_FOLDER = 2;
+
+		public static final String FILE_EXTENSION = ".jpg";
+
+		private String name;
+		private String path;
+		private int type;
+
+		public Option(String name, String path, int type) {
+			this.name = name;
+			this.path = path;
+			this.type = type;
 		}
 
 		public String getName() {
 			return name;
 		}
 
-		public String getData() {
-			return data;
-		}
-
 		public String getPath() {
 			return path;
+		}
+
+		public int getType() {
+			return type;
 		}
 
 		public int compareTo(Option o) {
@@ -55,15 +63,10 @@ public class FileChooserActivity extends ListActivity {
 
 	private class FileArrayAdapter extends ArrayAdapter<Option> {
 
-		private Context c;
-		private int id;
 		private List<Option> items;
 
-		public FileArrayAdapter(Context context, int textViewResourceId,
-				List<Option> objects) {
-			super(context, textViewResourceId, objects);
-			c = context;
-			id = textViewResourceId;
+		public FileArrayAdapter(Context context, List<Option> objects) {
+			super(context, R.layout.list_view_icon_label_layout, objects);
 			items = objects;
 		}
 
@@ -73,27 +76,39 @@ public class FileChooserActivity extends ListActivity {
 
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
-			View v = convertView;
-			if (v == null) {
-				LayoutInflater vi = (LayoutInflater) c
+			View view = convertView;
+			if (view == null) {
+				LayoutInflater vi = (LayoutInflater) getContext()
 						.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-				v = vi.inflate(id, null);
+				view = vi.inflate(R.layout.list_view_icon_label_layout, null);
 			}
 			final Option o = items.get(position);
 			if (o != null) {
-				TextView t1 = (TextView) v.findViewById(R.id.TextView01);
-				TextView t2 = (TextView) v.findViewById(R.id.TextView02);
-
-				if (t1 != null)
-					t1.setText(o.getName());
-				if (t2 != null)
-					t2.setText(o.getData());
+				TextView label = (TextView) view
+						.findViewById(R.id.list_view_label);
+				label.setText(o.getName());
+				ImageView icon = (ImageView) view
+						.findViewById(R.id.list_view_icon);
+				switch (o.getType()) {
+				case Option.TYPE_FOLDER:
+					icon.setImageResource(R.drawable.folder);
+					break;
+				case Option.TYPE_FILE:
+					icon.setImageResource(R.drawable.application_x_m4);
+					break;
+				case Option.TYPE_PARENT_FOLDER:
+					icon.setImageResource(R.drawable.go_up);
+					break;
+				default:
+					break;
+				}
 			}
-			return v;
+			return view;
 		}
 
 	}
 
+	private File initialDir;
 	private File currentDir;
 	private FileArrayAdapter adapter;
 
@@ -102,23 +117,24 @@ public class FileChooserActivity extends ListActivity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		currentDir = Environment.getExternalStorageDirectory();
+		initialDir = Environment.getExternalStorageDirectory();
+		currentDir = initialDir;
 		fillInList(currentDir);
 	}
 
 	private void fillInList(File f) {
 		File[] dirs = f.listFiles();
-		this.setTitle("Current Dir: " + f.getName());
+		setTitle("Current directory: " + f.getName());
 		List<Option> dir = new ArrayList<Option>();
 		List<Option> fls = new ArrayList<Option>();
 		try {
 			for (File ff : dirs) {
 				if (ff.isDirectory())
-					dir.add(new Option(ff.getName(), "Folder", ff
-							.getAbsolutePath()));
-				else {
-					fls.add(new Option(ff.getName(), "File Size: "
-							+ ff.length(), ff.getAbsolutePath()));
+					dir.add(new Option(ff.getName(), ff.getAbsolutePath(),
+							Option.TYPE_FOLDER));
+				else if (ff.getName().endsWith(Option.FILE_EXTENSION)) {
+					fls.add(new Option(ff.getName(), ff.getAbsolutePath(),
+							Option.TYPE_FILE));
 				}
 			}
 		} catch (Exception e) {
@@ -127,10 +143,10 @@ public class FileChooserActivity extends ListActivity {
 		Collections.sort(dir);
 		Collections.sort(fls);
 		dir.addAll(fls);
-		if (!f.getName().equalsIgnoreCase("sdcard"))
-			dir.add(0, new Option("..", "Parent Directory", f.getParent()));
-		adapter = new FileArrayAdapter(FileChooserActivity.this,
-				R.layout.file_view, dir);
+		if (!f.getName().equalsIgnoreCase(initialDir.getName()))
+			dir.add(0, new Option("Parent directory", f.getParent(),
+					Option.TYPE_PARENT_FOLDER));
+		adapter = new FileArrayAdapter(FileChooserActivity.this, dir);
 		this.setListAdapter(adapter);
 	}
 
@@ -139,8 +155,8 @@ public class FileChooserActivity extends ListActivity {
 		// TODO Auto-generated method stub
 		super.onListItemClick(l, v, position, id);
 		Option o = adapter.getItem(position);
-		if (o.getData().equalsIgnoreCase("folder")
-				|| o.getData().equalsIgnoreCase("parent directory")) {
+		if (o.getType() == Option.TYPE_FOLDER
+				|| o.getType() == Option.TYPE_PARENT_FOLDER) {
 			currentDir = new File(o.getPath());
 			fillInList(currentDir);
 		} else {
