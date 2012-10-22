@@ -1,7 +1,7 @@
 package br.com.vinyanalista.simulador.simulation;
 
 public enum AnimationType {
-	IC_TO_MAR,
+	PC_TO_MAR,
 	CHANGE_MAR,
 	MAR_TO_MEMORY,
 	MEMORY_TO_MBR,
@@ -9,7 +9,7 @@ public enum AnimationType {
 	MBR_TO_IR,
 	CHANGE_IR_OPCODE,
 	CHANGE_IR_OPERAND,
-	CHANGE_IC,
+	CHANGE_PC,
 	IR_TO_MAR,
 	MBR_TO_ACC,
 	CHANGE_ACC,

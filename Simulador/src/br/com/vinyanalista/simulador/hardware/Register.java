@@ -26,8 +26,9 @@ public class Register extends ProcessorUnit {
 		return name;
 	}
 	
-	public void setName(String name) {
+	public Register setName(String name) {
 		this.name = name;
+		return this;
 	}
 
 	@Override
@@ -35,8 +36,9 @@ public class Register extends ProcessorUnit {
 		return completeName;
 	}
 	
-	public void setCompleteName(String completeName) {
+	public Register setCompleteName(String completeName) {
 		this.completeName = completeName;
+		return this;
 	}
 	
 	@Override
@@ -44,8 +46,9 @@ public class Register extends ProcessorUnit {
 		return description;
 	}
 	
-	public void setDescription(String description) {
+	public Register setDescription(String description) {
 		this.description = description;
+		return this;
 	}
 	
 	private Byte value;
@@ -54,7 +57,8 @@ public class Register extends ProcessorUnit {
 		return value;
 	}
 
-	public void setValue(Byte value) {
+	public Register setValue(Byte value) {
 		this.value = value;
+		return this;
 	}
 }

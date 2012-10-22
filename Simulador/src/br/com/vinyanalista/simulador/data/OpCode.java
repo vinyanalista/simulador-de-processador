@@ -2,7 +2,10 @@ package br.com.vinyanalista.simulador.data;
 
 public class OpCode extends Byte {
 	public static final int REPRESENTATION_MNEMONIC = 3;
-		
+
+	public static final int MIN_VALUE = 0;
+	public static final int MAX_VALUE = 15;
+
 	public static final int NOP_OPCODE = 0;
 	public static final int STA_OPCODE = 1;
 	public static final int LDA_OPCODE = 2;
@@ -39,16 +42,6 @@ public class OpCode extends Byte {
 
 	public OpCode(int value) {
 		super(value);
-	}
-
-	@Override
-	public int getMinValue() {
-		return 0;
-	}
-
-	@Override
-	public int getMaxValue() {
-		return 15;
 	}
 
 	public String getValueAsMnemonic() {
@@ -92,6 +85,21 @@ public class OpCode extends Byte {
 		default:
 			throw new IllegalArgumentException();
 		}
+	}
+
+	@Override
+	public void setValue(int value) {
+		setValue(value, MIN_VALUE, MAX_VALUE);
+	}
+
+	@Override
+	public void setValueAsBinary(String value) {
+		setValueAsBinary(value, MIN_VALUE, MIN_VALUE);
+	}
+
+	@Override
+	public void setValueAsHex(String value) {
+		setValueAsHex(value, MIN_VALUE, MIN_VALUE);
 	}
 
 }

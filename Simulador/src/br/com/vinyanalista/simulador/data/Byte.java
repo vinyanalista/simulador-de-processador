@@ -6,9 +6,6 @@ public abstract class Byte {
 	public static final int REPRESENTATION_HEX = 2;
 
 	protected static int representation = REPRESENTATION_DECIMAL;
-	
-	public abstract int getMinValue();
-	public abstract int getMaxValue();
 
 	protected static void setRepresentation(int representation) {
 		switch (representation) {
@@ -42,41 +39,47 @@ public abstract class Byte {
 		return toHex(value);
 	}
 
-	public void setValue(int value) {
-		if ((value >= getMinValue()) && (value <= getMaxValue())) {
+	public abstract void setValue(int value);
+
+	protected void setValue(int value, int minValue, int maxValue) {
+		if ((value >= minValue) && (value <= maxValue)) {
 			this.value = value;
 		} else {
-			throw new OutOfRangeException(value, getMinValue(), getMaxValue());
+			throw new OutOfRangeException(value, minValue, maxValue);
 		}
 	}
 
-	public void setValueAsBinary(String value) {
+	public abstract void setValueAsBinary(String value);
+
+	protected void setValueAsBinary(String value, int minValue, int maxValue) {
 		if (validateBinary(value)) {
 			try {
 				setValue(Integer.parseInt(value, 2));
 			} catch (OutOfRangeException e) {
 				throw new OutOfRangeException("Value " + value
-						+ " is out of range [" + toBinary(getMinValue()) + ".."
-						+ toBinary(getMaxValue()) + "]", e);
+						+ " is out of range [" + toBinary(minValue) + ".."
+						+ toBinary(maxValue) + "]", e);
 			}
 		} else {
 			throw new IllegalArgumentException("Value " + value
-					+ " is not a valid hex!");
+					+ " is not a valid binary!");
 		}
 	}
 
-	public void setValueAsHex(String value) {
+	public abstract void setValueAsHex(String value);
+
+	protected void setValueAsHex(String value, int minValue, int maxValue) {
 		if (validateHex(value)) {
 			try {
 				setValue(Integer.parseInt(value, 16));
 			} catch (OutOfRangeException e) {
 				throw new OutOfRangeException("Value " + value
-						+ " is out of range [" + Integer.toHexString(getMinValue())
-						+ ".." + Integer.toHexString(getMaxValue()) + "]", e);
+						+ " is out of range [" + Integer.toHexString(minValue)
+						+ ".." + Integer.toHexString(maxValue) + "]", e);
 			}
 		} else {
 			throw new IllegalArgumentException("Value " + value
-					+ " is not a valid binary!");
+					+ " is not a valid hex!");
 		}
 	}
 

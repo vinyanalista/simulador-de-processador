@@ -10,7 +10,16 @@ public abstract class Memory {
 
 	private Byte[] content = new Byte[getMaxAddress() - getMinAddress() + 1];
 
-	public Byte getByte(int address) {
+	public void writeByte(int address, Byte byteToWrite) {
+		if ((address >= getMinAddress()) && (address <= getMaxAddress())) {
+			content[address] = byteToWrite;
+		} else {
+			throw new OutOfRangeException(address, getMinAddress(),
+					getMaxAddress());
+		}
+	}
+
+	public Byte readByte(int address) {
 		if ((address >= getMinAddress()) && (address <= getMaxAddress())) {
 			return content[address + getMinAddress() - getMaxAddress()];
 		} else {

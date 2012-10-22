@@ -4,22 +4,27 @@ public class DataAddress extends Byte {
 
 	public static final int MIN_VALUE = 128;
 	public static final int MAX_VALUE = 255;
-	
+
 	public DataAddress() {
 	}
 
 	public DataAddress(int value) {
-		setValue(value);
+		super(value);
 	}
 
 	@Override
-	public int getMinValue() {
-		return 128;
+	public void setValue(int value) {
+		setValue(value, MIN_VALUE, MAX_VALUE);
 	}
 
 	@Override
-	public int getMaxValue() {
-		return 255;
+	public void setValueAsBinary(String value) {
+		setValueAsBinary(value, MIN_VALUE, MIN_VALUE);
+	}
+
+	@Override
+	public void setValueAsHex(String value) {
+		setValueAsHex(value, MIN_VALUE, MIN_VALUE);
 	}
 
 }

@@ -7,6 +7,11 @@ public class Instruction {
 	OpCode opCode;
 	Byte operator;
 
+	public Instruction(OpCode opCode, Byte operator) {
+		this.opCode = opCode;
+		this.operator = operator;
+	}
+
 	public OpCode getOpCode() {
 		return opCode;
 	}

@@ -3,7 +3,11 @@ package br.com.vinyanalista.simulador.simulation;
 import java.util.ArrayList;
 import java.util.List;
 
+import br.com.vinyanalista.simulador.data.OpCode;
+import br.com.vinyanalista.simulador.hardware.DataMemory;
+import br.com.vinyanalista.simulador.hardware.Processor;
 import br.com.vinyanalista.simulador.hardware.ProgramMemory;
+import br.com.vinyanalista.simulador.software.Instruction;
 import br.com.vinyanalista.simulador.software.Program;
 
 public class Simulation {
@@ -26,15 +30,33 @@ public class Simulation {
 	private void generateSimulation() {
 		// TODO Implementar geração de animações conforme programa a ser
 		// simulado
+		for (Instruction instruction : program.getInstructions()) {
+			InstructionAnimation animation = new InstructionAnimation(
+					instruction, new Processor(), new DataMemory());
+			switch (instruction.getOpCode().getValue()) {
+			case OpCode.LDA_OPCODE:
+
+				break;
+
+			default:
+				break;
+			}
+		}
 	}
 
 	private void populateProgramMemory() {
-		// TODO Implementar método que povoa a memória de programa com o
-		// programa a ser simulado
+		int address = programMemory.getMinAddress();
+		for (Instruction instruction : program.getInstructions()) {
+			programMemory.writeByte(address, instruction.getOpCode());
+			address++;
+			programMemory.writeByte(address, instruction.getOperator());
+			address++;
+		}
 	}
 
 	public Simulation(Program program) {
 		this.program = program;
+		programMemory = new ProgramMemory();
 		populateProgramMemory();
 		generateSimulation();
 	}

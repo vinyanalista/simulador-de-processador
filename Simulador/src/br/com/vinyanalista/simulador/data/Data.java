@@ -2,18 +2,26 @@ package br.com.vinyanalista.simulador.data;
 
 public class Data extends Byte {
 
+	public static final int MIN_VALUE = -128;
+	public static final int MAX_VALUE = 127;
+
 	public Data(int value) {
 		super(value);
 	}
 
 	@Override
-	public int getMinValue() {
-		return -128;
+	public void setValue(int value) {
+		setValue(value, MIN_VALUE, MAX_VALUE);
 	}
 
 	@Override
-	public int getMaxValue() {
-		return 127;
+	public void setValueAsBinary(String value) {
+		setValueAsBinary(value, MIN_VALUE, MIN_VALUE);
+	}
+
+	@Override
+	public void setValueAsHex(String value) {
+		setValueAsHex(value, MIN_VALUE, MIN_VALUE);
 	}
 
 }
