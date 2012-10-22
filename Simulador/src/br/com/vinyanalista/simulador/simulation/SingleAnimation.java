@@ -1,5 +1,7 @@
 package br.com.vinyanalista.simulador.simulation;
 
+import br.com.vinyanalista.simulador.data.Byte;
+
 public class SingleAnimation {
 	private AnimationType type;
 	private Byte value;

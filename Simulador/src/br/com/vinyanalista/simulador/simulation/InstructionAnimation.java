@@ -12,6 +12,7 @@ public class InstructionAnimation {
 	private Processor initialProcessorState;
 	private Processor finalProcessorState;
 	private DataMemory initialDataMemoryState;
+	private DataMemory finalDataMemoryState;
 	private List<SingleAnimation> animations = new ArrayList<SingleAnimation>();
 
 	public List<SingleAnimation> getAnimations() {
@@ -32,6 +33,10 @@ public class InstructionAnimation {
 
 	public DataMemory getInitialDataMemoryState() {
 		return initialDataMemoryState;
+	}
+
+	public DataMemory getFinalDataMemoryState() {
+		return finalDataMemoryState;
 	}
 
 	private void generateAnimations() {

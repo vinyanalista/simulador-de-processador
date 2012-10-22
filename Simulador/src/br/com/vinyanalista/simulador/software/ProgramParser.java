@@ -33,6 +33,8 @@ public class ProgramParser {
 				new DataAddress(128)));
 		program.instructions.add(new Instruction(new OpCode(OpCode.STA_OPCODE),
 				new DataAddress(129)));
+		program.instructions.add(new Instruction(new OpCode(OpCode.OUT_OPCODE),
+				new DataAddress(129)));
 		return null;
 	}
 }

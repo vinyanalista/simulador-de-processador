@@ -1,5 +1,7 @@
 package br.com.vinyanalista.simulador.data;
 
+import java.util.Random;
+
 public abstract class Byte {
 	public static final int REPRESENTATION_DECIMAL = 0;
 	public static final int REPRESENTATION_BINARY = 1;
@@ -20,11 +22,13 @@ public abstract class Byte {
 
 	int value;
 
-	public Byte() {
-	}
-
 	public Byte(int value) {
 		setValue(value);
+	}
+	
+	protected Byte(int minValue, int maxValue) {
+		//http://java.about.com/od/javautil/a/randomnumbers.htm
+		setValue(new Random().nextInt(maxValue - minValue + 1) + minValue);
 	}
 
 	public int getValue() {
@@ -112,5 +116,13 @@ public abstract class Byte {
 	public static final boolean validateHex(String value) {
 		return value.matches("[0-9A-Fa-f]+");
 	}
-
+	
+	public static void main(String[] args) {
+		OpCode data;
+		for (int i = 0; i < 10; i++) {
+			data = new OpCode();
+			System.out.println("Data " + i + ": " + data.getValue());
+		}
+	}
+	
 }

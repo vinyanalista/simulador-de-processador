@@ -1,5 +1,6 @@
 package br.com.vinyanalista.simulador.hardware;
 
+import br.com.vinyanalista.simulador.data.Byte;
 import br.com.vinyanalista.simulador.software.Instruction;
 
 public class InstructionRegister extends Register {

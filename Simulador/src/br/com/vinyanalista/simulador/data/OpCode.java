@@ -40,6 +40,10 @@ public class OpCode extends Byte {
 	public static final String LDI_MNEMONIC = "LDI";
 	public static final String HLT_MNEMONIC = "HLT";
 
+	public OpCode() {
+		super(MIN_VALUE, MAX_VALUE);
+	}
+	
 	public OpCode(int value) {
 		super(value);
 	}

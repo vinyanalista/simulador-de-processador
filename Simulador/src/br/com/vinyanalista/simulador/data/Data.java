@@ -5,6 +5,10 @@ public class Data extends Byte {
 	public static final int MIN_VALUE = -128;
 	public static final int MAX_VALUE = 127;
 
+	public Data() {
+		super(MIN_VALUE, MAX_VALUE);
+	}
+	
 	public Data(int value) {
 		super(value);
 	}

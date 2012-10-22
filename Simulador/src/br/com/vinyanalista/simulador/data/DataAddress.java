@@ -6,6 +6,7 @@ public class DataAddress extends Byte {
 	public static final int MAX_VALUE = 255;
 
 	public DataAddress() {
+		super(MIN_VALUE, MAX_VALUE);
 	}
 
 	public DataAddress(int value) {

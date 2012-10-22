@@ -6,6 +6,7 @@ public class InstructionAddress extends Byte {
 	public static final int MAX_VALUE = 127;
 
 	public InstructionAddress() {
+		super(MIN_VALUE, MAX_VALUE);
 	}
 
 	public InstructionAddress(int value) {

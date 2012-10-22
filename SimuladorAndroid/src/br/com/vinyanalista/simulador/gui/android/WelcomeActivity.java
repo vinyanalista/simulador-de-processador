@@ -65,6 +65,10 @@ public class WelcomeActivity extends Activity {
 					startActivityForResult(new Intent(WelcomeActivity.this,
 							FileChooserActivity.class), OPCAO_ABRIR);
 					break;
+				case OPCAO_RECENTES:
+					startActivity(new Intent(WelcomeActivity.this,
+							SimulationActivity.class));
+					break;
 				default:
 					break;
 				}

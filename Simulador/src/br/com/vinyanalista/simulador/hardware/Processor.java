@@ -21,10 +21,26 @@ public class Processor {
 	}
 
 	public Processor() {
-		registers.put(ACC, new Register());
-		registers.put(PC, new Register());
-		registers.put(MAR, new Register());
-		registers.put(MBR, new Register());
+		registers.put(
+				ACC,
+				new Register().setName(Register.ACC_NAME)
+						.setCompleteName(Register.ACC_COMPLETE_NAME)
+						.setDescription(Register.ACC_DESCRIPTION));
+		registers.put(
+				PC,
+				new Register().setName(Register.PC_NAME)
+						.setCompleteName(Register.PC_COMPLETE_NAME)
+						.setDescription(Register.PC_DESCRIPTION));
+		registers.put(
+				MAR,
+				new Register().setName(Register.MAR_NAME)
+						.setCompleteName(Register.MAR_COMPLETE_NAME)
+						.setDescription(Register.MAR_DESCRIPTION));
+		registers.put(
+				MBR,
+				new Register().setName(Register.MBR_NAME)
+						.setCompleteName(Register.MBR_COMPLETE_NAME)
+						.setDescription(Register.MBR_DESCRIPTION));
 		registers.put(IR, new InstructionRegister());
 	}
 }

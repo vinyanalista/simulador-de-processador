@@ -30,9 +30,16 @@ public class Simulation {
 	private void generateSimulation() {
 		// TODO Implementar geração de animações conforme programa a ser
 		// simulado
+		InstructionAnimation lastAnimation = null;
+		InstructionAnimation animation;
 		for (Instruction instruction : program.getInstructions()) {
-			InstructionAnimation animation = new InstructionAnimation(
-					instruction, new Processor(), new DataMemory());
+			if (lastAnimation == null)
+				animation = new InstructionAnimation(instruction,
+						new Processor(), new DataMemory());
+			else
+				animation = new InstructionAnimation(instruction,
+						lastAnimation.getFinalProcessorState(),
+						lastAnimation.getFinalDataMemoryState());
 			switch (instruction.getOpCode().getValue()) {
 			case OpCode.LDA_OPCODE:
 

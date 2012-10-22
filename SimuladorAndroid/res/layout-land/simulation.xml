@@ -33,7 +33,7 @@
             android:textColor="#008000"
             android:textSize="12dp"
             android:textStyle="bold"
-            android:visibility="visible" />
+            android:visibility="invisible" />
 
         <TextView
             android:id="@+id/from_memory_2"
@@ -45,7 +45,7 @@
             android:textColor="#008000"
             android:textSize="12dp"
             android:textStyle="bold"
-            android:visibility="visible" />
+            android:visibility="invisible" />
 
         <TextView
             android:id="@+id/to_pc_or_mbr"
@@ -59,7 +59,7 @@
             android:textColor="#008000"
             android:textSize="12dp"
             android:textStyle="bold"
-            android:visibility="visible" />
+            android:visibility="invisible" />
 
         <TextView
             android:id="@+id/to_mbr"
@@ -72,7 +72,7 @@
             android:textColor="#008000"
             android:textSize="12dp"
             android:textStyle="bold"
-            android:visibility="visible" />
+            android:visibility="invisible" />
 
         <TextView
             android:id="@+id/to_pc"
@@ -171,7 +171,7 @@
             android:textColor="#008000"
             android:textSize="12dp"
             android:textStyle="bold" />
-        
+
         <TextView
             android:id="@+id/to_alu2_or_ir2"
             android:layout_width="wrap_content"
@@ -232,7 +232,7 @@
             android:textColor="#008000"
             android:textSize="12dp"
             android:textStyle="bold" />
-        
+
         <TextView
             android:id="@+id/to_alu1_or_ir1"
             android:layout_width="wrap_content"
@@ -281,7 +281,7 @@
             android:textColor="#008000"
             android:textSize="12dp"
             android:textStyle="bold"
-            android:visibility="invisible" />
+            android:visibility="visible" />
 
         <TextView
             android:id="@+id/ir1"
@@ -305,7 +305,7 @@
             android:textColor="#008000"
             android:textSize="12dp"
             android:textStyle="bold"
-            android:visibility="invisible" />
+            android:visibility="visible" />
 
         <TextView
             android:id="@+id/alu_to_acc3"
@@ -318,8 +318,8 @@
             android:textColor="#008000"
             android:textSize="12dp"
             android:textStyle="bold"
-            android:visibility="invisible" />
-        
+            android:visibility="visible" />
+
         <TextView
             android:id="@+id/alu_to_acc2"
             android:layout_width="wrap_content"
@@ -331,15 +331,28 @@
             android:textColor="#008000"
             android:textSize="12dp"
             android:textStyle="bold"
-            android:visibility="invisible" />
+            android:visibility="visible" />
         
+        <TextView
+            android:id="@+id/alu_to_acc1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignRight="@+id/alu_to_acc2"
+            android:layout_below="@+id/alu_to_acc2"
+            android:layout_marginTop="3dp"
+            android:text="12345678"
+            android:textColor="#008000"
+            android:textSize="12dp"
+            android:textStyle="bold"
+            android:visibility="visible" />
+
         <TextView
             android:id="@+id/alu_out"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignRight="@+id/alu_to_acc2"
-            android:layout_marginTop="23dp"
-            android:layout_below="@+id/alu_to_acc2"
+            android:layout_alignRight="@+id/alu_to_acc1"
+            android:layout_below="@+id/alu_to_acc1"
+            android:layout_marginTop="5dp"
             android:text="12345678"
             android:textColor="#008000"
             android:textSize="12dp"
@@ -364,12 +377,14 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_alignParentTop="true"
-            android:layout_marginTop="55dp"
             android:layout_marginRight="57dp"
+            android:layout_marginTop="55dp"
             android:text="12345678"
             android:textColor="#ff0000"
             android:textSize="16dp"
             android:textStyle="bold" />
+
+        
 
     </RelativeLayout>
 
