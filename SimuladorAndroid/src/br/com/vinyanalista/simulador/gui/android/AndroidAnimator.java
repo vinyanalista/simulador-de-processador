@@ -71,10 +71,10 @@ public class AndroidAnimator implements Animator, AnimatorListener {
 
 	private AnimatorSet changeValue(TextView textView, Byte newValue) {
 		ValueAnimator changeValue = ObjectAnimator.ofObject(textView, "text",
-				new TypeEvaluator<String>() {
+				new TypeEvaluator<CharSequence>() {
 					@Override
-					public String evaluate(float fraction, String startValue,
-							String endValue) {
+					public CharSequence evaluate(float fraction,
+							CharSequence startValue, CharSequence endValue) {
 						return endValue;
 					}
 				}, newValue.getValueAsBinary()).setDuration(1);
@@ -160,11 +160,13 @@ public class AndroidAnimator implements Animator, AnimatorListener {
 			break;
 		case MBR_TO_ACC:
 			break;
-		case MBR_TO_IR:
+		case MBR_TO_IR_1:
+			break;
+		case MBR_TO_IR_2:
 			break;
 		case MEMORY_TO_MBR:
 			AnimatorSet memoryToMbr = fromMemory(activity.to_pc_or_mbr,
-					activity.to_pc, animation.getValue());
+					activity.to_mbr, animation.getValue());
 			memoryToMbr.addListener(this);
 			memoryToMbr.start();
 			break;

@@ -281,7 +281,7 @@
             android:textColor="#008000"
             android:textSize="12dp"
             android:textStyle="bold"
-            android:visibility="visible" />
+            android:visibility="invisible" />
 
         <TextView
             android:id="@+id/ir1"
@@ -305,7 +305,7 @@
             android:textColor="#008000"
             android:textSize="12dp"
             android:textStyle="bold"
-            android:visibility="visible" />
+            android:visibility="invisible" />
 
         <TextView
             android:id="@+id/alu_to_acc3"
@@ -318,7 +318,7 @@
             android:textColor="#008000"
             android:textSize="12dp"
             android:textStyle="bold"
-            android:visibility="visible" />
+            android:visibility="invisible" />
 
         <TextView
             android:id="@+id/alu_to_acc2"
@@ -331,7 +331,7 @@
             android:textColor="#008000"
             android:textSize="12dp"
             android:textStyle="bold"
-            android:visibility="visible" />
+            android:visibility="invisible" />
         
         <TextView
             android:id="@+id/alu_to_acc1"
@@ -339,12 +339,12 @@
             android:layout_height="wrap_content"
             android:layout_alignRight="@+id/alu_to_acc2"
             android:layout_below="@+id/alu_to_acc2"
-            android:layout_marginTop="3dp"
+            android:layout_marginTop="1dp"
             android:text="12345678"
             android:textColor="#008000"
             android:textSize="12dp"
             android:textStyle="bold"
-            android:visibility="visible" />
+            android:visibility="invisible" />
 
         <TextView
             android:id="@+id/alu_out"
