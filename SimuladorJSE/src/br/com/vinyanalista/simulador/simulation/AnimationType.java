@@ -1,0 +1,23 @@
+package br.com.vinyanalista.simulador.simulation;
+
+public enum AnimationType {
+	PC_TO_MAR,
+	CHANGE_MAR,
+	MAR_TO_MEMORY,
+	MEMORY_TO_MBR,
+	CHANGE_MBR,
+	MBR_TO_IR_1,
+	MBR_TO_IR_2,
+	CHANGE_IR_OPCODE,
+	CHANGE_IR_OPERAND,
+	CHANGE_PC,
+	IR_TO_MAR,
+	MBR_TO_ACC,
+	CHANGE_ACC,
+	ACC_TO_ALU_1,
+	CHANGE_ALU_1,
+	ACC_TO_ALU_2,
+	CHANGE_ALU_2,
+	CHANGE_ALU_OUTPUT,
+	ALU_TO_ACC;
+}

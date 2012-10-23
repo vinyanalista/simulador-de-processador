@@ -50,9 +50,9 @@ public class CodeHighlighter extends QSyntaxHighlighter {
 		// All the opcodes
 		List<String> keywords = new ArrayList<String>();
 		OpCode auxOpCode = new OpCode(0);
-		for (int i = auxOpCode.getMinValue(); i <= auxOpCode.getMaxValue(); i++) {
-			keywords.add(OpCode.toMnemonic(i));
-		}
+//		for (int i = auxOpCode.getMinValue(); i <= auxOpCode.getMaxValue(); i++) {
+//			keywords.add(OpCode.toMnemonic(i));
+//		}
 
 		for (String keyword : keywords) {
 			pattern = new QRegExp("\\b" + keyword + "\\b");
