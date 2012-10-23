@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import com.actionbarsherlock.app.SherlockListActivity;
+
 import android.app.ListActivity;
 import android.content.Context;
 import android.content.Intent;
@@ -20,7 +22,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-public class FileChooserActivity extends ListActivity {
+public class FileChooserActivity extends SherlockListActivity {
 
 	private class Option implements Comparable<Option> {
 

@@ -4,9 +4,9 @@ import br.com.vinyanalista.simulador.data.Byte;
 import br.com.vinyanalista.simulador.software.Instruction;
 
 public class InstructionRegister extends Register {
-	private static final String NAME = "IR";
-	private static final String COMPLETE_NAME = "Instruction Register";
-	private static final String DESCRIPTION = "Stores the instruction being processed.";
+	static final String NAME = "IR";
+	static final String COMPLETE_NAME = "Instruction Register";
+	static final String DESCRIPTION = "Stores the instruction being processed.";
 
 	private Instruction instruction;
 

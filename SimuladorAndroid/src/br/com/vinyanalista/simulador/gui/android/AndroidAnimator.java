@@ -1,6 +1,5 @@
 package br.com.vinyanalista.simulador.gui.android;
 
-import com.nineoldandroids.animation.Animator.AnimatorListener;
 import com.nineoldandroids.animation.AnimatorSet;
 import com.nineoldandroids.animation.ArgbEvaluator;
 import com.nineoldandroids.animation.ObjectAnimator;
@@ -13,22 +12,15 @@ import android.widget.TextView;
 
 import br.com.vinyanalista.simulador.data.Byte;
 import br.com.vinyanalista.simulador.simulation.Animator;
-import br.com.vinyanalista.simulador.simulation.SingleAnimation;
+import br.com.vinyanalista.simulador.simulation.Animation;
 
-public class AndroidAnimator implements Animator, AnimatorListener {
-
-	public abstract class OnAnimationEndListener {
-
-		public abstract void onAnimationEnd(SingleAnimation animation);
-
-	}
+public class AndroidAnimator implements Animator {
 
 	public final static int COR_VERDE = Color.parseColor("#008000");
 	public final static int COR_VERMELHA = Color.RED;
 
 	SimulationActivity activity;
-	SingleAnimation animation = null;
-	OnAnimationEndListener listener;
+	Animation animation = null;
 
 	private AnimatorSet position(TextView textView, TextView reference) {
 		ObjectAnimator positionX = ObjectAnimator.ofFloat(textView,
@@ -42,21 +34,21 @@ public class AndroidAnimator implements Animator, AnimatorListener {
 		return position;
 	}
 
-	private AnimatorSet fromMemory(TextView intermediateStep, TextView to,
-			Byte value) {
+	private AnimatorSet move(TextView position1, TextView position2,
+			TextView position3, TextView position4, Byte value) {
 		ValueAnimator show = ObjectAnimator.ofInt(activity.movingByte,
 				"visibility", View.VISIBLE).setDuration(1);
 
 		ObjectAnimator step1 = ObjectAnimator.ofFloat(activity.movingByte,
-				"translationY", activity.from_memory_1.getTop(),
-				activity.from_memory_2.getTop()).setDuration(1000);
+				"translationY", position1.getTop(), position2.getTop())
+				.setDuration(1000);
 
 		ObjectAnimator step2 = ObjectAnimator.ofFloat(activity.movingByte,
-				"translationX", activity.from_memory_2.getLeft(),
-				intermediateStep.getLeft()).setDuration(1000);
+				"translationX", position2.getLeft(), position3.getLeft())
+				.setDuration(1000);
 
 		ObjectAnimator step3 = ObjectAnimator.ofFloat(activity.movingByte,
-				"translationY", intermediateStep.getTop(), to.getTop())
+				"translationY", position3.getTop(), position4.getTop())
 				.setDuration(1000);
 
 		ValueAnimator hide = ObjectAnimator.ofInt(activity.movingByte,
@@ -91,87 +83,84 @@ public class AndroidAnimator implements Animator, AnimatorListener {
 	}
 
 	@Override
-	public void animate(SingleAnimation animation) {
+	public void animate(Animation animation) {
 		this.animation = animation;
 		switch (animation.getType()) {
-		case CHANGE_MAR:
-			AnimatorSet changeMar = changeValue(activity.mar,
-					animation.getValue());
-			changeMar.addListener(this);
-			changeMar.start();
+		case MAR_CHANGE:
+			changeValue(activity.mar, animation.getValue()).start();
 			break;
-		case CHANGE_MBR:
-			AnimatorSet changeMbr = changeValue(activity.mbr,
-					animation.getValue());
-			changeMbr.addListener(this);
-			changeMbr.start();
+		case MBR_CHANGE:
+			changeValue(activity.mbr, animation.getValue()).start();
 			break;
-		case CHANGE_IR_OPCODE:
-			AnimatorSet changeIrOpcode = changeValue(activity.ir1,
-					animation.getValue());
-			changeIrOpcode.addListener(this);
-			changeIrOpcode.start();
+		case IR_OPCODE_CHANGE:
+			changeValue(activity.ir1, animation.getValue()).start();
 			break;
-		case CHANGE_IR_OPERAND:
-			AnimatorSet changeIrOperand = changeValue(activity.ir2,
-					animation.getValue());
-			changeIrOperand.addListener(this);
-			changeIrOperand.start();
+		case IR_OPERAND_CHANGE:
+			changeValue(activity.ir2, animation.getValue()).start();
 			break;
-		case CHANGE_PC:
-			AnimatorSet changePc = changeValue(activity.pc,
-					animation.getValue());
-			changePc.addListener(this);
-			changePc.start();
+		case PC_CHANGE:
+			changeValue(activity.pc, animation.getValue()).start();
 			break;
-		case CHANGE_ACC:
-			AnimatorSet changeAcc = changeValue(activity.acc,
-					animation.getValue());
-			changeAcc.addListener(this);
-			changeAcc.start();
+		case ACC_CHANGE:
+			changeValue(activity.acc, animation.getValue()).start();
 			break;
-		case CHANGE_ALU_1:
-			AnimatorSet changeAlu1 = changeValue(activity.alu1,
-					animation.getValue());
-			changeAlu1.addListener(this);
-			changeAlu1.start();
+		case ALU_IN_1_CHANGE:
+			changeValue(activity.alu1, animation.getValue()).start();
 			break;
-		case CHANGE_ALU_2:
-			AnimatorSet changeAlu2 = changeValue(activity.alu2,
-					animation.getValue());
-			changeAlu2.addListener(this);
-			changeAlu2.start();
+		case ALU_IN_2_CHANGE:
+			changeValue(activity.alu2, animation.getValue()).start();
 			break;
-		case CHANGE_ALU_OUTPUT:
-			AnimatorSet changeAluOutput = changeValue(activity.alu_out,
-					animation.getValue());
-			changeAluOutput.addListener(this);
-			changeAluOutput.start();
+		case ALU_OUTPUT_CHANGE:
+			changeValue(activity.alu_out, animation.getValue()).start();
 			break;
-		case ACC_TO_ALU_1:
+		case ACC_TO_ALU_IN_1:
+			move(activity.to_acc, activity.to_acc_or_mar,
+					activity.to_alu1_or_ir1, activity.to_alu1,
+					animation.getValue()).start();
 			break;
-		case ACC_TO_ALU_2:
+		case ACC_TO_ALU_IN_2:
+			move(activity.to_acc, activity.to_acc_or_mar,
+					activity.to_alu2_or_ir2, activity.to_alu2,
+					animation.getValue()).start();
 			break;
-		case ALU_TO_ACC:
+		case ALU_OUTPUT_TO_ACC:
 			break;
-		case IR_TO_MAR:
+		case IR_OPERAND_TO_MAR:
+			move(activity.to_mar, activity.to_acc_or_mar,
+					activity.to_alu2_or_ir2, activity.to_ir2,
+					animation.getValue()).start();
 			break;
 		case MAR_TO_MEMORY:
+			move(activity.to_mar, activity.to_acc_or_mar,
+					activity.from_memory_2, activity.from_memory_1,
+					animation.getValue()).start();
 			break;
 		case MBR_TO_ACC:
+			move(activity.to_mbr, activity.to_pc_or_mbr,
+					activity.to_acc_or_mar, activity.to_acc,
+					animation.getValue()).start();
 			break;
-		case MBR_TO_IR_1:
+		case MBR_TO_IR_OPCODE:
+			move(activity.to_mbr, activity.to_pc_or_mbr,
+					activity.to_alu1_or_ir1, activity.to_ir1,
+					animation.getValue()).start();
 			break;
-		case MBR_TO_IR_2:
+		case MBR_TO_IR_OPERAND:
+			move(activity.to_mbr, activity.to_pc_or_mbr,
+					activity.to_alu2_or_ir2, activity.to_ir2,
+					animation.getValue()).start();
 			break;
 		case MEMORY_TO_MBR:
-			AnimatorSet memoryToMbr = fromMemory(activity.to_pc_or_mbr,
-					activity.to_mbr, animation.getValue());
-			memoryToMbr.addListener(this);
-			memoryToMbr.start();
+			move(activity.from_memory_1, activity.from_memory_2,
+					activity.to_pc_or_mbr, activity.to_mbr,
+					animation.getValue()).start();
 			break;
 		case PC_TO_MAR:
-			break;
+		case ACC_TO_MBR:
+		case IR_OPERAND_TO_ACC:
+		case LED_CHANGE:
+		case MBR_TO_LED:
+		case MBR_TO_MEMORY:
 		default:
 			break;
 		}
@@ -179,31 +168,5 @@ public class AndroidAnimator implements Animator, AnimatorListener {
 
 	public AndroidAnimator(SimulationActivity activity) {
 		this.activity = activity;
-	}
-
-	public AndroidAnimator setOnAnimationEndListener(
-			OnAnimationEndListener listener) {
-		this.listener = listener;
-		return this;
-	}
-
-	@Override
-	public void onAnimationEnd(com.nineoldandroids.animation.Animator animator) {
-		if (listener != null)
-			listener.onAnimationEnd(animation);
-	}
-
-	@Override
-	public void onAnimationCancel(
-			com.nineoldandroids.animation.Animator animator) {
-	}
-
-	@Override
-	public void onAnimationRepeat(
-			com.nineoldandroids.animation.Animator animator) {
-	}
-
-	@Override
-	public void onAnimationStart(com.nineoldandroids.animation.Animator animator) {
 	}
 }

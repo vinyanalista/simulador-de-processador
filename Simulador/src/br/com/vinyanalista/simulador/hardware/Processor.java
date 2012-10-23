@@ -2,12 +2,14 @@ package br.com.vinyanalista.simulador.hardware;
 
 import java.util.HashMap;
 
+import br.com.vinyanalista.simulador.data.InstructionAddress;
+
 public class Processor {
-	public static final String ACC = "ACC";
-	public static final String PC = "PC";
-	public static final String MAR = "MAR";
-	public static final String MBR = "MBR";
-	public static final String IR = "IR";
+	public static final String ACC = Register.ACC_NAME;
+	public static final String PC = Register.PC_NAME;
+	public static final String MAR = Register.MAR_NAME;
+	public static final String MBR = Register.MBR_NAME;
+	public static final String IR = InstructionRegister.NAME;
 
 	private ALU alu = new ALU();
 	private HashMap<String, Register> registers = new HashMap<String, Register>();
@@ -41,6 +43,7 @@ public class Processor {
 				new Register().setName(Register.MBR_NAME)
 						.setCompleteName(Register.MBR_COMPLETE_NAME)
 						.setDescription(Register.MBR_DESCRIPTION));
-		registers.put(IR, new InstructionRegister());
+		registers.put(IR,
+				new InstructionRegister().setValue(new InstructionAddress(0)));
 	}
 }

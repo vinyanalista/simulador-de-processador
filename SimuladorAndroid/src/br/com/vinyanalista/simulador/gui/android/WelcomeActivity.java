@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import com.actionbarsherlock.app.SherlockActivity;
+
 import android.os.Bundle;
 import android.app.Activity;
 import android.content.Intent;
@@ -15,7 +17,7 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.Toast;
 
-public class WelcomeActivity extends Activity {
+public class WelcomeActivity extends SherlockActivity {
 
 	// http://wptrafficanalyzer.in/blog/listview-with-images-and-text-using-simple-adapter-in-android/
 	private ListView menu;
@@ -76,11 +78,11 @@ public class WelcomeActivity extends Activity {
 		});
 	}
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		getMenuInflater().inflate(R.menu.welcome, menu);
-		return true;
-	}
+//	@Override
+//	public boolean onCreateOptionsMenu(Menu menu) {
+//		getMenuInflater().inflate(R.menu.welcome, menu);
+//		return true;
+//	}
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {

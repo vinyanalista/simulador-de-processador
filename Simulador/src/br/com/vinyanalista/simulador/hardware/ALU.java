@@ -30,4 +30,9 @@ public class ALU {
 	public void setOut(Data out) {
 		this.out = out;
 	}
+
+	public void add() {
+		// TODO implementar overflow
+		out = new Data(in1.getValue() + in2.getValue());
+	}
 }

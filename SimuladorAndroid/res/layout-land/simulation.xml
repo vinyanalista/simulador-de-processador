@@ -2,7 +2,6 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#1c376d"
     android:gravity="center_vertical"
     android:orientation="horizontal" >
 
@@ -10,7 +9,8 @@
         android:id="@+id/relativeLayout2"
         android:layout_width="530dp"
         android:layout_height="378dp"
-        android:orientation="horizontal" >
+        android:orientation="horizontal"
+        android:background="#1c376d" >
 
         <ImageView
             android:id="@+id/imageView1"
@@ -391,7 +391,6 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#ffffff"
         android:orientation="vertical" >
 
         <Button

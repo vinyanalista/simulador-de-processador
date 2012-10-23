@@ -1,10 +1,14 @@
 package br.com.vinyanalista.simulador.gui.android;
 
+import com.actionbarsherlock.app.SherlockActivity;
+
 import br.com.vinyanalista.simulador.data.Data;
 //import br.com.vinyanalista.simulador.gui.android.AndroidAnimator.OnAnimationEndListener;
 import br.com.vinyanalista.simulador.simulation.AnimationType;
+import br.com.vinyanalista.simulador.simulation.Simulation;
 //import br.com.vinyanalista.simulador.simulation.Animator;
-import br.com.vinyanalista.simulador.simulation.SingleAnimation;
+import br.com.vinyanalista.simulador.simulation.Animation;
+import br.com.vinyanalista.simulador.software.Program;
 
 //import com.nineoldandroids.animation.AnimatorListenerAdapter;
 //import com.nineoldandroids.animation.AnimatorSet;
@@ -29,11 +33,13 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.RelativeLayout.LayoutParams;
 
-public class SimulationActivity extends Activity implements OnClickListener,
+public class SimulationActivity extends SherlockActivity implements OnClickListener,
 		OnItemClickListener {
 
 	// private final static int COR_VERDE = Color.parseColor("#008000");
 	// private final static int COR_VERMELHA = Color.RED;
+
+	public static final String EXTRA_PROGRAM = "program";
 
 	private RelativeLayout layout;
 	private LayoutParams params;
@@ -44,6 +50,8 @@ public class SimulationActivity extends Activity implements OnClickListener,
 			ir1, alu_to_acc1, alu_to_acc2, alu_to_acc3, alu_to_acc4, alu_out,
 			to_led, led, movingByte;
 
+	private Program program;
+	private Simulation simulation;
 	private AndroidAnimator animator;
 
 	private Button button;
@@ -130,11 +138,11 @@ public class SimulationActivity extends Activity implements OnClickListener,
 		animationsListView.setOnItemClickListener(this);
 	}
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		getMenuInflater().inflate(R.menu.simulation, menu);
-		return true;
-	}
+//	@Override
+//	public boolean onCreateOptionsMenu(Menu menu) {
+//		getMenuInflater().inflate(R.menu.simulation, menu);
+//		return true;
+//	}
 
 	// private void criarTextView() {
 	// http://stackoverflow.com/questions/4733021/add-new-view-to-layout-upon-button-click-in-android
@@ -153,19 +161,6 @@ public class SimulationActivity extends Activity implements OnClickListener,
 
 	public void onClick(View view) {
 		if (view.equals(button)) {
-			animator.setOnAnimationEndListener(
-					animator.new OnAnimationEndListener() {
-						@Override
-						public void onAnimationEnd(SingleAnimation animation) {
-							animator.setOnAnimationEndListener(null).animate(
-									new SingleAnimation(
-											AnimationType.CHANGE_MBR, animation
-													.getValue()));
-						}
-					}).animate(
-					new SingleAnimation(AnimationType.MEMORY_TO_MBR, new Data(
-							10)));
-
 			// criarTextView();
 			//
 			// ObjectAnimator posicionarX =

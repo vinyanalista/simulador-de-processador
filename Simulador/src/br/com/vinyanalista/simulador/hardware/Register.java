@@ -4,21 +4,21 @@ import br.com.vinyanalista.simulador.data.Byte;
 import br.com.vinyanalista.simulador.data.Data;
 
 public class Register extends ProcessorUnit {
-	public static final String ACC_NAME = "ACC";
-	public static final String ACC_COMPLETE_NAME = "";
-	public static final String ACC_DESCRIPTION = "Not defined yet.";
+	static final String ACC_NAME = "ACC";
+	static final String ACC_COMPLETE_NAME = "";
+	static final String ACC_DESCRIPTION = "Not defined yet.";
 
-	public static final String PC_NAME = "PC";
-	public static final String PC_COMPLETE_NAME = "Program Counter";
-	public static final String PC_DESCRIPTION = "Not defined yet.";
+	static final String PC_NAME = "PC";
+	static final String PC_COMPLETE_NAME = "Program Counter";
+	static final String PC_DESCRIPTION = "Not defined yet.";
 
-	public static final String MAR_NAME = "MAR";
-	public static final String MAR_COMPLETE_NAME = "Memory Address Register";
-	public static final String MAR_DESCRIPTION = "Not defined yet.";
+	static final String MAR_NAME = "MAR";
+	static final String MAR_COMPLETE_NAME = "Memory Address Register";
+	static final String MAR_DESCRIPTION = "Not defined yet.";
 
-	public static final String MBR_NAME = "MBR";
-	public static final String MBR_COMPLETE_NAME = "Memory Buffer Register";
-	public static final String MBR_DESCRIPTION = "Not defined yet.";
+	static final String MBR_NAME = "MBR";
+	static final String MBR_COMPLETE_NAME = "Memory Buffer Register";
+	static final String MBR_DESCRIPTION = "Not defined yet.";
 
 	private String name;
 	private String completeName;
