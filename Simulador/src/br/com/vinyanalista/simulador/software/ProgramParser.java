@@ -28,13 +28,13 @@ public class ProgramParser {
 		program.instructions.add(new Instruction(new OpCode(OpCode.STA_OPCODE),
 				new DataAddress(129)));
 		program.instructions.add(new Instruction(new OpCode(OpCode.LDA_OPCODE),
-				new DataAddress(127)));
-		program.instructions.add(new Instruction(new OpCode(OpCode.ADD_OPCODE),
 				new DataAddress(128)));
+		program.instructions.add(new Instruction(new OpCode(OpCode.ADD_OPCODE),
+				new DataAddress(129)));
 		program.instructions.add(new Instruction(new OpCode(OpCode.STA_OPCODE),
-				new DataAddress(129)));
+				new DataAddress(130)));
 		program.instructions.add(new Instruction(new OpCode(OpCode.OUT_OPCODE),
-				new DataAddress(129)));
-		return null;
+				new DataAddress(130)));
+		return program;
 	}
 }

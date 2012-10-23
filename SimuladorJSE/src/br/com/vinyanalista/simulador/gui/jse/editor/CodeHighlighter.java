@@ -49,8 +49,7 @@ public class CodeHighlighter extends QSyntaxHighlighter {
 
 		// All the opcodes
 		List<String> keywords = new ArrayList<String>();
-		OpCode auxOpCode = new OpCode(0);
-		for (int i = auxOpCode.getMinValue(); i <= auxOpCode.getMaxValue(); i++) {
+		for (int i = OpCode.MIN_VALUE; i <= OpCode.MAX_VALUE; i++) {
 			keywords.add(OpCode.toMnemonic(i));
 		}
 
