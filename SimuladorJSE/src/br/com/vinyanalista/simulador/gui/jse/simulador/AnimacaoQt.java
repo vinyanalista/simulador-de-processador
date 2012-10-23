@@ -273,7 +273,7 @@ public class AnimacaoQt extends QMainWindow {
 
 		moverValor.start();
 
-		moverValor.finished.connect(this, "CHANGE_MAR()");
+		moverValor.finished.connect(this, "MAR_CHANGE()");
 	}
 	
 	private void MAR_CHANGE() {
@@ -327,7 +327,7 @@ public class AnimacaoQt extends QMainWindow {
 
 		moverValor.start();
 
-		moverValor.finished.connect(this, "CHANGE_MAR()");
+		moverValor.finished.connect(this, "MAR_CHANGE()");
 	}
 	
 	private void MEMORY_TO_MBR(){
@@ -361,7 +361,7 @@ public class AnimacaoQt extends QMainWindow {
 
 				moverValor.start();
 
-				moverValor.finished.connect(this, "CHANGE_MBR()");
+				moverValor.finished.connect(this, "MBR_CHANGE()");
 	}
 	
 	
@@ -546,7 +546,7 @@ public class AnimacaoQt extends QMainWindow {
 
 		moverValorDaMemoriaParaMAR.start();
 
-		moverValorDaMemoriaParaMAR.finished.connect(this, "CHANGE_MAR()");
+		moverValorDaMemoriaParaMAR.finished.connect(this, "MAR_CHANGE()");
 	}
 	
 	private void MBR_TO_ACC(){
@@ -576,7 +576,7 @@ public class AnimacaoQt extends QMainWindow {
 
 		moverValorDaMemoriaParaMAR.start();
 
-		moverValorDaMemoriaParaMAR.finished.connect(this, "CHANGE_ACC()");
+		moverValorDaMemoriaParaMAR.finished.connect(this, "ACC_CHANGE()");
 	}
 
 	private void ACC_CHANGE() {
@@ -630,7 +630,7 @@ public class AnimacaoQt extends QMainWindow {
 
 		moverValorDaMemoriaParaMAR.start();
 
-		moverValorDaMemoriaParaMAR.finished.connect(this, "CHANGE_ALU_1()");	
+		moverValorDaMemoriaParaMAR.finished.connect(this, "ALU_IN_1_CHANGE()");	
 	}
 	
 	private void ALU_IN_1_CHANGE() {
@@ -684,7 +684,7 @@ public class AnimacaoQt extends QMainWindow {
 
 		moverValorDaMemoriaParaMAR.start();
 
-		moverValorDaMemoriaParaMAR.finished.connect(this, "CHANGE_ALU_2()");		
+		moverValorDaMemoriaParaMAR.finished.connect(this, "ALU_IN_2_CHANGE()");		
 	}
 	
 	private void ALU_IN_2_CHANGE() {
@@ -758,7 +758,7 @@ public class AnimacaoQt extends QMainWindow {
 
 		moverValorDaMemoriaParaMAR.start();
 
-		moverValorDaMemoriaParaMAR.finished.connect(this, "CHANGE_ACC()");
+		moverValorDaMemoriaParaMAR.finished.connect(this, "ACC_CHANGE()");
 	}
 	
 	private void LED_CHANGE(){
