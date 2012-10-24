@@ -3,7 +3,6 @@ package br.com.vinyanalista.simulador.gui.android;
 import com.nineoldandroids.animation.AnimatorSet;
 import com.nineoldandroids.animation.ArgbEvaluator;
 import com.nineoldandroids.animation.ObjectAnimator;
-import com.nineoldandroids.animation.TypeEvaluator;
 import com.nineoldandroids.animation.ValueAnimator;
 
 import android.graphics.Color;
@@ -17,25 +16,52 @@ import br.com.vinyanalista.simulador.simulation.Animation;
 public class AndroidAnimator implements Animator {
 
 	public final static int COR_VERDE = Color.parseColor("#008000");
-	public final static int COR_VERMELHA = Color.RED;
+	public final static int COR_VERMELHA = Color.parseColor("#ff0000");
+	public final static int COR_VERMELHA_ESCURA = Color.parseColor("#7b0010");
 
 	SimulationActivity activity;
 	Animation animation = null;
 
-	private AnimatorSet position(TextView textView, TextView reference) {
+	private AnimatorSet position(TextView textView, int x, int y) {
 		ObjectAnimator positionX = ObjectAnimator.ofFloat(textView,
-				"translationX", reference.getLeft()).setDuration(1);
+				"translationX", x).setDuration(1);
 
 		ObjectAnimator positionY = ObjectAnimator.ofFloat(textView,
-				"translationY", reference.getTop()).setDuration(1);
+				"translationY", y).setDuration(1);
 
 		AnimatorSet position = new AnimatorSet();
 		position.playTogether(positionX, positionY);
 		return position;
 	}
 
+	private AnimatorSet position(TextView textView, TextView reference) {
+		return position(textView, reference.getLeft(), reference.getTop());
+	}
+
+	private AnimatorSet translateY(TextView position1, TextView position2,
+			Byte value) {
+		AnimatorSet position = position(activity.movingByte, position1);
+		activity.movingByte.setText(value.getValueAsBinary());
+
+		ValueAnimator show = ObjectAnimator.ofInt(activity.movingByte,
+				"visibility", View.VISIBLE).setDuration(1);
+
+		ObjectAnimator translation = ObjectAnimator.ofFloat(
+				activity.movingByte, "translationY", position1.getTop(),
+				position2.getTop()).setDuration(1000);
+
+		AnimatorSet hide = position(activity.movingByte, 1000000, 1000000);
+
+		AnimatorSet translateY = new AnimatorSet();
+		translateY.playSequentially(position, show, translation, hide);
+		return translateY;
+	}
+
 	private AnimatorSet move(TextView position1, TextView position2,
 			TextView position3, TextView position4, Byte value) {
+		AnimatorSet position = position(activity.movingByte, position1);
+		activity.movingByte.setText(value.getValueAsBinary());
+
 		ValueAnimator show = ObjectAnimator.ofInt(activity.movingByte,
 				"visibility", View.VISIBLE).setDuration(1);
 
@@ -51,34 +77,32 @@ public class AndroidAnimator implements Animator {
 				"translationY", position3.getTop(), position4.getTop())
 				.setDuration(1000);
 
-		ValueAnimator hide = ObjectAnimator.ofInt(activity.movingByte,
-				"visibility", View.INVISIBLE).setDuration(1);
+		AnimatorSet hide = position(activity.movingByte, 1000000, 1000000);
 
-		AnimatorSet fromMemory = new AnimatorSet();
-		fromMemory.playSequentially(
-				position(activity.movingByte, activity.from_memory_1), show,
-				step1, step2, step3, hide);
-		return fromMemory;
+		AnimatorSet move = new AnimatorSet();
+		move.playSequentially(position, show, step1, step2, step3, hide);
+		return move;
 	}
 
-	private AnimatorSet changeValue(TextView textView, Byte newValue) {
-		ValueAnimator changeValue = ObjectAnimator.ofObject(textView, "text",
-				new TypeEvaluator<CharSequence>() {
-					@Override
-					public CharSequence evaluate(float fraction,
-							CharSequence startValue, CharSequence endValue) {
-						return endValue;
-					}
-				}, newValue.getValueAsBinary()).setDuration(1);
+	private ValueAnimator changeLedValue(Byte newValue) {
+		activity.led.setText(newValue.getValueAsBinary());
+		ValueAnimator mudarValor = ObjectAnimator.ofInt(activity.led,
+				"textColor", COR_VERMELHA, COR_VERMELHA_ESCURA, COR_VERMELHA,
+				COR_VERMELHA_ESCURA, COR_VERMELHA).setDuration(3000);
+		mudarValor.setEvaluator(new ArgbEvaluator());
+		mudarValor.setRepeatMode(ValueAnimator.REVERSE);
 
-		ValueAnimator blink = ObjectAnimator.ofInt(textView, "textColor",
+		return mudarValor;
+	}
+
+	private ValueAnimator changeValue(TextView textView, Byte newValue) {
+		textView.setText(newValue.getValueAsBinary());
+		ValueAnimator mudarValor = ObjectAnimator.ofInt(textView, "textColor",
 				COR_VERDE, COR_VERMELHA, COR_VERDE, COR_VERMELHA, COR_VERDE)
 				.setDuration(3000);
-		blink.setEvaluator(new ArgbEvaluator());
-		blink.setRepeatMode(ValueAnimator.REVERSE);
+		mudarValor.setEvaluator(new ArgbEvaluator());
+		mudarValor.setRepeatMode(ValueAnimator.REVERSE);
 
-		AnimatorSet mudarValor = new AnimatorSet();
-		mudarValor.playSequentially(changeValue, blink);
 		return mudarValor;
 	}
 
@@ -114,53 +138,75 @@ public class AndroidAnimator implements Animator {
 			changeValue(activity.alu_out, animation.getValue()).start();
 			break;
 		case ACC_TO_ALU_IN_1:
-			move(activity.to_acc, activity.to_acc_or_mar,
+			move(activity.to_acc, activity.to_acc_or_mbr,
 					activity.to_alu1_or_ir1, activity.to_alu1,
 					animation.getValue()).start();
 			break;
 		case ACC_TO_ALU_IN_2:
-			move(activity.to_acc, activity.to_acc_or_mar,
+			move(activity.to_acc, activity.to_acc_or_mbr,
 					activity.to_alu2_or_ir2, activity.to_alu2,
 					animation.getValue()).start();
 			break;
 		case ALU_OUTPUT_TO_ACC:
+			move(activity.alu_to_acc1, activity.alu_to_acc2,
+					activity.alu_to_acc3, activity.alu_to_acc4,
+					animation.getValue()).start();
 			break;
 		case IR_OPERAND_TO_MAR:
-			move(activity.to_mar, activity.to_acc_or_mar,
-					activity.to_alu2_or_ir2, activity.to_ir2,
+			move(activity.to_ir2, activity.to_alu2_or_ir2,
+					activity.to_pc_or_mar, activity.to_mar,
 					animation.getValue()).start();
 			break;
 		case MAR_TO_MEMORY:
-			move(activity.to_mar, activity.to_acc_or_mar,
+			move(activity.to_mar, activity.to_pc_or_mar,
 					activity.from_memory_2, activity.from_memory_1,
 					animation.getValue()).start();
 			break;
 		case MBR_TO_ACC:
-			move(activity.to_mbr, activity.to_pc_or_mbr,
-					activity.to_acc_or_mar, activity.to_acc,
-					animation.getValue()).start();
+			translateY(activity.to_mbr, activity.to_acc, animation.getValue())
+					.start();
 			break;
 		case MBR_TO_IR_OPCODE:
-			move(activity.to_mbr, activity.to_pc_or_mbr,
+			move(activity.to_mbr, activity.to_acc_or_mbr,
 					activity.to_alu1_or_ir1, activity.to_ir1,
 					animation.getValue()).start();
 			break;
 		case MBR_TO_IR_OPERAND:
-			move(activity.to_mbr, activity.to_pc_or_mbr,
+			move(activity.to_mbr, activity.to_acc_or_mbr,
 					activity.to_alu2_or_ir2, activity.to_ir2,
 					animation.getValue()).start();
 			break;
 		case MEMORY_TO_MBR:
 			move(activity.from_memory_1, activity.from_memory_2,
-					activity.to_pc_or_mbr, activity.to_mbr,
+					activity.to_acc_or_mbr, activity.to_mbr,
 					animation.getValue()).start();
 			break;
 		case PC_TO_MAR:
+			translateY(activity.to_pc, activity.to_mar, animation.getValue())
+					.start();
+			break;
 		case ACC_TO_MBR:
+			translateY(activity.to_acc, activity.to_mbr, animation.getValue())
+					.start();
+			break;
 		case IR_OPERAND_TO_ACC:
+			move(activity.to_ir2, activity.to_alu2_or_ir2,
+					activity.to_acc_or_mbr, activity.to_acc,
+					animation.getValue()).start();
+			break;
 		case LED_CHANGE:
+			changeLedValue(animation.getValue()).start();
+			break;
 		case MBR_TO_LED:
+			move(activity.to_mbr, activity.to_acc_or_mbr,
+					activity.from_memory_2, activity.to_led,
+					animation.getValue()).start();
+			break;
 		case MBR_TO_MEMORY:
+			move(activity.to_mbr, activity.to_acc_or_mbr,
+					activity.from_memory_2, activity.from_memory_1,
+					animation.getValue()).start();
+			break;
 		default:
 			break;
 		}

@@ -8,6 +8,9 @@ import java.util.Collections;
 import java.util.List;
 
 import com.actionbarsherlock.app.SherlockListActivity;
+import com.actionbarsherlock.view.ActionMode;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
 
 import android.app.ListActivity;
 import android.content.Context;
@@ -116,6 +119,8 @@ public class FileChooserActivity extends SherlockListActivity {
 
 	public static final String FILE_NAME = "FILE_NAME";
 
+	private MenuItem goUp;
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -124,9 +129,26 @@ public class FileChooserActivity extends SherlockListActivity {
 		fillInList(currentDir);
 	}
 
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		goUp = menu.add("Up").setIcon(R.drawable.go_up);
+		goUp.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		currentDir = new File(currentDir.getParent());
+		fillInList(currentDir);
+		return true;
+	}
+
 	private void fillInList(File f) {
 		File[] dirs = f.listFiles();
-		setTitle("Current directory: " + f.getName());
+		if (currentDir.getParent() != null)
+			setTitle("Current directory: " + f.getName());
+		else
+			setTitle("Current directory: ROOT");
 		List<Option> dir = new ArrayList<Option>();
 		List<Option> fls = new ArrayList<Option>();
 		try {
@@ -140,16 +162,17 @@ public class FileChooserActivity extends SherlockListActivity {
 				}
 			}
 		} catch (Exception e) {
-
 		}
 		Collections.sort(dir);
 		Collections.sort(fls);
 		dir.addAll(fls);
-		if (!f.getName().equalsIgnoreCase(initialDir.getName()))
-			dir.add(0, new Option("Parent directory", f.getParent(),
-					Option.TYPE_PARENT_FOLDER));
+		// if (!f.getName().equalsIgnoreCase(initialDir.getName()))
+		// dir.add(0, new Option("Parent directory", f.getParent(),
+		// Option.TYPE_PARENT_FOLDER));
 		adapter = new FileArrayAdapter(FileChooserActivity.this, dir);
 		this.setListAdapter(adapter);
+		if (goUp != null)
+			goUp.setVisible(currentDir.getParent() != null);
 	}
 
 	@Override

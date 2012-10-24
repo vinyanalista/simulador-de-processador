@@ -25,15 +25,17 @@ public class WelcomeActivity extends SherlockActivity {
 	protected static final int OPCAO_ABRIR = 0;
 	protected static final int OPCAO_RECENTES = 1;
 	protected static final int OPCAO_SOBRE = 2;
+	protected static final int OPCAO_TESTE = 3;
 
 	private String ICONE = "icone";
 	private String ROTULO = "opcao";
 
 	String[] rotulos = new String[] { "Abrir programa", "Programas recentes",
-			"Sobre" };
+			"Sobre", "Teste das animações", };
 
 	int[] icones = new int[] { R.drawable.document_open,
-			R.drawable.document_open_recent, R.drawable.help_about };
+			R.drawable.document_open_recent, R.drawable.document_open_recent,
+			R.drawable.help_about };
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -42,7 +44,7 @@ public class WelcomeActivity extends SherlockActivity {
 
 		List<HashMap<String, String>> aList = new ArrayList<HashMap<String, String>>();
 
-		for (int opcao = 0; opcao < 3; opcao++) {
+		for (int opcao = 0; opcao < 4; opcao++) {
 			HashMap<String, String> hm = new HashMap<String, String>();
 			hm.put(ICONE, Integer.toString(icones[opcao]));
 			hm.put(ROTULO, rotulos[opcao]);
@@ -67,7 +69,7 @@ public class WelcomeActivity extends SherlockActivity {
 					startActivityForResult(new Intent(WelcomeActivity.this,
 							FileChooserActivity.class), OPCAO_ABRIR);
 					break;
-				case OPCAO_RECENTES:
+				case OPCAO_TESTE:
 					startActivity(new Intent(WelcomeActivity.this,
 							SimulationActivity.class));
 					break;
@@ -78,11 +80,11 @@ public class WelcomeActivity extends SherlockActivity {
 		});
 	}
 
-//	@Override
-//	public boolean onCreateOptionsMenu(Menu menu) {
-//		getMenuInflater().inflate(R.menu.welcome, menu);
-//		return true;
-//	}
+	// @Override
+	// public boolean onCreateOptionsMenu(Menu menu) {
+	// getMenuInflater().inflate(R.menu.welcome, menu);
+	// return true;
+	// }
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {

@@ -19,6 +19,7 @@ public class ProgramParser {
 		// OUT 130
 
 		Program program = new Program();
+		program.sourceCode = sourceCode;
 		program.instructions.add(new Instruction(new OpCode(OpCode.LDI_OPCODE),
 				new Data(2)));
 		program.instructions.add(new Instruction(new OpCode(OpCode.STA_OPCODE),

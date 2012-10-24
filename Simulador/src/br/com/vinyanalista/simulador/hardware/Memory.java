@@ -10,12 +10,16 @@ public abstract class Memory {
 	public abstract int getMaxAddress();
 
 	private Byte[] content;
+	
+	private int addressToArrayIndex(int address) {
+		return address - getMinAddress();
+	}
 
 	public Memory() {
 		int numberOfCells = getMaxAddress() - getMinAddress() + 1;
 		content = new Byte[numberOfCells];
 		for (int address = getMinAddress(); address <= getMaxAddress(); address++) {
-			content[address] = new Data();
+			content[addressToArrayIndex(address)] = new Data();
 		}
 	}
 
