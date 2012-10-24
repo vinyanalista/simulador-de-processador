@@ -209,6 +209,11 @@ public class AndroidAnimator extends Animator {
 					activity.from_memory_2, activity.from_memory_1,
 					animation.getValue());
 			break;
+		case STATUS_EXECUTE:
+		case STATUS_FETCH_INSTRUCTION:
+		case STATUS_FETCH_OPERAND:
+		case STATUS_PC_INCREMENT:
+		case UPDATE_INSTRUCTION:
 		default:
 			break;
 		}

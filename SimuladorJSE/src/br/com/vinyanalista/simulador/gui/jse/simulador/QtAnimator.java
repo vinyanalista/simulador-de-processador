@@ -23,9 +23,11 @@ public class QtAnimator extends Animator {
 	
 //	QLabel byteDeExemplo;
 	QPalette corVerde;
-	QPalette corVermelha = new QPalette();
+	QPalette corVermelha;
+	QPalette corPreta;
 
 	QTimer mudarCorTimer = new QTimer();
+	QTimer mudarCorDaStatusBar = new QTimer();
 	
 	private static final int DURACAO_DO_PISCAR = 100;
 	private static final int DURACAO_DA_ANIMACAO = 1000;
@@ -65,6 +67,8 @@ public class QtAnimator extends Animator {
 		corVerde.setColor(QPalette.ColorRole.WindowText, new QColor(0, 200, 0));
 		corVermelha = new QPalette();
 		corVermelha.setColor(QPalette.ColorRole.WindowText, QColor.red);
+		corPreta = new QPalette();
+		corPreta.setColor(QPalette.ColorRole.WindowText, QColor.black);
 		
 	}
 
@@ -90,6 +94,21 @@ public class QtAnimator extends Animator {
 		if ((mudarCorCount > 4) || (mudarCorCount == 4)) {
 			mudarCorCount = 0;
 			mudarCorTimer.stop();
+			callAnimationEndListener();
+		}
+	}
+	
+	private void mudarCorDaStatusBar() {
+		if (SimulatorQMainWindow.status.palette().equals(corPreta))
+			SimulatorQMainWindow.status.setPalette(corVermelha);
+		else
+			SimulatorQMainWindow.status.setPalette(corPreta);
+		SimulatorQMainWindow.status.show();
+		mudarCorCount++;
+		if ((mudarCorCount > 4) || (mudarCorCount == 4)) {
+			mudarCorCount = 0;
+			mudarCorDaStatusBar.stop();
+			callAnimationEndListener();
 		}
 	}
 	
@@ -140,6 +159,7 @@ private void PC_TO_MAR(String valor) {
 	moverValor.start();
 
 //	moverValor.finished.connect(this, "MAR_CHANGE()");
+	moverValor.finished.connect(this, "callAnimationEndListener()");
 }
 
 private void MAR_CHANGE(String valor) {
@@ -176,6 +196,7 @@ private void MAR_TO_MEMORY(String valor) {
 	moverValor.start();
 
 //	moverValor.finished.connect(this, "MAR_CHANGE()");
+	moverValor.finished.connect(this, "callAnimationEndListener()");
 }
 
 private void MEMORY_TO_MBR(String valor){
@@ -236,6 +257,7 @@ private void MBR_TO_IR_OPCODE(String valor) {
 	moverValorDaMemoriaParaMAR.start();
 
 //	moverValorDaMemoriaParaMAR.finished.connect(this, "callAnimationEndListener()");
+	moverValorDaMemoriaParaMAR.finished.connect(this, "callAnimationEndListener()");
 	
 	
 }
@@ -261,7 +283,7 @@ private void MBR_TO_IR_OPERAND(String valor) {
 
 	moverValorDaMemoriaParaMAR.start();
 
-//	moverValorDaMemoriaParaMAR.finished.connect(this, "callAnimationEndListener()");
+	moverValorDaMemoriaParaMAR.finished.connect(this, "callAnimationEndListener()");
 }
 
 private void IR_OPCODE_CHANGE(String valor) {
@@ -322,6 +344,7 @@ private void IR_OPERAND_TO_MAR(String valor) {
 	moverValorDaMemoriaParaMAR.start();
 
 //	moverValorDaMemoriaParaMAR.finished.connect(this, "callAnimationEndListener()");
+	moverValorDaMemoriaParaMAR.finished.connect(this, "callAnimationEndListener()");
 }
 
 private void MBR_TO_ACC(String valor){
@@ -342,6 +365,7 @@ private void MBR_TO_ACC(String valor){
 	moverValorDaMemoriaParaMAR.start();
 
 //	moverValorDaMemoriaParaMAR.finished.connect(this, "callAnimationEndListener()");
+	moverValorDaMemoriaParaMAR.finished.connect(this, "callAnimationEndListener()");
 }
 
 private void ACC_CHANGE(String valor) {
@@ -376,7 +400,8 @@ private void ACC_TO_ALU_IN_1(String valor) {
 
 	moverValorDaMemoriaParaMAR.start();
 
-	moverValorDaMemoriaParaMAR.finished.connect(this, "callAnimationEndListener()");	
+	moverValorDaMemoriaParaMAR.finished.connect(this, "callAnimationEndListener()");
+	moverValorDaMemoriaParaMAR.finished.connect(this, "callAnimationEndListener()");
 }
 
 private void ALU_IN_1_CHANGE(String valor) {
@@ -412,7 +437,8 @@ private void ACC_TO_ALU_IN_2(String valor) {
 
 	moverValorDaMemoriaParaMAR.start();
 
-//	moverValorDaMemoriaParaMAR.finished.connect(this, "callAnimationEndListener()");		
+//	moverValorDaMemoriaParaMAR.finished.connect(this, "callAnimationEndListener()");
+	moverValorDaMemoriaParaMAR.finished.connect(this, "callAnimationEndListener()");
 }
 
 private void ALU_IN_2_CHANGE(String valor) {
@@ -460,6 +486,7 @@ private void ALU_OUTPUT_TO_ACC(String valor) {
 	moverValorDaMemoriaParaMAR.start();
 
 //	moverValorDaMemoriaParaMAR.finished.connect(this, "callAnimationEndListener()");
+	moverValorDaMemoriaParaMAR.finished.connect(this, "callAnimationEndListener()");
 }
 
 private void IR_OPERAND_TO_ACC(String valor){
@@ -484,6 +511,7 @@ private void IR_OPERAND_TO_ACC(String valor){
 	moverValorDaMemoriaParaMAR.start();
 
 //	moverValorDaMemoriaParaMAR.finished.connect(this, "callAnimationEndListener()");
+	moverValorDaMemoriaParaMAR.finished.connect(this, "callAnimationEndListener()");
 }
 
 private void MBR_TO_MEMORY(String valor){
@@ -508,6 +536,7 @@ private void MBR_TO_MEMORY(String valor){
 	moverValorDaMemoriaParaMAR.start();
 
 //	moverValorDaMemoriaParaMAR.finished.connect(this, "callAnimationEndListener()");
+	moverValorDaMemoriaParaMAR.finished.connect(this, "callAnimationEndListener()");
 }
 
 private void ACC_TO_MBR(String valor){
@@ -528,6 +557,7 @@ private void ACC_TO_MBR(String valor){
 	moverValorDaMemoriaParaMAR.start();
 
 //	moverValorDaMemoriaParaMAR.finished.connect(this, "callAnimationEndListener()");
+	moverValorDaMemoriaParaMAR.finished.connect(this, "callAnimationEndListener()");
 }
 
 private void MBR_TO_LED(String valor){
@@ -552,6 +582,7 @@ private void MBR_TO_LED(String valor){
 	moverValorDaMemoriaParaMAR.start();
 
 //	moverValorDaMemoriaParaMAR.finished.connect(this, "callAnimationEndListener()");
+	moverValorDaMemoriaParaMAR.finished.connect(this, "callAnimationEndListener()");
 }
 	
 private void LED_CHANGE(String valor){
@@ -563,6 +594,16 @@ private void LED_CHANGE(String valor){
 		mudarCorTimer.timeout.connect(this, "mudarCorDaLabel()");
 		mudarCorTimer.start(DURACAO_DO_PISCAR);
 		}
+}
+
+private void statusChange(String valor) {
+	//http://lists.trolltech.com/qt-interest/2002-09/thread00617-0.html
+	SimulatorQMainWindow.status.setText(valor);
+			if(!mudarCorDaStatusBar.isActive()){
+				mudarCorDaStatusBar = new QTimer();
+				mudarCorDaStatusBar.timeout.connect(this, "mudarCorDaStatusBar()");
+				mudarCorDaStatusBar.start(DURACAO_DO_PISCAR);
+				}
 }
 
 	
@@ -641,6 +682,22 @@ private void LED_CHANGE(String valor){
 			break;
 		case MBR_TO_MEMORY:
 			MBR_TO_MEMORY(animation.getValue().getValueAsBinary());
+			break;
+		case STATUS_EXECUTE:
+			statusChange("Execution cycle");
+			break;
+		case STATUS_FETCH_INSTRUCTION:
+			statusChange("Fetch instruction cycle");
+			break;
+		case STATUS_FETCH_OPERAND:
+			statusChange("Fetch operand cycle");
+			break;
+		case STATUS_PC_INCREMENT:
+			statusChange("Program Counter (PC) increment");
+			break;
+		case UPDATE_INSTRUCTION:
+			SimulatorQMainWindow.atualizarPonteiroDeInstrucao();
+			callAnimationEndListener();
 			break;
 		default:
 			break;

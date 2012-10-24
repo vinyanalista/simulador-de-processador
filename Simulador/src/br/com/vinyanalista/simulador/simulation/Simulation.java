@@ -185,6 +185,7 @@ public class Simulation implements AnimationEndListener {
 	}
 
 	private void incrementPC() {
+		animations.add(new Animation(AnimationType.STATUS_PC_INCREMENT, null));
 		getRegister(Processor.PC).setValue(
 				new InstructionAddress(getRegister(Processor.PC).getValue()
 						.getValue() + 1));
@@ -193,6 +194,9 @@ public class Simulation implements AnimationEndListener {
 	}
 
 	private void fetchNextInstruction() {
+		animations.add(new Animation(AnimationType.STATUS_FETCH_INSTRUCTION,
+				null));
+		animations.add(new Animation(AnimationType.UPDATE_INSTRUCTION, null));
 		animations.add(new Animation(AnimationType.PC_TO_MAR, getRegister(
 				Processor.PC).getValue()));
 		readFromMemory(getRegister(Processor.PC).getValue().getValue());
@@ -202,7 +206,11 @@ public class Simulation implements AnimationEndListener {
 				getRegister(Processor.MBR).getValue()));
 		OpCode opCode = new OpCode(getRegister(Processor.MBR).getValue()
 				.getValue());
-		incrementPC();
+		getRegister(Processor.PC).setValue(
+				new InstructionAddress(getRegister(Processor.PC).getValue()
+						.getValue() + 1));
+		animations.add(new Animation(AnimationType.PC_CHANGE, getRegister(
+				Processor.PC).getValue()));
 		animations.add(new Animation(AnimationType.PC_TO_MAR, getRegister(
 				Processor.PC).getValue()));
 		readFromMemory(getRegister(Processor.PC).getValue().getValue());
@@ -231,6 +239,7 @@ public class Simulation implements AnimationEndListener {
 	}
 
 	private void fetchOperand() {
+		animations.add(new Animation(AnimationType.STATUS_FETCH_OPERAND, null));
 		switch (getInstruction().getOpCode().getValue()) {
 		case OpCode.ADD_OPCODE:
 			readFromMemory(getInstruction().getOperand().getValue());
@@ -253,6 +262,7 @@ public class Simulation implements AnimationEndListener {
 	}
 
 	private void execute() {
+		animations.add(new Animation(AnimationType.STATUS_EXECUTE, null));
 		switch (getInstruction().getOpCode().getValue()) {
 		case OpCode.LDI_OPCODE:
 			animations.add(new Animation(AnimationType.IR_OPERAND_TO_ACC,
@@ -262,7 +272,7 @@ public class Simulation implements AnimationEndListener {
 		case OpCode.STA_OPCODE:
 			animations.add(new Animation(AnimationType.IR_OPERAND_TO_MAR,
 					getInstruction().getOperand()));
-			setMar(getRegister(Processor.ACC).getValue());
+			setMar(getInstruction().getOperand());
 			animations.add(new Animation(AnimationType.ACC_TO_MBR, getRegister(
 					Processor.ACC).getValue()));
 			setMbr((Data) getRegister(Processor.ACC).getValue());
@@ -270,9 +280,9 @@ public class Simulation implements AnimationEndListener {
 					getRegister(Processor.MAR).getValue()));
 			animations.add(new Animation(AnimationType.MBR_TO_MEMORY,
 					getRegister(Processor.MBR).getValue()));
-			dataMemory.writeByte(((DataAddress) getRegister(Processor.MAR)
-					.getValue()).getValue(), new Data(
-					getRegister(Processor.MBR).getValue().getValue()));
+			dataMemory.writeByte(getRegister(Processor.MAR).getValue()
+					.getValue(), new Data(getRegister(Processor.MBR).getValue()
+					.getValue()));
 			break;
 		case OpCode.LDA_OPCODE:
 			animations.add(new Animation(AnimationType.IR_OPERAND_TO_MAR,

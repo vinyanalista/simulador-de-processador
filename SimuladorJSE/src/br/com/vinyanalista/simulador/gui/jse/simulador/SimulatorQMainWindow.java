@@ -7,6 +7,7 @@ import java.util.List;
 import br.com.vinyanalista.simulador.data.Data;
 import br.com.vinyanalista.simulador.simulation.Animation;
 import br.com.vinyanalista.simulador.simulation.AnimationType;
+import br.com.vinyanalista.simulador.simulation.Simulation;
 import br.com.vinyanalista.simulador.simulation.Animator.AnimationEndListener;
 import br.com.vinyanalista.simulador.software.Instruction;
 import br.com.vinyanalista.simulador.software.ProgramParser;
@@ -21,6 +22,7 @@ import com.trolltech.qt.gui.QApplication;
 import com.trolltech.qt.gui.QColor;
 import com.trolltech.qt.gui.QFont;
 import com.trolltech.qt.gui.QFontDatabase;
+import com.trolltech.qt.gui.QItemSelectionModel.SelectionFlag;
 import com.trolltech.qt.gui.QLabel;
 import com.trolltech.qt.gui.QMainWindow;
 import com.trolltech.qt.gui.QPaintEvent;
@@ -28,6 +30,7 @@ import com.trolltech.qt.gui.QPainter;
 import com.trolltech.qt.gui.QPalette;
 import com.trolltech.qt.gui.QPixmap;
 import com.trolltech.qt.gui.QPushButton;
+import com.trolltech.qt.gui.QStatusBar;
 import com.trolltech.qt.gui.QTableWidget;
 import com.trolltech.qt.gui.QTableWidgetItem;
 
@@ -36,12 +39,14 @@ public class SimulatorQMainWindow extends QMainWindow implements AnimationEndLis
 	private QPixmap fundo;
 	private static QFont fonte;
 	static QPalette corVerde;
-	static QPalette corVermelha = new QPalette();
+	static QPalette corVermelha;
+	QPalette corPreta;
 	
-	QTableWidget tablePrincipal = new QTableWidget(this);
+	public static QTableWidget tablePrincipal;
 	QTableWidgetItem wigitem = null;
 	
-	QtAnimator qt;
+	private static Simulation simulation;
+	QtAnimator animator;
 	
 	//labels
 	public static QLabel labelAcc, labelALU1, labelALU2, labelALUResult, labelPC, labelIROPCODE, 
@@ -51,14 +56,19 @@ public class SimulatorQMainWindow extends QMainWindow implements AnimationEndLis
 	public static QLabel genericLabel;
 
 	public static QLabel byteDeExemplo;
+	
+	QStatusBar statusBar;
+	public static QLabel status;
 
 	
 	public void initabel(){
 		
-		List<Instruction> inst = ProgramParser.parseFrom("").getInstructions();
+		List<Instruction> inst = simulation.getProgram().getInstructions();
 		
+		tablePrincipal = new QTableWidget(this);		
 		tablePrincipal.setColumnCount(2);
 		tablePrincipal.setRowCount(inst.size());
+		tablePrincipal.setAutoScroll(true);
 		
 		for(int i=0; i<inst.size(); i++){
 			for(int j=0; j<2; j++){
@@ -162,13 +172,17 @@ public class SimulatorQMainWindow extends QMainWindow implements AnimationEndLis
 	public static void setGenericLabel(QLabel gener) {
 		genericLabel = gener;
 	}
+	
+	public static void atualizarPonteiroDeInstrucao() {
+		tablePrincipal.setCurrentCell(simulation.getInstructionIndex() - 1, 0);
+	}
 
 	public void play(){
-		Data dt = new Data(110);
-		Animation anima = new Animation(AnimationType.ACC_TO_ALU_IN_1, dt );
-		
-		qt.animate(anima);
-		
+//		Data dt = new Data(110);
+//		Animation anima = new Animation(AnimationType.ACC_TO_ALU_IN_1, dt );
+//		
+//		animator.animate(anima);
+		simulation.start();
 	}
 	
 	@Override
@@ -176,7 +190,7 @@ public class SimulatorQMainWindow extends QMainWindow implements AnimationEndLis
 		Data dt = new Data(110);
 		Animation anima = new Animation(AnimationType.ALU_IN_1_CHANGE, dt );
 	
-		qt.animate(anima);
+		animator.animate(anima);
 	}
 	
 	public void table_memory_data(){
@@ -208,8 +222,9 @@ public class SimulatorQMainWindow extends QMainWindow implements AnimationEndLis
 		byteDeExemplo = new QLabel(this);
 		byteDeExemplo.hide();
 
-		qt = new QtAnimator();
-		qt.setAnimationEndListener(this);
+		animator = new QtAnimator();
+//		animator.setAnimationEndListener(this);
+		simulation = new Simulation(ProgramParser.parseFrom(null), animator);
 		
 		
 		
@@ -263,6 +278,9 @@ public class SimulatorQMainWindow extends QMainWindow implements AnimationEndLis
 
 		corVermelha = new QPalette();
 		corVermelha.setColor(QPalette.ColorRole.WindowText, QColor.red);
+		
+		corPreta = new QPalette();
+		corPreta.setColor(QPalette.ColorRole.WindowText, QColor.black);
 		//***************************************************
 	
 		
@@ -294,9 +312,12 @@ public class SimulatorQMainWindow extends QMainWindow implements AnimationEndLis
 //		bt[2].setGeometry(805, 100, bt[0].width(), bt[0].height());
 //		
 		
+		statusBar = statusBar();
+		status = new QLabel("Click Play to start simulation.");
+		status.setPalette(corPreta);
+		statusBar.addWidget(status);
 		
-		
-		resize(fundo.width()+250, fundo.height());
+		resize(fundo.width()+250, fundo.height() + statusBar.height());
 		show();
 	}
 	
@@ -315,6 +336,7 @@ public class SimulatorQMainWindow extends QMainWindow implements AnimationEndLis
 		anima.zeraLabels();
 		anima.initabel();
 		QApplication.exec();
+		
 	}
 	
 }
