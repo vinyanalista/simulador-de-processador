@@ -7,14 +7,14 @@ public abstract class Byte {
 	public static final int REPRESENTATION_BINARY = 1;
 	public static final int REPRESENTATION_HEX = 2;
 
-	protected static int representation = REPRESENTATION_DECIMAL;
+	protected static int preferredRepresentation = REPRESENTATION_DECIMAL;
 
 	protected static void setRepresentation(int representation) {
 		switch (representation) {
 		case REPRESENTATION_DECIMAL:
 		case REPRESENTATION_BINARY:
 		case REPRESENTATION_HEX:
-			Byte.representation = representation;
+			Byte.preferredRepresentation = representation;
 		default:
 			throw new IllegalArgumentException();
 		}
@@ -25,9 +25,9 @@ public abstract class Byte {
 	public Byte(int value) {
 		setValue(value);
 	}
-	
+
 	protected Byte(int minValue, int maxValue) {
-		//http://java.about.com/od/javautil/a/randomnumbers.htm
+		// http://java.about.com/od/javautil/a/randomnumbers.htm
 		setValue(new Random().nextInt(maxValue - minValue + 1) + minValue);
 	}
 
@@ -41,6 +41,19 @@ public abstract class Byte {
 
 	public String getValueAsHex() {
 		return toHex(value);
+	}
+
+	public String getValueAsPreferredRepresentation() {
+		switch (preferredRepresentation) {
+		case REPRESENTATION_DECIMAL:
+			return Integer.toString(value);
+		case REPRESENTATION_BINARY:
+			return getValueAsBinary();
+		case REPRESENTATION_HEX:
+			return getValueAsHex();
+		default:
+			return null;
+		}
 	}
 
 	public abstract void setValue(int value);
@@ -116,7 +129,7 @@ public abstract class Byte {
 	public static final boolean validateHex(String value) {
 		return value.matches("[0-9A-Fa-f]+");
 	}
-	
+
 	public static void main(String[] args) {
 		OpCode data;
 		for (int i = 0; i < 10; i++) {
@@ -124,5 +137,5 @@ public abstract class Byte {
 			System.out.println("Data " + i + ": " + data.getValue());
 		}
 	}
-	
+
 }

@@ -3,6 +3,8 @@ package br.com.vinyanalista.simulador.data;
 public class OpCode extends Byte {
 	public static final int REPRESENTATION_MNEMONIC = 3;
 
+	protected static int preferredRepresentation = REPRESENTATION_MNEMONIC;
+
 	public static final int MIN_VALUE = 0;
 	public static final int MAX_VALUE = 15;
 
@@ -43,13 +45,9 @@ public class OpCode extends Byte {
 	public OpCode() {
 		super(MIN_VALUE, MAX_VALUE);
 	}
-	
+
 	public OpCode(int value) {
 		super(value);
-	}
-
-	public String getValueAsMnemonic() {
-		return toMnemonic(value);
 	}
 
 	public static final String toMnemonic(int value) {
@@ -88,6 +86,26 @@ public class OpCode extends Byte {
 			return HLT_MNEMONIC;
 		default:
 			throw new IllegalArgumentException();
+		}
+	}
+
+	public String getValueAsMnemonic() {
+		return toMnemonic(value);
+	}
+
+	@Override
+	public String getValueAsPreferredRepresentation() {
+		switch (preferredRepresentation) {
+		case REPRESENTATION_DECIMAL:
+			return Integer.toString(value);
+		case REPRESENTATION_BINARY:
+			return getValueAsBinary();
+		case REPRESENTATION_HEX:
+			return getValueAsHex();
+		case REPRESENTATION_MNEMONIC:
+			return getValueAsMnemonic();
+		default:
+			return null;
 		}
 	}
 

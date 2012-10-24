@@ -14,11 +14,12 @@ import br.com.vinyanalista.simulador.hardware.Led;
 import br.com.vinyanalista.simulador.hardware.Processor;
 import br.com.vinyanalista.simulador.hardware.ProgramMemory;
 import br.com.vinyanalista.simulador.hardware.Register;
+import br.com.vinyanalista.simulador.simulation.Animator.AnimationEndListener;
 import br.com.vinyanalista.simulador.software.Instruction;
 import br.com.vinyanalista.simulador.software.Program;
 
-public class Simulation {
-	public final static int STOPPED = -1;
+public class Simulation implements AnimationEndListener {
+	private final static int STOPPED = -1;
 
 	private Program program;
 	private Processor processor;
@@ -27,19 +28,11 @@ public class Simulation {
 	private Led led;
 	private List<Animation> animations;
 
-	private int animationIndex = 0;
+	private int animationIndex;
 	private int instructionAddress;
 	private boolean stopped;
 
 	private Animator animator;
-
-	public boolean isPaused() {
-		return (stopped && instructionAddress != STOPPED);
-	}
-
-	public boolean isStopped() {
-		return (stopped && instructionAddress == STOPPED);
-	}
 
 	public int getInstructionIndex() {
 		if (instructionAddress != STOPPED)
@@ -63,6 +56,14 @@ public class Simulation {
 	public ProgramMemory getProgramMemory() {
 		return programMemory;
 	}
+	
+	public boolean isPaused() {
+		return (stopped && instructionAddress != STOPPED);
+	}
+
+	public boolean isStopped() {
+		return (stopped && instructionAddress == STOPPED);
+	}
 
 	public List<Animation> getAnimations() {
 		return animations;
@@ -71,12 +72,41 @@ public class Simulation {
 	public Simulation(Program program, Animator animator) {
 		this.program = program;
 		this.animator = animator;
+		animator.setAnimationEndListener(this);
 		processor = new Processor();
 		dataMemory = new DataMemory();
 		programMemory = new ProgramMemory();
 		led = new Led();
 		animations = new ArrayList<Animation>();
 		stop();
+	}
+	
+	public void start() {
+		if (isStopped()) {
+			processor.getRegister(Processor.PC).setValue(
+					new InstructionAddress(0));
+			instructionAddress = 0;
+		}
+		stopped = false;
+		while (true) {
+			if (isPaused() || isStopped())
+				break;
+			else {
+				process();
+				animate();
+			}
+		}
+	}
+
+	public void pause() {
+		stopped = true;
+	}
+
+	public void stop() {
+		stopped = true;
+		animationIndex = STOPPED;
+		instructionAddress = STOPPED;
+		animations.clear();
 	}
 
 	private InstructionRegister getInstructionRegister() {
@@ -264,29 +294,9 @@ public class Simulation {
 		}
 	}
 
-	public void start() {
-		if (isStopped())
-			processor.getRegister(Processor.PC).setValue(
-					new InstructionAddress(0));
-		while (true) {
-			if (isPaused() || isStopped())
-				break;
-			else {
-				process();
-				animate();
-			}
-		}
-	}
-
-	public void pause() {
-		stopped = true;
-	}
-
-	public void stop() {
-		stopped = true;
-		animationIndex = STOPPED;
-		instructionAddress = STOPPED;
-		animations.clear();
+	@Override
+	public void onAnimationEnd() {
+		// TODO Auto-generated method stub
 	}
 
 }

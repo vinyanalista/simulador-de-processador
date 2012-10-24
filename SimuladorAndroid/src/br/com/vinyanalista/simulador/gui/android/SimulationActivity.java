@@ -28,35 +28,29 @@ import android.widget.Toast;
 import android.widget.RelativeLayout.LayoutParams;
 
 public class SimulationActivity extends SherlockActivity implements
-		OnClickListener, OnItemClickListener {
+		OnItemClickListener {
 
 	public static final String EXTRA_PROGRAM = "program";
-
-//	RelativeLayout layout;
-//	private LayoutParams params;
 
 	TextView from_memory_1, from_memory_2, to_pc_or_mar, to_pc, pc, to_mar,
 			mar, to_acc_or_mbr, to_acc, acc, to_mbr, mbr, to_alu2_or_ir2,
 			to_alu2, alu2, to_ir2, ir2, to_alu1_or_ir1, to_alu1, alu1, to_ir1,
 			ir1, alu_to_acc1, alu_to_acc2, alu_to_acc3, alu_to_acc4, alu_out,
-			to_led, led, movingByte, moving_byte;
+			to_led, led, moving_byte;
 
-	private Program program;
+	private ListView animationsListView;
+
+	private MenuItem playPause;
+	private MenuItem stop;
+
+	// private Program program;
 	private Simulation simulation;
 	private AndroidAnimator animator;
 
-	private Button button;
-	private ListView animationsListView;
-	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.simulation);
-
-//		layout = (RelativeLayout) findViewById(R.id.relativeLayout2);
-
-//		params = new LayoutParams(LayoutParams.WRAP_CONTENT,
-//				LayoutParams.WRAP_CONTENT);
 
 		from_memory_1 = (TextView) findViewById(R.id.from_memory_1);
 		from_memory_2 = (TextView) findViewById(R.id.from_memory_2);
@@ -88,17 +82,6 @@ public class SimulationActivity extends SherlockActivity implements
 		to_led = (TextView) findViewById(R.id.to_led);
 		led = (TextView) findViewById(R.id.led);
 		moving_byte = (TextView) findViewById(R.id.moving_byte);
-		movingByte = moving_byte;
-		
-//		movingByte = new TextView(this);
-//		movingByte.setText("87654321");
-//		movingByte.setTextSize(12);
-//		movingByte.setTypeface(Typeface.DEFAULT_BOLD);
-//		movingByte.setTextColor(AndroidAnimator.COR_VERDE);
-//		movingByte.setVisibility(View.INVISIBLE);
-//		layout.addView(movingByte, params);
-		
-		animator = new AndroidAnimator(this);
 
 		// http://www.vogella.com/articles/AndroidListView/article.html#listsactivity_simple
 
@@ -114,34 +97,38 @@ public class SimulationActivity extends SherlockActivity implements
 		animationsListView.setAdapter(new ArrayAdapter<String>(this,
 				android.R.layout.simple_list_item_1, animations));
 		animationsListView.setOnItemClickListener(this);
+
+		animator = new AndroidAnimator(this);
+		simulation = new Simulation(ProgramParser.parseFrom(null), animator);
 	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		menu.add("Start")
-				.setIcon(R.drawable.media_playback_start)
-				.setShowAsAction(
-						MenuItem.SHOW_AS_ACTION_IF_ROOM
-								| MenuItem.SHOW_AS_ACTION_WITH_TEXT);
-		menu.add("Stop")
-				.setIcon(R.drawable.media_playback_stop)
-				.setShowAsAction(
-						MenuItem.SHOW_AS_ACTION_IF_ROOM
-								| MenuItem.SHOW_AS_ACTION_WITH_TEXT);
+		playPause = menu.add("Resume").setIcon(R.drawable.media_playback_start);
+		playPause.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM
+				| MenuItem.SHOW_AS_ACTION_WITH_TEXT);
+		stop = menu.add("Stop").setIcon(R.drawable.media_playback_stop);
+		stop.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM
+				| MenuItem.SHOW_AS_ACTION_WITH_TEXT);
 		return true;
-	}
-
-	public void onClick(View view) {
-		if (view.equals(button)) {
-			Simulation simulation = new Simulation(
-					ProgramParser.parseFrom(null), animator);
-			simulation.start();
-		}
 	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		Toast.makeText(this, "Got click: " + item, Toast.LENGTH_SHORT).show();
+		if (item.equals(playPause)) {
+			if (item.getTitle().equals("Resume")) {
+				item.setTitle("Pause");
+				item.setIcon(R.drawable.media_playback_pause);
+				simulation.start();
+			} else {
+				item.setTitle("Resume");
+				item.setIcon(R.drawable.media_playback_start);
+				simulation.pause();
+			}
+		}
+		if (item.equals(stop))
+			simulation.stop();
 		return true;
 	}
 
