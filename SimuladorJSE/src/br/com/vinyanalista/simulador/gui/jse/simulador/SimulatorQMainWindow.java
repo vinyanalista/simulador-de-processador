@@ -7,6 +7,7 @@ import java.util.List;
 import br.com.vinyanalista.simulador.data.Data;
 import br.com.vinyanalista.simulador.simulation.Animation;
 import br.com.vinyanalista.simulador.simulation.AnimationType;
+import br.com.vinyanalista.simulador.simulation.Animator.AnimationEndListener;
 import br.com.vinyanalista.simulador.software.Instruction;
 import br.com.vinyanalista.simulador.software.ProgramParser;
 
@@ -30,18 +31,30 @@ import com.trolltech.qt.gui.QPushButton;
 import com.trolltech.qt.gui.QTableWidget;
 import com.trolltech.qt.gui.QTableWidgetItem;
 
-public class SimulatorQMainWindow extends QMainWindow {
+public class SimulatorQMainWindow extends QMainWindow implements AnimationEndListener {
 
 	private QPixmap fundo;
 	private static QFont fonte;
+	static QPalette corVerde;
+	static QPalette corVermelha = new QPalette();
 	
 	QTableWidget tablePrincipal = new QTableWidget(this);
 	QTableWidgetItem wigitem = null;
 	
+	QtAnimator qt;
 	
+	//labels
+	public static QLabel labelAcc, labelALU1, labelALU2, labelALUResult, labelPC, labelIROPCODE, 
+	labelIROPERAND, labelMAR, labelMBR, labelLed;	
 	
-	public void povoatabela(){
-				
+	private QPushButton[] bt = new QPushButton[20];
+	public static QLabel genericLabel;
+
+	public static QLabel byteDeExemplo;
+
+	
+	public void initabel(){
+		
 		List<Instruction> inst = ProgramParser.parseFrom("").getInstructions();
 		
 		tablePrincipal.setColumnCount(2);
@@ -70,34 +83,6 @@ public class SimulatorQMainWindow extends QMainWindow {
 		tablePrincipal.setGeometry(800, 60, 270, 500);
 		tablePrincipal.show();
 	}
-	
-	
-	//labels
-	public static QLabel labelAcc;
-	public static QLabel labelALU1;
-	public static QLabel labelALU2;
-	public static QLabel labelALUResult;
-	public static QLabel labelPC;
-	public static QLabel labelIROPCODE;
-	public static QLabel labelIROPERAND;
-	public static QLabel labelMAR;
-	public static QLabel labelMBR;
-	public static QLabel labelLed;
-	
-	
-	private QPushButton[] bt = new QPushButton[20];
-	public static QLabel genericLabel;
-
-	public static QLabel byteDeExemplo;
-
-	static QPalette corVerde;
-	static QPalette corVermelha = new QPalette();
-
-	QTimer mudarCorTimer = new QTimer();
-	
-	private static final int DURACAO_DO_PISCAR = 100;
-	private static final int DURACAO_DA_ANIMACAO = 1000;
-	int mudarCorCount = 0;
 	
 	private void initLabels(){
 		labelAcc = new QLabel(this);
@@ -173,39 +158,26 @@ public class SimulatorQMainWindow extends QMainWindow {
 		labelMAR.setText("00000000");
 		labelMBR.setText("00000000");
 	}
-	
-	public static QLabel getGenericLabel() {
-		return genericLabel;
-	}
 
 	public static void setGenericLabel(QLabel gener) {
 		genericLabel = gener;
-	}
-
-	private void mudarCorDaLabel() {
-		if (genericLabel.palette().equals(corVerde))
-			genericLabel.setPalette(corVermelha);
-		else
-			genericLabel.setPalette(corVerde);
-		genericLabel.show();
-		//this.show();
-		mudarCorCount++;
-		if ((mudarCorCount > 4) || (mudarCorCount == 4)) {
-			mudarCorCount = 0;
-			mudarCorTimer.stop();
-		}
 	}
 
 	public void play(){
 		Data dt = new Data(110);
 		Animation anima = new Animation(AnimationType.ACC_TO_ALU_IN_1, dt );
 		
-		QtAnimator qt = new QtAnimator();
 		qt.animate(anima);
-		anima = new Animation(AnimationType.ALU_IN_1_CHANGE, dt );
-		qt.animate(anima);
+		
 	}
 	
+	@Override
+	public void onAnimationEnd() {
+		Data dt = new Data(110);
+		Animation anima = new Animation(AnimationType.ALU_IN_1_CHANGE, dt );
+	
+		qt.animate(anima);
+	}
 	
 	public void table_memory_data(){
 		
@@ -228,16 +200,16 @@ public class SimulatorQMainWindow extends QMainWindow {
 		table.show();
 		}
 	
-		
+	//construtor
 	public SimulatorQMainWindow() {
 		this.setWindowModified(false);
 		this.setWindowTitle("AES");
-//		this.setWin
 		
 		byteDeExemplo = new QLabel(this);
 		byteDeExemplo.hide();
 
-		
+		qt = new QtAnimator();
+		qt.setAnimationEndListener(this);
 		
 		
 		
@@ -297,118 +269,7 @@ public class SimulatorQMainWindow extends QMainWindow {
 		//***************************************************	
 		//*         Setando Botoes de teste                 *
 		//***************************************************
-//	
-//		bt[0] = new QPushButton(this);
-//		bt[0].setText("CHANGE_MAR");
-//		bt[0].clicked.connect(this, "CHANGE_MAR()");
-//		bt[0].setGeometry(820, 100, bt[0].width(), bt[0].height());
-//	
-//		bt[4] = new QPushButton(this);
-//		bt[4].setText("CHANGE_MBR");
-//		bt[4].clicked.connect(this, "CHANGE_MBR()");
-//		bt[4].setGeometry(820, 250, bt[0].width(), bt[0].height());
-//		
-//		bt[6] = new QPushButton(this);
-//		bt[6].setText("CHANGE_IR_OPCODE");
-//		bt[6].clicked.connect(this, "CHANGE_IR_OPCODE()");
-//		bt[6].setGeometry(820, 350, bt[0].width(), bt[0].height());
-//		
-//		bt[7] = new QPushButton(this);
-//		bt[7].setText("CHANGE_IR_OPERAND");
-//		bt[7].clicked.connect(this, "CHANGE_IR_OPERAND()");
-//		bt[7].setGeometry(820, 400, bt[0].width(), bt[0].height());
-//		
-//		bt[8] = new QPushButton(this);
-//		bt[8].setText("CHANGE_IC");
-//		bt[8].clicked.connect(this, "CHANGE_PC()");
-//		bt[8].setGeometry(820, 450, bt[0].width(), bt[0].height());
-//
-//		bt[11] = new QPushButton(this);
-//		bt[11].setText("CHANGE_ACC");
-//		bt[11].clicked.connect(this, "CHANGE_ACC()");
-//		bt[11].setGeometry(930, 100, bt[0].width(), bt[0].height());
-//		
-//		bt[13] = new QPushButton(this);
-//		bt[13].setText("CHANGE_ALU_1");
-//		bt[13].clicked.connect(this, "CHANGE_ALU_1()");
-//		bt[13].setGeometry(930, 200, bt[0].width(), bt[0].height());
-//
-//		bt[15] = new QPushButton(this);
-//		bt[15].setText("CHANGE_ALU_2");
-//		bt[15].clicked.connect(this, "CHANGE_ALU_2()");
-//		bt[15].setGeometry(930, 300, bt[0].width(), bt[0].height());
-//		
-//		bt[16] = new QPushButton(this);
-//		bt[16].setText("CHANGE_ALU_OUTPUT");
-//		bt[16].clicked.connect(this, "CHANGE_ALU_OUTPUT()");
-//		bt[16].setGeometry(930, 350, bt[0].width(), bt[0].height());
-//		
-//		
-//		
-//		
-//		bt[0] = new QPushButton(this);
-//		bt[0].setText("PC_TO_MAR");
-//		bt[0].clicked.connect(this, "PC_TO_MAR()");
-//		bt[0].setGeometry(820, 50, bt[0].width(), bt[0].height());
-//		
-//		
-//		bt[2] = new QPushButton(this);
-//		bt[2].setText("MAR_TO_MEMORY");
-//		bt[2].clicked.connect(this, "MAR_TO_MEMORY()");
-//		bt[2].setGeometry(820, 150, bt[0].width(), bt[0].height());
-//		
-//		bt[3] = new QPushButton(this);
-//		bt[3].setText("MEMORY_TO_MBR");
-//		bt[3].clicked.connect(this, "MEMORY_TO_MBR()");
-//		bt[3].setGeometry(820, 200, bt[0].width(), bt[0].height());
-//		
-//		
-//		bt[5] = new QPushButton(this);
-//		bt[5].setText("MBR_TO_IR_1");
-//		bt[5].clicked.connect(this, "MBR_TO_IR_1()");
-//		bt[5].setGeometry(820, 300, bt[0].width(), bt[0].height());
-//		
-//		
-//		
-//		bt[9] = new QPushButton(this);
-//		bt[9].setText("IR_TO_MAR");
-//		bt[9].clicked.connect(this, "IR_TO_MAR()");
-//		bt[9].setGeometry(820, 500, bt[0].width(), bt[0].height());
-//		
-//		bt[10] = new QPushButton(this);
-//		bt[10].setText("MBR_TO_ACC");
-//		bt[10].clicked.connect(this, "MBR_TO_ACC()");
-//		bt[10].setGeometry(930, 50, bt[0].width(), bt[0].height());
-//		
-//		bt[12] = new QPushButton(this);
-//		bt[12].setText("ACC_TO_ALU_1");
-//		bt[12].clicked.connect(this, "ACC_TO_ALU_1()");
-//		bt[12].setGeometry(930, 150, bt[0].width(), bt[0].height());
-//	
-//		bt[14] = new QPushButton(this);
-//		bt[14].setText("ACC_TO_ALU_2");
-//		bt[14].clicked.connect(this, "ACC_TO_ALU_2()");
-//		bt[14].setGeometry(930, 250, bt[0].width(), bt[0].height());
-//
-//		bt[17] = new QPushButton(this);
-//		bt[17].setText("ALU_TO_ACC");
-//		bt[17].clicked.connect(this, "ALU_TO_ACC()");
-//		bt[17].setGeometry(930, 400, bt[0].width(), bt[0].height());
-//		
-//		bt[18] = new QPushButton(this);
-//		bt[18].setText("CHANGE_LED");
-//		bt[18].clicked.connect(this, "CHANGE_LED()");
-//		bt[18].setGeometry(930, 450, bt[0].width(), bt[0].height());
-//		
-//		bt[19] = new QPushButton(this);
-//		bt[19].setText("MBR_TO_IR_OPERAND");
-//		bt[19].clicked.connect(this, "MBR_TO_IR_2()");
-//		bt[19].setGeometry(930, 500, bt[0].width(), bt[0].height());
-//
-		
-		
-		
-		
+	
 		bt[0] = new QPushButton(this);
 		bt[0].setText("Play");
 		bt[0].clicked.connect(this, "play()");
@@ -438,7 +299,7 @@ public class SimulatorQMainWindow extends QMainWindow {
 		resize(fundo.width()+250, fundo.height());
 		show();
 	}
-
+	
 	@Override
 	@QtBlockedSlot
 	protected void paintEvent(QPaintEvent arg__1) {
@@ -452,7 +313,8 @@ public class SimulatorQMainWindow extends QMainWindow {
 		SimulatorQMainWindow anima = new SimulatorQMainWindow();
 		anima.initLabels();
 		anima.zeraLabels();
-		anima.povoatabela();
+		anima.initabel();
 		QApplication.exec();
 	}
+	
 }

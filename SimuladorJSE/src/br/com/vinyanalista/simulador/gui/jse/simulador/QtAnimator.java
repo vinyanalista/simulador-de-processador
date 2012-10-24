@@ -199,7 +199,7 @@ private void MEMORY_TO_MBR(String valor){
 
 			moverValor.start();
 
-//			moverValor.finished.connect(this, "MBR_CHANGE()");
+			moverValor.finished.connect(this, "callAnimationEndListener()");
 }
 
 private void MBR_CHANGE(String valor) {
@@ -235,7 +235,7 @@ private void MBR_TO_IR_OPCODE(String valor) {
 
 	moverValorDaMemoriaParaMAR.start();
 
-//	moverValorDaMemoriaParaMAR.finished.connect(this, "CHANGE_IR_OPCODE()");
+//	moverValorDaMemoriaParaMAR.finished.connect(this, "callAnimationEndListener()");
 	
 	
 }
@@ -261,7 +261,7 @@ private void MBR_TO_IR_OPERAND(String valor) {
 
 	moverValorDaMemoriaParaMAR.start();
 
-//	moverValorDaMemoriaParaMAR.finished.connect(this, "CHANGE_IR_OPERAND()");
+//	moverValorDaMemoriaParaMAR.finished.connect(this, "callAnimationEndListener()");
 }
 
 private void IR_OPCODE_CHANGE(String valor) {
@@ -321,7 +321,7 @@ private void IR_OPERAND_TO_MAR(String valor) {
 
 	moverValorDaMemoriaParaMAR.start();
 
-//	moverValorDaMemoriaParaMAR.finished.connect(this, "MAR_CHANGE()");
+//	moverValorDaMemoriaParaMAR.finished.connect(this, "callAnimationEndListener()");
 }
 
 private void MBR_TO_ACC(String valor){
@@ -341,7 +341,7 @@ private void MBR_TO_ACC(String valor){
 
 	moverValorDaMemoriaParaMAR.start();
 
-//	moverValorDaMemoriaParaMAR.finished.connect(this, "ACC_CHANGE()");
+//	moverValorDaMemoriaParaMAR.finished.connect(this, "callAnimationEndListener()");
 }
 
 private void ACC_CHANGE(String valor) {
@@ -376,7 +376,7 @@ private void ACC_TO_ALU_IN_1(String valor) {
 
 	moverValorDaMemoriaParaMAR.start();
 
-//	moverValorDaMemoriaParaMAR.finished.connect(this, "ALU_IN_1_CHANGE()");	
+	moverValorDaMemoriaParaMAR.finished.connect(this, "callAnimationEndListener()");	
 }
 
 private void ALU_IN_1_CHANGE(String valor) {
@@ -412,7 +412,7 @@ private void ACC_TO_ALU_IN_2(String valor) {
 
 	moverValorDaMemoriaParaMAR.start();
 
-//	moverValorDaMemoriaParaMAR.finished.connect(this, "ALU_IN_2_CHANGE()");		
+//	moverValorDaMemoriaParaMAR.finished.connect(this, "callAnimationEndListener()");		
 }
 
 private void ALU_IN_2_CHANGE(String valor) {
@@ -459,7 +459,7 @@ private void ALU_OUTPUT_TO_ACC(String valor) {
 
 	moverValorDaMemoriaParaMAR.start();
 
-//	moverValorDaMemoriaParaMAR.finished.connect(this, "ACC_CHANGE()");
+//	moverValorDaMemoriaParaMAR.finished.connect(this, "callAnimationEndListener()");
 }
 
 private void IR_OPERAND_TO_ACC(String valor){
@@ -483,7 +483,7 @@ private void IR_OPERAND_TO_ACC(String valor){
 
 	moverValorDaMemoriaParaMAR.start();
 
-//	moverValorDaMemoriaParaMAR.finished.connect(this, "ACC_CHANGE()");
+//	moverValorDaMemoriaParaMAR.finished.connect(this, "callAnimationEndListener()");
 }
 
 private void MBR_TO_MEMORY(String valor){
@@ -507,7 +507,7 @@ private void MBR_TO_MEMORY(String valor){
 
 	moverValorDaMemoriaParaMAR.start();
 
-//	moverValorDaMemoriaParaMAR.finished.connect(this, "ACC_CHANGE()");
+//	moverValorDaMemoriaParaMAR.finished.connect(this, "callAnimationEndListener()");
 }
 
 private void ACC_TO_MBR(String valor){
@@ -527,7 +527,7 @@ private void ACC_TO_MBR(String valor){
 
 	moverValorDaMemoriaParaMAR.start();
 
-//	moverValorDaMemoriaParaMAR.finished.connect(this, "MBR_CHANGE()");
+//	moverValorDaMemoriaParaMAR.finished.connect(this, "callAnimationEndListener()");
 }
 
 private void MBR_TO_LED(String valor){
@@ -551,7 +551,7 @@ private void MBR_TO_LED(String valor){
 
 	moverValorDaMemoriaParaMAR.start();
 
-//	moverValorDaMemoriaParaMAR.finished.connect(this, "LED_CHANGE()");
+//	moverValorDaMemoriaParaMAR.finished.connect(this, "callAnimationEndListener()");
 }
 	
 private void LED_CHANGE(String valor){
