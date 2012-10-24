@@ -2,11 +2,11 @@ package br.com.vinyanalista.simulador.simulation;
 
 public abstract class Animator {
 
-	interface AnimationEndListener {
+	public interface AnimationEndListener {
 		public void onAnimationEnd();
 	}
 
-	AnimationEndListener listener = null;
+	private AnimationEndListener listener = null;
 
 	public abstract void animate(Animation animation);
 
@@ -15,7 +15,7 @@ public abstract class Animator {
 			listener.onAnimationEnd();
 	}
 
-	final void setAnimationEndListener(AnimationEndListener listener) {
+	public final void setAnimationEndListener(AnimationEndListener listener) {
 		this.listener = listener;
 	}
 

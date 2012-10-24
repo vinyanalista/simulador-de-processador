@@ -1,6 +1,7 @@
 package br.com.vinyanalista.simulador.simulation;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import br.com.vinyanalista.simulador.data.Byte;
@@ -27,16 +28,15 @@ public class Simulation implements AnimationEndListener {
 	private ProgramMemory programMemory;
 	private Led led;
 	private List<Animation> animations;
+	private Iterator<Animation> animationsIterator;
 
-	private int animationIndex;
-	private int instructionAddress;
 	private boolean stopped;
 
 	private Animator animator;
 
 	public int getInstructionIndex() {
-		if (instructionAddress != STOPPED)
-			return (instructionAddress / 2);
+		if (!isStopped())
+			return (getInstructionAddress() / 2);
 		else
 			return STOPPED;
 	}
@@ -56,13 +56,13 @@ public class Simulation implements AnimationEndListener {
 	public ProgramMemory getProgramMemory() {
 		return programMemory;
 	}
-	
+
 	public boolean isPaused() {
-		return (stopped && instructionAddress != STOPPED);
+		return (stopped && animationsIterator != null);
 	}
 
 	public boolean isStopped() {
-		return (stopped && instructionAddress == STOPPED);
+		return (stopped && animationsIterator == null);
 	}
 
 	public List<Animation> getAnimations() {
@@ -78,24 +78,17 @@ public class Simulation implements AnimationEndListener {
 		programMemory = new ProgramMemory();
 		led = new Led();
 		animations = new ArrayList<Animation>();
+		animationsIterator = null;
 		stop();
 	}
-	
+
 	public void start() {
 		if (isStopped()) {
 			processor.getRegister(Processor.PC).setValue(
 					new InstructionAddress(0));
-			instructionAddress = 0;
 		}
 		stopped = false;
-		while (true) {
-			if (isPaused() || isStopped())
-				break;
-			else {
-				process();
-				animate();
-			}
-		}
+		animate();
 	}
 
 	public void pause() {
@@ -104,9 +97,41 @@ public class Simulation implements AnimationEndListener {
 
 	public void stop() {
 		stopped = true;
-		animationIndex = STOPPED;
-		instructionAddress = STOPPED;
 		animations.clear();
+		animationsIterator = null;
+	}
+
+	private void process() {
+		animations.clear();
+		// Busca da próxima instrução
+		fetchNextInstruction();
+		// Incremento do CI
+		incrementPC();
+		// Decodificação do OpCode
+		// Busca de operando
+		fetchOperand();
+		// Execução da instrução
+		execute();
+		animationsIterator = animations.iterator();
+	}
+
+	private void animate() {
+		if (isPaused() || isStopped())
+			return;
+		else {
+			if (animationsIterator == null || !animationsIterator.hasNext())
+				process();
+			animator.animate(animationsIterator.next());
+		}
+	}
+
+	@Override
+	public void onAnimationEnd() {
+		animate();
+	}
+
+	private int getInstructionAddress() {
+		return getRegister(Processor.PC).getValue().getValue();
 	}
 
 	private InstructionRegister getInstructionRegister() {
@@ -126,7 +151,7 @@ public class Simulation implements AnimationEndListener {
 		getRegister(Processor.MAR).setValue(address);
 	}
 
-	private void setMbr(Byte data) {
+	private void setMbr(Data data) {
 		animations.add(new Animation(AnimationType.MBR_CHANGE, data));
 		getRegister(Processor.MBR).setValue(data);
 	}
@@ -145,7 +170,7 @@ public class Simulation implements AnimationEndListener {
 		setMar(address);
 		animations.add(new Animation(AnimationType.MAR_TO_MEMORY, address));
 		animations.add(new Animation(AnimationType.MEMORY_TO_MBR, readByte));
-		setMbr(readByte);
+		setMbr(new Data(readByte.getValue()));
 	}
 
 	private void incrementPC() {
@@ -263,40 +288,6 @@ public class Simulation implements AnimationEndListener {
 		default:
 			break;
 		}
-	}
-
-	private void process() {
-		animationIndex = 0;
-		animations.clear();
-		// Busca da próxima instrução
-		fetchNextInstruction();
-		// Incremento do CI
-		incrementPC();
-		// Decodificação do OpCode
-		// Busca de operando
-		fetchOperand();
-		// Execução da instrução
-		execute();
-	}
-
-	private void animate() {
-		while (true) {
-			if (isPaused() || isStopped() || animationIndex == STOPPED)
-				break;
-			else {
-				animationIndex++;
-				Animation animation = animations.get(animationIndex);
-				if (animation != null)
-					animator.animate(animation);
-				else
-					animationIndex = STOPPED;
-			}
-		}
-	}
-
-	@Override
-	public void onAnimationEnd() {
-		// TODO Auto-generated method stub
 	}
 
 }
