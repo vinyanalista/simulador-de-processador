@@ -76,6 +76,7 @@ public class Simulation implements AnimationEndListener {
 		processor = new Processor();
 		dataMemory = new DataMemory();
 		programMemory = new ProgramMemory();
+		populateProgramMemory();
 		led = new Led();
 		animations = new ArrayList<Animation>();
 		animationsIterator = null;
@@ -99,6 +100,16 @@ public class Simulation implements AnimationEndListener {
 		stopped = true;
 		animations.clear();
 		animationsIterator = null;
+	}
+
+	private void populateProgramMemory() {
+		int address = programMemory.getMinAddress();
+		for (Instruction instruction : program.getInstructions()) {
+			programMemory.writeByte(address, instruction.getOpCode());
+			address++;
+			programMemory.writeByte(address, instruction.getOperand());
+			address++;
+		}
 	}
 
 	private void process() {
@@ -151,7 +162,7 @@ public class Simulation implements AnimationEndListener {
 		getRegister(Processor.MAR).setValue(address);
 	}
 
-	private void setMbr(Data data) {
+	private void setMbr(Byte data) {
 		animations.add(new Animation(AnimationType.MBR_CHANGE, data));
 		getRegister(Processor.MBR).setValue(data);
 	}
@@ -170,7 +181,7 @@ public class Simulation implements AnimationEndListener {
 		setMar(address);
 		animations.add(new Animation(AnimationType.MAR_TO_MEMORY, address));
 		animations.add(new Animation(AnimationType.MEMORY_TO_MBR, readByte));
-		setMbr(new Data(readByte.getValue()));
+		setMbr(readByte);
 	}
 
 	private void incrementPC() {
@@ -189,7 +200,8 @@ public class Simulation implements AnimationEndListener {
 				getRegister(Processor.MBR).getValue()));
 		animations.add(new Animation(AnimationType.IR_OPCODE_CHANGE,
 				getRegister(Processor.MBR).getValue()));
-		OpCode opCode = (OpCode) getRegister(Processor.MBR).getValue();
+		OpCode opCode = new OpCode(getRegister(Processor.MBR).getValue()
+				.getValue());
 		incrementPC();
 		animations.add(new Animation(AnimationType.PC_TO_MAR, getRegister(
 				Processor.PC).getValue()));
@@ -259,8 +271,8 @@ public class Simulation implements AnimationEndListener {
 			animations.add(new Animation(AnimationType.MBR_TO_MEMORY,
 					getRegister(Processor.MBR).getValue()));
 			dataMemory.writeByte(((DataAddress) getRegister(Processor.MAR)
-					.getValue()).getValue(), getRegister(Processor.MBR)
-					.getValue());
+					.getValue()).getValue(), new Data(
+					getRegister(Processor.MBR).getValue().getValue()));
 			break;
 		case OpCode.LDA_OPCODE:
 			animations.add(new Animation(AnimationType.IR_OPERAND_TO_MAR,

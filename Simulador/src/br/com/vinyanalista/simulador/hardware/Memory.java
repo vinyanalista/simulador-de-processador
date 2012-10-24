@@ -13,8 +13,6 @@ public abstract class Memory {
 
 	private int addressToArrayIndex(int address) {
 		int index = address - getMinAddress();
-		index++;
-		index--;
 		return index;
 	}
 
