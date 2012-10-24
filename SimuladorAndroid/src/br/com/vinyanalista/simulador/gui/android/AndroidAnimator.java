@@ -42,7 +42,7 @@ public class AndroidAnimator extends Animator {
 	private AnimatorSet translateY(TextView position1, TextView position2,
 			Byte value) {
 		AnimatorSet position = position(activity.moving_byte, position1);
-		activity.moving_byte.setText(value.getValueAsBinary());
+		activity.moving_byte.setText(value.getValueAsPreferredRepresentation());
 
 		ValueAnimator show = ObjectAnimator.ofInt(activity.moving_byte,
 				"visibility", View.VISIBLE).setDuration(1);
@@ -61,7 +61,7 @@ public class AndroidAnimator extends Animator {
 	private AnimatorSet move(TextView position1, TextView position2,
 			TextView position3, TextView position4, Byte value) {
 		AnimatorSet position = position(activity.moving_byte, position1);
-		activity.moving_byte.setText(value.getValueAsBinary());
+		activity.moving_byte.setText(value.getValueAsPreferredRepresentation());
 
 		ValueAnimator show = ObjectAnimator.ofInt(activity.moving_byte,
 				"visibility", View.VISIBLE).setDuration(1);
@@ -86,7 +86,7 @@ public class AndroidAnimator extends Animator {
 	}
 
 	private ValueAnimator changeLedValue(Byte newValue) {
-		activity.led.setText(newValue.getValueAsBinary());
+		activity.led.setText(newValue.getValueAsPreferredRepresentation());
 		ValueAnimator mudarValor = ObjectAnimator.ofInt(activity.led,
 				"textColor", COR_VERMELHA, COR_VERMELHA_ESCURA, COR_VERMELHA,
 				COR_VERMELHA_ESCURA, COR_VERMELHA).setDuration(3000);
@@ -97,7 +97,7 @@ public class AndroidAnimator extends Animator {
 	}
 
 	private ValueAnimator changeValue(TextView textView, Byte newValue) {
-		textView.setText(newValue.getValueAsBinary());
+		textView.setText(newValue.getValueAsPreferredRepresentation());
 		ValueAnimator mudarValor = ObjectAnimator.ofInt(textView, "textColor",
 				COR_VERDE, COR_VERMELHA, COR_VERDE, COR_VERMELHA, COR_VERDE)
 				.setDuration(3000);
