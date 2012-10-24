@@ -1,6 +1,7 @@
 package br.com.vinyanalista.simulador.simulation;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import br.com.vinyanalista.simulador.data.Byte;
@@ -27,16 +28,15 @@ public class Simulation implements AnimationEndListener {
 	private ProgramMemory programMemory;
 	private Led led;
 	private List<Animation> animations;
+	private Iterator<Animation> animationsIterator;
 
-	private int animationIndex;
-	private int instructionAddress;
 	private boolean stopped;
 
 	private Animator animator;
 
 	public int getInstructionIndex() {
-		if (instructionAddress != STOPPED)
-			return (instructionAddress / 2);
+		if (!isStopped())
+			return (getInstructionAddress() / 2);
 		else
 			return STOPPED;
 	}
@@ -56,13 +56,13 @@ public class Simulation implements AnimationEndListener {
 	public ProgramMemory getProgramMemory() {
 		return programMemory;
 	}
-	
+
 	public boolean isPaused() {
-		return (stopped && instructionAddress != STOPPED);
+		return (stopped && animationsIterator != null);
 	}
 
 	public boolean isStopped() {
-		return (stopped && instructionAddress == STOPPED);
+		return (stopped && animationsIterator == null);
 	}
 
 	public List<Animation> getAnimations() {
@@ -76,26 +76,20 @@ public class Simulation implements AnimationEndListener {
 		processor = new Processor();
 		dataMemory = new DataMemory();
 		programMemory = new ProgramMemory();
+		populateProgramMemory();
 		led = new Led();
 		animations = new ArrayList<Animation>();
+		animationsIterator = null;
 		stop();
 	}
-	
+
 	public void start() {
 		if (isStopped()) {
 			processor.getRegister(Processor.PC).setValue(
 					new InstructionAddress(0));
-			instructionAddress = 0;
 		}
 		stopped = false;
-		while (true) {
-			if (isPaused() || isStopped())
-				break;
-			else {
-				process();
-				animate();
-			}
-		}
+		animate();
 	}
 
 	public void pause() {
@@ -104,9 +98,51 @@ public class Simulation implements AnimationEndListener {
 
 	public void stop() {
 		stopped = true;
-		animationIndex = STOPPED;
-		instructionAddress = STOPPED;
 		animations.clear();
+		animationsIterator = null;
+	}
+
+	private void populateProgramMemory() {
+		int address = programMemory.getMinAddress();
+		for (Instruction instruction : program.getInstructions()) {
+			programMemory.writeByte(address, instruction.getOpCode());
+			address++;
+			programMemory.writeByte(address, instruction.getOperand());
+			address++;
+		}
+	}
+
+	private void process() {
+		animations.clear();
+		// Busca da próxima instrução
+		fetchNextInstruction();
+		// Incremento do CI
+		incrementPC();
+		// Decodificação do OpCode
+		// Busca de operando
+		fetchOperand();
+		// Execução da instrução
+		execute();
+		animationsIterator = animations.iterator();
+	}
+
+	private void animate() {
+		if (isPaused() || isStopped())
+			return;
+		else {
+			if (animationsIterator == null || !animationsIterator.hasNext())
+				process();
+			animator.animate(animationsIterator.next());
+		}
+	}
+
+	@Override
+	public void onAnimationEnd() {
+		animate();
+	}
+
+	private int getInstructionAddress() {
+		return getRegister(Processor.PC).getValue().getValue();
 	}
 
 	private InstructionRegister getInstructionRegister() {
@@ -164,7 +200,8 @@ public class Simulation implements AnimationEndListener {
 				getRegister(Processor.MBR).getValue()));
 		animations.add(new Animation(AnimationType.IR_OPCODE_CHANGE,
 				getRegister(Processor.MBR).getValue()));
-		OpCode opCode = (OpCode) getRegister(Processor.MBR).getValue();
+		OpCode opCode = new OpCode(getRegister(Processor.MBR).getValue()
+				.getValue());
 		incrementPC();
 		animations.add(new Animation(AnimationType.PC_TO_MAR, getRegister(
 				Processor.PC).getValue()));
@@ -234,8 +271,8 @@ public class Simulation implements AnimationEndListener {
 			animations.add(new Animation(AnimationType.MBR_TO_MEMORY,
 					getRegister(Processor.MBR).getValue()));
 			dataMemory.writeByte(((DataAddress) getRegister(Processor.MAR)
-					.getValue()).getValue(), getRegister(Processor.MBR)
-					.getValue());
+					.getValue()).getValue(), new Data(
+					getRegister(Processor.MBR).getValue().getValue()));
 			break;
 		case OpCode.LDA_OPCODE:
 			animations.add(new Animation(AnimationType.IR_OPERAND_TO_MAR,
@@ -263,40 +300,6 @@ public class Simulation implements AnimationEndListener {
 		default:
 			break;
 		}
-	}
-
-	private void process() {
-		animationIndex = 0;
-		animations.clear();
-		// Busca da próxima instrução
-		fetchNextInstruction();
-		// Incremento do CI
-		incrementPC();
-		// Decodificação do OpCode
-		// Busca de operando
-		fetchOperand();
-		// Execução da instrução
-		execute();
-	}
-
-	private void animate() {
-		while (true) {
-			if (isPaused() || isStopped() || animationIndex == STOPPED)
-				break;
-			else {
-				animationIndex++;
-				Animation animation = animations.get(animationIndex);
-				if (animation != null)
-					animator.animate(animation);
-				else
-					animationIndex = STOPPED;
-			}
-		}
-	}
-
-	@Override
-	public void onAnimationEnd() {
-		// TODO Auto-generated method stub
 	}
 
 }

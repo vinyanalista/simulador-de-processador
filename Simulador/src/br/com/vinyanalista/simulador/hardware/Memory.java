@@ -10,9 +10,10 @@ public abstract class Memory {
 	public abstract int getMaxAddress();
 
 	private Byte[] content;
-	
+
 	private int addressToArrayIndex(int address) {
-		return address - getMinAddress();
+		int index = address - getMinAddress();
+		return index;
 	}
 
 	public Memory() {
@@ -25,7 +26,7 @@ public abstract class Memory {
 
 	public void writeByte(int address, Byte byteToWrite) {
 		if ((address >= getMinAddress()) && (address <= getMaxAddress())) {
-			content[address] = byteToWrite;
+			content[addressToArrayIndex(address)] = byteToWrite;
 		} else {
 			throw new OutOfRangeException(address, getMinAddress(),
 					getMaxAddress());
@@ -34,7 +35,7 @@ public abstract class Memory {
 
 	public Byte readByte(int address) {
 		if ((address >= getMinAddress()) && (address <= getMaxAddress())) {
-			return content[address + getMinAddress() - getMaxAddress()];
+			return content[addressToArrayIndex(address)];
 		} else {
 			throw new OutOfRangeException(address, getMinAddress(),
 					getMaxAddress());
