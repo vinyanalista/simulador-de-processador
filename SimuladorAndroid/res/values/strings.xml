@@ -1,8 +1,5 @@
 <resources>
 
-    <string name="app_name">SimuladorAndroid</string>
-    <string name="hello_world">Hello world!</string>
-    <string name="menu_settings">Settings</string>
-    <string name="title_activity_welcome">AES Processor Simulator</string>
+    <string name="app_name">AES Processor Simulator</string>
 
 </resources>

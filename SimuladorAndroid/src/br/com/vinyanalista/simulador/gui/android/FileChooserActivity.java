@@ -31,7 +31,6 @@ public class FileChooserActivity extends SherlockListActivity {
 
 		public static final int TYPE_FOLDER = 0;
 		public static final int TYPE_FILE = 1;
-		public static final int TYPE_PARENT_FOLDER = 2;
 
 		public static final String FILE_EXTENSION = ".jpg";
 
@@ -100,9 +99,6 @@ public class FileChooserActivity extends SherlockListActivity {
 					break;
 				case Option.TYPE_FILE:
 					icon.setImageResource(R.drawable.application_x_m4);
-					break;
-				case Option.TYPE_PARENT_FOLDER:
-					icon.setImageResource(R.drawable.go_up);
 					break;
 				default:
 					break;
@@ -180,8 +176,7 @@ public class FileChooserActivity extends SherlockListActivity {
 		// TODO Auto-generated method stub
 		super.onListItemClick(l, v, position, id);
 		Option o = adapter.getItem(position);
-		if (o.getType() == Option.TYPE_FOLDER
-				|| o.getType() == Option.TYPE_PARENT_FOLDER) {
+		if (o.getType() == Option.TYPE_FOLDER) {
 			currentDir = new File(o.getPath());
 			fillInList(currentDir);
 		} else {
@@ -190,6 +185,10 @@ public class FileChooserActivity extends SherlockListActivity {
 	}
 
 	private void onFileClick(Option o) {
+		RecentFilesDAO dao = new RecentFilesDAO(this);
+		dao.open();
+		dao.addRecentFile(o.getPath());
+		dao.close();
 		Intent i = new Intent();
 		i.putExtra(FILE_NAME, o.getName());
 		setResult(RESULT_OK, i);

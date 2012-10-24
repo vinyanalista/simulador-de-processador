@@ -69,6 +69,10 @@ public class WelcomeActivity extends SherlockActivity {
 					startActivityForResult(new Intent(WelcomeActivity.this,
 							FileChooserActivity.class), OPCAO_ABRIR);
 					break;
+				case OPCAO_RECENTES:
+					startActivityForResult(new Intent(WelcomeActivity.this,
+							RecentFilesActivity.class), OPCAO_RECENTES);
+					break;
 				case OPCAO_TESTE:
 					startActivity(new Intent(WelcomeActivity.this,
 							SimulationActivity.class));
@@ -96,7 +100,17 @@ public class WelcomeActivity extends SherlockActivity {
 						"File Clicked: "
 								+ data.getStringExtra(FileChooserActivity.FILE_NAME),
 						Toast.LENGTH_SHORT).show();
-				startActivity(new Intent(this, SimulationActivity.class));
+//				startActivity(new Intent(this, SimulationActivity.class));
+			}
+			break;
+		case OPCAO_RECENTES:
+			if (resultCode == RESULT_OK) {
+				Toast.makeText(
+						this,
+						"File Clicked: "
+								+ data.getStringExtra(RecentFilesActivity.FILE_NAME),
+						Toast.LENGTH_SHORT).show();
+//				startActivity(new Intent(this, SimulationActivity.class));
 			}
 			break;
 		}
