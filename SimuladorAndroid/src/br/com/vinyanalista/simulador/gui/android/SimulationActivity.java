@@ -36,7 +36,7 @@ public class SimulationActivity extends SherlockActivity implements
 			mar, to_acc_or_mbr, to_acc, acc, to_mbr, mbr, to_alu2_or_ir2,
 			to_alu2, alu2, to_ir2, ir2, to_alu1_or_ir1, to_alu1, alu1, to_ir1,
 			ir1, alu_to_acc1, alu_to_acc2, alu_to_acc3, alu_to_acc4, alu_out,
-			to_led, led, moving_byte;
+			to_led, led, moving_byte, status;
 
 	private ListView animationsListView;
 
@@ -82,6 +82,8 @@ public class SimulationActivity extends SherlockActivity implements
 		to_led = (TextView) findViewById(R.id.to_led);
 		led = (TextView) findViewById(R.id.led);
 		moving_byte = (TextView) findViewById(R.id.moving_byte);
+		status = (TextView) findViewById(R.id.status);
+		status.setText("Click Resume to start the simulation!");
 
 		// http://www.vogella.com/articles/AndroidListView/article.html#listsactivity_simple
 
@@ -127,8 +129,11 @@ public class SimulationActivity extends SherlockActivity implements
 				simulation.pause();
 			}
 		}
-		if (item.equals(stop))
+		if (item.equals(stop)) {
+			playPause.setTitle("Resume");
+			playPause.setIcon(R.drawable.media_playback_start);
 			simulation.stop();
+		}
 		return true;
 	}
 

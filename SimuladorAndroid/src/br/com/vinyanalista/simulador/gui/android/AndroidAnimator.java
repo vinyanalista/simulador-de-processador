@@ -19,6 +19,7 @@ public class AndroidAnimator extends Animator {
 	public final static int COR_VERDE = Color.parseColor("#008000");
 	public final static int COR_VERMELHA = Color.parseColor("#ff0000");
 	public final static int COR_VERMELHA_ESCURA = Color.parseColor("#7b0010");
+	public final static int COR_BRANCA = Color.WHITE;
 
 	SimulationActivity activity;
 	Animation animation = null;
@@ -85,26 +86,34 @@ public class AndroidAnimator extends Animator {
 		return move;
 	}
 
-	private ValueAnimator changeLedValue(Byte newValue) {
-		activity.led.setText(newValue.getValueAsPreferredRepresentation());
-		ValueAnimator mudarValor = ObjectAnimator.ofInt(activity.led,
-				"textColor", COR_VERMELHA, COR_VERMELHA_ESCURA, COR_VERMELHA,
-				COR_VERMELHA_ESCURA, COR_VERMELHA).setDuration(3000);
-		mudarValor.setEvaluator(new ArgbEvaluator());
-		mudarValor.setRepeatMode(ValueAnimator.REVERSE);
+	private ValueAnimator changeValueAndBlink(TextView textView, int color1,
+			int color2, int color3, int color4, int color5, String newValue) {
+		textView.setText(newValue);
 
-		return mudarValor;
+		ValueAnimator mudarValorPiscar = ObjectAnimator.ofInt(textView,
+				"textColor", color1, color2, color3, color4, color5)
+				.setDuration(3000);
+		mudarValorPiscar.setEvaluator(new ArgbEvaluator());
+		mudarValorPiscar.setRepeatMode(ValueAnimator.REVERSE);
+
+		return mudarValorPiscar;
 	}
 
 	private ValueAnimator changeValue(TextView textView, Byte newValue) {
-		textView.setText(newValue.getValueAsPreferredRepresentation());
-		ValueAnimator mudarValor = ObjectAnimator.ofInt(textView, "textColor",
-				COR_VERDE, COR_VERMELHA, COR_VERDE, COR_VERMELHA, COR_VERDE)
-				.setDuration(3000);
-		mudarValor.setEvaluator(new ArgbEvaluator());
-		mudarValor.setRepeatMode(ValueAnimator.REVERSE);
+		return changeValueAndBlink(textView, COR_VERDE, COR_VERMELHA,
+				COR_VERDE, COR_VERMELHA, COR_VERDE,
+				newValue.getValueAsPreferredRepresentation());
+	}
 
-		return mudarValor;
+	private ValueAnimator changeLedValue(Byte newValue) {
+		return changeValueAndBlink(activity.led, COR_VERMELHA,
+				COR_VERMELHA_ESCURA, COR_VERMELHA, COR_VERMELHA_ESCURA,
+				COR_VERMELHA, newValue.getValueAsPreferredRepresentation());
+	}
+
+	private ValueAnimator changeStatusBarValue(String newValue) {
+		return changeValueAndBlink(activity.status, COR_BRANCA, COR_VERMELHA,
+				COR_BRANCA, COR_VERMELHA, COR_BRANCA, newValue);
 	}
 
 	@Override
@@ -209,37 +218,50 @@ public class AndroidAnimator extends Animator {
 					activity.from_memory_2, activity.from_memory_1,
 					animation.getValue());
 			break;
-		case STATUS_EXECUTE:
-		case STATUS_FETCH_INSTRUCTION:
-		case STATUS_FETCH_OPERAND:
-		case STATUS_PC_INCREMENT:
 		case UPDATE_INSTRUCTION:
+			animator = changeStatusBarValue("This is a test");
+			break;		
+		case STATUS_FETCH_INSTRUCTION:
+			animator = changeStatusBarValue("Fetch instruction cycle");
+			break;
+		case STATUS_FETCH_OPERAND:
+			animator = changeStatusBarValue("Fetch operand cycle");
+			break;
+		case STATUS_PC_INCREMENT:
+			animator = changeStatusBarValue("Program Counter (PC) increment");
+			break;
+		case STATUS_EXECUTE:
+			animator = changeStatusBarValue("Execution cycle");
+			break;
+		
 		default:
 			break;
 		}
-		animator.addListener(new AnimatorListener() {
-			@Override
-			public void onAnimationStart(
-					com.nineoldandroids.animation.Animator arg0) {
-			}
+		if (animator != null) {
+			animator.addListener(new AnimatorListener() {
+				@Override
+				public void onAnimationStart(
+						com.nineoldandroids.animation.Animator arg0) {
+				}
 
-			@Override
-			public void onAnimationRepeat(
-					com.nineoldandroids.animation.Animator arg0) {
-			}
+				@Override
+				public void onAnimationRepeat(
+						com.nineoldandroids.animation.Animator arg0) {
+				}
 
-			@Override
-			public void onAnimationEnd(
-					com.nineoldandroids.animation.Animator arg0) {
-				callAnimationEndListener();
-			}
+				@Override
+				public void onAnimationEnd(
+						com.nineoldandroids.animation.Animator arg0) {
+					callAnimationEndListener();
+				}
 
-			@Override
-			public void onAnimationCancel(
-					com.nineoldandroids.animation.Animator arg0) {
-			}
-		});
-		animator.start();
+				@Override
+				public void onAnimationCancel(
+						com.nineoldandroids.animation.Animator arg0) {
+				}
+			});
+			animator.start();
+		}
 	}
 
 	public AndroidAnimator(SimulationActivity activity) {
