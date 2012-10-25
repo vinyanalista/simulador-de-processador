@@ -5,6 +5,18 @@ public class OpCode extends Byte {
 
 	protected static int preferredRepresentation = REPRESENTATION_MNEMONIC;
 
+	protected static void setRepresentation(int representation) {
+		switch (representation) {
+		case REPRESENTATION_DECIMAL:
+		case REPRESENTATION_BINARY:
+		case REPRESENTATION_HEX:
+		case REPRESENTATION_MNEMONIC:
+			preferredRepresentation = representation;
+		default:
+			throw new IllegalArgumentException();
+		}
+	}
+
 	public static final int MIN_VALUE = 0;
 	public static final int MAX_VALUE = 15;
 
@@ -114,14 +126,14 @@ public class OpCode extends Byte {
 		setValue(value, MIN_VALUE, MAX_VALUE);
 	}
 
-	@Override
-	public void setValueAsBinary(String value) {
-		setValueAsBinary(value, MIN_VALUE, MIN_VALUE);
-	}
-
-	@Override
-	public void setValueAsHex(String value) {
-		setValueAsHex(value, MIN_VALUE, MIN_VALUE);
-	}
+//	@Override
+//	public void setValueAsBinary(String value) {
+//		setValueAsBinary(value, MIN_VALUE, MIN_VALUE);
+//	}
+//
+//	@Override
+//	public void setValueAsHex(String value) {
+//		setValueAsHex(value, MIN_VALUE, MIN_VALUE);
+//	}
 
 }

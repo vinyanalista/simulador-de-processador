@@ -89,6 +89,7 @@ public class SimulationActivity extends SherlockActivity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.simulation);
+		setTitle("Simulation");
 
 		from_memory_1 = (TextView) findViewById(R.id.from_memory_1);
 		from_memory_2 = (TextView) findViewById(R.id.from_memory_2);

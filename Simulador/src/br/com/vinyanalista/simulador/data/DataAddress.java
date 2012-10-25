@@ -18,14 +18,14 @@ public class DataAddress extends Byte {
 		setValue(value, MIN_VALUE, MAX_VALUE);
 	}
 
-	@Override
-	public void setValueAsBinary(String value) {
-		setValueAsBinary(value, MIN_VALUE, MIN_VALUE);
-	}
-
-	@Override
-	public void setValueAsHex(String value) {
-		setValueAsHex(value, MIN_VALUE, MIN_VALUE);
-	}
+//	@Override
+//	public void setValueAsBinary(String value) {
+//		setValueAsBinary(value, MIN_VALUE, MIN_VALUE);
+//	}
+//
+//	@Override
+//	public void setValueAsHex(String value) {
+//		setValueAsHex(value, MIN_VALUE, MIN_VALUE);
+//	}
 
 }
