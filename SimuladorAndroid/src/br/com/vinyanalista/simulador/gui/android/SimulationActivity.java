@@ -1,34 +1,29 @@
 package br.com.vinyanalista.simulador.gui.android;
 
+import java.util.List;
+
 import com.actionbarsherlock.app.SherlockActivity;
 
-import br.com.vinyanalista.simulador.data.Data;
-import br.com.vinyanalista.simulador.simulation.AnimationType;
 import br.com.vinyanalista.simulador.simulation.Simulation;
-import br.com.vinyanalista.simulador.simulation.Animation;
-import br.com.vinyanalista.simulador.software.Program;
+import br.com.vinyanalista.simulador.software.Instruction;
 import br.com.vinyanalista.simulador.software.ProgramParser;
 
 import android.os.Bundle;
-import android.graphics.Typeface;
+import android.content.Context;
 
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 
+import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.RelativeLayout.LayoutParams;
 
-public class SimulationActivity extends SherlockActivity implements
-		OnItemClickListener {
+public class SimulationActivity extends SherlockActivity {
 
 	public static final String EXTRA_PROGRAM = "program";
 
@@ -38,14 +33,57 @@ public class SimulationActivity extends SherlockActivity implements
 			ir1, alu_to_acc1, alu_to_acc2, alu_to_acc3, alu_to_acc4, alu_out,
 			to_led, led, moving_byte, status;
 
-	private ListView animationsListView;
+	ListView instructionsListView;
+
+	InstructionArrayAdapter adapter;
 
 	private MenuItem playPause;
 	private MenuItem stop;
 
-	// private Program program;
 	private Simulation simulation;
 	private AndroidAnimator animator;
+
+	// http://www.mkyong.com/android/android-listview-example/
+	private class InstructionArrayAdapter extends ArrayAdapter<Instruction> {
+		private final Context context;
+		private final List<Instruction> instructions;
+
+		public InstructionArrayAdapter(Context context,
+				List<Instruction> instructions) {
+			super(context, R.layout.list_view_instruction, instructions);
+			this.context = context;
+			this.instructions = instructions;
+		}
+
+		@Override
+		public View getView(int position, View convertView, ViewGroup parent) {
+			LayoutInflater inflater = (LayoutInflater) context
+					.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+			View rowView = inflater.inflate(R.layout.list_view_instruction,
+					parent, false);
+			TextView instructionOpcode = (TextView) rowView
+					.findViewById(R.id.instruction_opcode);
+			TextView instructionOperand = (TextView) rowView
+					.findViewById(R.id.instruction_operand);
+			ImageView instructionIcon = (ImageView) rowView
+					.findViewById(R.id.instruction_icon);
+
+			instructionOpcode.setText(instructions.get(position).getOpCode()
+					.getValueAsPreferredRepresentation());
+			instructionOperand.setText(instructions.get(position).getOperand()
+					.getValueAsPreferredRepresentation());
+			instructionIcon.setImageResource(R.drawable.arrow_right);
+
+			if (position == simulation.getInstructionIndex() - 1) {
+				instructionIcon.setVisibility(View.VISIBLE);
+			} else {
+				instructionIcon.setVisibility(View.INVISIBLE);
+			}
+
+			return rowView;
+		}
+	}
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -85,23 +123,31 @@ public class SimulationActivity extends SherlockActivity implements
 		status = (TextView) findViewById(R.id.status);
 		status.setText("Click Resume to start the simulation!");
 
-		// http://www.vogella.com/articles/AndroidListView/article.html#listsactivity_simple
-
-		String[] animations = new String[] { "PC_TO_MAR", "MAR_CHANGE",
-				"MAR_TO_MEMORY", "MEMORY_TO_MBR", "MBR_CHANGE",
-				"MBR_TO_IR_OPCODE", "MBR_TO_IR_OPERAND", "IR_OPCODE_CHANGE",
-				"IR_OPERAND_CHANGE", "PC_CHANGE", "IR_OPERAND_TO_MAR",
-				"MBR_TO_ACC", "ACC_CHANGE", "ACC_TO_ALU_IN_1",
-				"ALU_IN_1_CHANGE", "ACC_TO_ALU_IN_2", "ALU_IN_2_CHANGE",
-				"ALU_OUTPUT_CHANGE", "ALU_OUTPUT_TO_ACC", "IR_OPERAND_TO_ACC",
-				"MBR_TO_MEMORY", "ACC_TO_MBR", "MBR_TO_LED", "LED_CHANGE" };
-		animationsListView = (ListView) findViewById(R.id.listView1);
-		animationsListView.setAdapter(new ArrayAdapter<String>(this,
-				android.R.layout.simple_list_item_1, animations));
-		animationsListView.setOnItemClickListener(this);
-
 		animator = new AndroidAnimator(this);
 		simulation = new Simulation(ProgramParser.parseFrom(null), animator);
+
+		instructionsListView = (ListView) findViewById(R.id.instructions);
+
+		adapter = new InstructionArrayAdapter(this, simulation.getProgram()
+				.getInstructions());
+
+		instructionsListView.setAdapter(adapter);
+
+		// http://www.vogella.com/articles/AndroidListView/article.html#listsactivity_simple
+
+		// String[] animations = new String[] { "PC_TO_MAR", "MAR_CHANGE",
+		// "MAR_TO_MEMORY", "MEMORY_TO_MBR", "MBR_CHANGE",
+		// "MBR_TO_IR_OPCODE", "MBR_TO_IR_OPERAND", "IR_OPCODE_CHANGE",
+		// "IR_OPERAND_CHANGE", "PC_CHANGE", "IR_OPERAND_TO_MAR",
+		// "MBR_TO_ACC", "ACC_CHANGE", "ACC_TO_ALU_IN_1",
+		// "ALU_IN_1_CHANGE", "ACC_TO_ALU_IN_2", "ALU_IN_2_CHANGE",
+		// "ALU_OUTPUT_CHANGE", "ALU_OUTPUT_TO_ACC", "IR_OPERAND_TO_ACC",
+		// "MBR_TO_MEMORY", "ACC_TO_MBR", "MBR_TO_LED", "LED_CHANGE" };
+		// animationsListView = (ListView) findViewById(R.id.listView1);
+		// animationsListView.setAdapter(new ArrayAdapter<String>(this,
+		// android.R.layout.simple_list_item_1, animations));
+		// animationsListView.setOnItemClickListener(this);
+
 	}
 
 	@Override
@@ -133,111 +179,116 @@ public class SimulationActivity extends SherlockActivity implements
 			playPause.setTitle("Resume");
 			playPause.setIcon(R.drawable.media_playback_start);
 			simulation.stop();
+			atualizarPonteiroDeInstrucao();
+			status.setText("Click Resume to start the simulation!");
 		}
 		return true;
 	}
 
-	@Override
-	public void onItemClick(AdapterView<?> arg0, View arg1, int position,
-			long arg3) {
-		// TODO Auto-generated method stub
-		switch (position) {
-		case 0:
-			animator.animate(new Animation(AnimationType.PC_TO_MAR, new Data(
-					position)));
-			break;
-		case 1:
-			animator.animate(new Animation(AnimationType.MAR_CHANGE, new Data(
-					position)));
-			break;
-		case 2:
-			animator.animate(new Animation(AnimationType.MAR_TO_MEMORY,
-					new Data(position)));
-			break;
-		case 3:
-			animator.animate(new Animation(AnimationType.MEMORY_TO_MBR,
-					new Data(position)));
-			break;
-		case 4:
-			animator.animate(new Animation(AnimationType.MBR_CHANGE, new Data(
-					position)));
-			break;
-		case 5:
-			animator.animate(new Animation(AnimationType.MBR_TO_IR_OPCODE,
-					new Data(position)));
-			break;
-		case 6:
-			animator.animate(new Animation(AnimationType.MBR_TO_IR_OPERAND,
-					new Data(position)));
-			break;
-		case 7:
-			animator.animate(new Animation(AnimationType.IR_OPCODE_CHANGE,
-					new Data(position)));
-			break;
-		case 8:
-			animator.animate(new Animation(AnimationType.IR_OPERAND_CHANGE,
-					new Data(position)));
-			break;
-		case 9:
-			animator.animate(new Animation(AnimationType.PC_CHANGE, new Data(
-					position)));
-			break;
-		case 10:
-			animator.animate(new Animation(AnimationType.IR_OPERAND_TO_MAR,
-					new Data(position)));
-			break;
-		case 11:
-			animator.animate(new Animation(AnimationType.MBR_TO_ACC, new Data(
-					position)));
-			break;
-		case 12:
-			animator.animate(new Animation(AnimationType.ACC_CHANGE, new Data(
-					position)));
-			break;
-		case 13:
-			animator.animate(new Animation(AnimationType.ACC_TO_ALU_IN_1,
-					new Data(position)));
-			break;
-		case 14:
-			animator.animate(new Animation(AnimationType.ALU_IN_1_CHANGE,
-					new Data(position)));
-			break;
-		case 15:
-			animator.animate(new Animation(AnimationType.ACC_TO_ALU_IN_2,
-					new Data(position)));
-			break;
-		case 16:
-			animator.animate(new Animation(AnimationType.ALU_IN_2_CHANGE,
-					new Data(position)));
-			break;
-		case 17:
-			animator.animate(new Animation(AnimationType.ALU_OUTPUT_CHANGE,
-					new Data(position)));
-			break;
-		case 18:
-			animator.animate(new Animation(AnimationType.ALU_OUTPUT_TO_ACC,
-					new Data(position)));
-			break;
-		case 19:
-			animator.animate(new Animation(AnimationType.IR_OPERAND_TO_ACC,
-					new Data(position)));
-			break;
-		case 20:
-			animator.animate(new Animation(AnimationType.MBR_TO_MEMORY,
-					new Data(position)));
-			break;
-		case 21:
-			animator.animate(new Animation(AnimationType.ACC_TO_MBR, new Data(
-					position)));
-			break;
-		case 22:
-			animator.animate(new Animation(AnimationType.MBR_TO_LED, new Data(
-					position)));
-			break;
-		case 23:
-			animator.animate(new Animation(AnimationType.LED_CHANGE, new Data(
-					position)));
-			break;
-		}
+	void atualizarPonteiroDeInstrucao() {
+		adapter.notifyDataSetChanged();
 	}
+
+	// @Override
+	// public void onItemClick(AdapterView<?> arg0, View arg1, int position,
+	// long arg3) {
+	// switch (position) {
+	// case 0:
+	// animator.animate(new Animation(AnimationType.PC_TO_MAR, new Data(
+	// position)));
+	// break;
+	// case 1:
+	// animator.animate(new Animation(AnimationType.MAR_CHANGE, new Data(
+	// position)));
+	// break;
+	// case 2:
+	// animator.animate(new Animation(AnimationType.MAR_TO_MEMORY,
+	// new Data(position)));
+	// break;
+	// case 3:
+	// animator.animate(new Animation(AnimationType.MEMORY_TO_MBR,
+	// new Data(position)));
+	// break;
+	// case 4:
+	// animator.animate(new Animation(AnimationType.MBR_CHANGE, new Data(
+	// position)));
+	// break;
+	// case 5:
+	// animator.animate(new Animation(AnimationType.MBR_TO_IR_OPCODE,
+	// new Data(position)));
+	// break;
+	// case 6:
+	// animator.animate(new Animation(AnimationType.MBR_TO_IR_OPERAND,
+	// new Data(position)));
+	// break;
+	// case 7:
+	// animator.animate(new Animation(AnimationType.IR_OPCODE_CHANGE,
+	// new Data(position)));
+	// break;
+	// case 8:
+	// animator.animate(new Animation(AnimationType.IR_OPERAND_CHANGE,
+	// new Data(position)));
+	// break;
+	// case 9:
+	// animator.animate(new Animation(AnimationType.PC_CHANGE, new Data(
+	// position)));
+	// break;
+	// case 10:
+	// animator.animate(new Animation(AnimationType.IR_OPERAND_TO_MAR,
+	// new Data(position)));
+	// break;
+	// case 11:
+	// animator.animate(new Animation(AnimationType.MBR_TO_ACC, new Data(
+	// position)));
+	// break;
+	// case 12:
+	// animator.animate(new Animation(AnimationType.ACC_CHANGE, new Data(
+	// position)));
+	// break;
+	// case 13:
+	// animator.animate(new Animation(AnimationType.ACC_TO_ALU_IN_1,
+	// new Data(position)));
+	// break;
+	// case 14:
+	// animator.animate(new Animation(AnimationType.ALU_IN_1_CHANGE,
+	// new Data(position)));
+	// break;
+	// case 15:
+	// animator.animate(new Animation(AnimationType.ACC_TO_ALU_IN_2,
+	// new Data(position)));
+	// break;
+	// case 16:
+	// animator.animate(new Animation(AnimationType.ALU_IN_2_CHANGE,
+	// new Data(position)));
+	// break;
+	// case 17:
+	// animator.animate(new Animation(AnimationType.ALU_OUTPUT_CHANGE,
+	// new Data(position)));
+	// break;
+	// case 18:
+	// animator.animate(new Animation(AnimationType.ALU_OUTPUT_TO_ACC,
+	// new Data(position)));
+	// break;
+	// case 19:
+	// animator.animate(new Animation(AnimationType.IR_OPERAND_TO_ACC,
+	// new Data(position)));
+	// break;
+	// case 20:
+	// animator.animate(new Animation(AnimationType.MBR_TO_MEMORY,
+	// new Data(position)));
+	// break;
+	// case 21:
+	// animator.animate(new Animation(AnimationType.ACC_TO_MBR, new Data(
+	// position)));
+	// break;
+	// case 22:
+	// animator.animate(new Animation(AnimationType.MBR_TO_LED, new Data(
+	// position)));
+	// break;
+	// case 23:
+	// animator.animate(new Animation(AnimationType.LED_CHANGE, new Data(
+	// position)));
+	// break;
+	// }
+	// }
 }

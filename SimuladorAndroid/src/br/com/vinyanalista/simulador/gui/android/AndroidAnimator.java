@@ -219,7 +219,8 @@ public class AndroidAnimator extends Animator {
 					animation.getValue());
 			break;
 		case UPDATE_INSTRUCTION:
-			animator = changeStatusBarValue("This is a test");
+			activity.atualizarPonteiroDeInstrucao();
+			callAnimationEndListener();
 			break;		
 		case STATUS_FETCH_INSTRUCTION:
 			animator = changeStatusBarValue("Fetch instruction cycle");
