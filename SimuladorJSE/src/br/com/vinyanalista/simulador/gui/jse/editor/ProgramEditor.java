@@ -7,6 +7,7 @@ import java.text.DateFormat;
 import java.util.Date;
 
 import br.com.vinyanalista.simulador.gui.jse.editor.CodeHighlighter;
+import br.com.vinyanalista.simulador.gui.jse.simulador.SimulatorQMainWindow;
 
 import com.trolltech.qt.QtBlockedSlot;
 import com.trolltech.qt.core.*;
@@ -213,6 +214,10 @@ public class ProgramEditor extends QMainWindow {
 	private void replace() {
 		showFindReplaceDialog(FindReplaceDialog.OPERATION_REPLACE);
 	}
+	
+	private void play() {
+		new SimulatorQMainWindow();
+	}
 
 	// @Override
 	// @QtBlockedSlot
@@ -277,7 +282,16 @@ public class ProgramEditor extends QMainWindow {
 		printAction.setShortcut(StandardKey.Print);
 		fileMenu.addAction(printAction);
 		toolbar.addAction(printAction);
-
+		
+		toolbar.addSeparator();
+		
+		QAction playAction = new MyAction(
+				new QIcon("icons/arrow_right.png"), "Valida o codigo e inicia a simulação", this, this,
+				"play()");//TODO
+		playAction.setShortcut(StandardKey.Print);
+		fileMenu.addAction(playAction);
+		toolbar.addAction(playAction);
+		
 		fileMenu.addSeparator();
 
 		QAction exitAction = new MyAction(new QIcon(

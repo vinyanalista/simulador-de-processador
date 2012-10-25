@@ -30,7 +30,7 @@ public class QtAnimator extends Animator {
 	QTimer mudarCorDaStatusBar = new QTimer();
 	
 	private static final int DURACAO_DO_PISCAR = 100;
-	private static final int DURACAO_DA_ANIMACAO = 1000;
+	private static final int DURACAO_DA_ANIMACAO = 100;
 	int mudarCorCount = 0;
 	
 	private static QFont fonte;
@@ -612,76 +612,76 @@ private void statusChange(String valor) {
 		this.animation = animation;
 		switch (animation.getType()) {
 		case MAR_CHANGE:
-				MAR_CHANGE(animation.getValue().getValueAsBinary());
+				MAR_CHANGE(animation.getValue().getValueAsPreferredRepresentation());
 			break;
 		case MBR_CHANGE:
-			MBR_CHANGE(animation.getValue().getValueAsBinary());
+			MBR_CHANGE(animation.getValue().getValueAsPreferredRepresentation());
 			break;
 		case IR_OPCODE_CHANGE:
-			IR_OPCODE_CHANGE(animation.getValue().getValueAsBinary());
+			IR_OPCODE_CHANGE(animation.getValue().getValueAsPreferredRepresentation());
 			break;
 		case IR_OPERAND_CHANGE:
-			IR_OPERAND_CHANGE(animation.getValue().getValueAsBinary());
+			IR_OPERAND_CHANGE(animation.getValue().getValueAsPreferredRepresentation());
 			break;
 		case PC_CHANGE:
-			PC_CHANGE(animation.getValue().getValueAsBinary());
+			PC_CHANGE(animation.getValue().getValueAsPreferredRepresentation());
 			break;
 		case ACC_CHANGE:
-			ACC_CHANGE(animation.getValue().getValueAsBinary());
+			ACC_CHANGE(animation.getValue().getValueAsPreferredRepresentation());
 			break;
 		case ALU_IN_1_CHANGE:
-			ALU_IN_1_CHANGE(animation.getValue().getValueAsBinary());
+			ALU_IN_1_CHANGE(animation.getValue().getValueAsPreferredRepresentation());
 			break;
 		case ALU_IN_2_CHANGE:
-			ALU_IN_2_CHANGE(animation.getValue().getValueAsBinary());
+			ALU_IN_2_CHANGE(animation.getValue().getValueAsPreferredRepresentation());
 			break;
 		case ALU_OUTPUT_CHANGE:
-			ALU_OUTPUT_CHANGE(animation.getValue().getValueAsBinary());
+			ALU_OUTPUT_CHANGE(animation.getValue().getValueAsPreferredRepresentation());
 			break;
 		case ACC_TO_ALU_IN_1:
-			ACC_TO_ALU_IN_1(animation.getValue().getValueAsBinary());
+			ACC_TO_ALU_IN_1(animation.getValue().getValueAsPreferredRepresentation());
 			break;
 		case ACC_TO_ALU_IN_2:
-			ACC_TO_ALU_IN_2(animation.getValue().getValueAsBinary());
+			ACC_TO_ALU_IN_2(animation.getValue().getValueAsPreferredRepresentation());
 			break;
 		case ALU_OUTPUT_TO_ACC:
-			ALU_OUTPUT_TO_ACC(animation.getValue().getValueAsBinary());
+			ALU_OUTPUT_TO_ACC(animation.getValue().getValueAsPreferredRepresentation());
 			break;
 		case IR_OPERAND_TO_MAR:
-			IR_OPERAND_TO_MAR(animation.getValue().getValueAsBinary());
+			IR_OPERAND_TO_MAR(animation.getValue().getValueAsPreferredRepresentation());
 			break;
 		case MAR_TO_MEMORY:
-			MAR_TO_MEMORY(animation.getValue().getValueAsBinary());
+			MAR_TO_MEMORY(animation.getValue().getValueAsPreferredRepresentation());
 			break;
 		case MBR_TO_ACC:
-			MBR_TO_ACC(animation.getValue().getValueAsBinary());
+			MBR_TO_ACC(animation.getValue().getValueAsPreferredRepresentation());
 			break;
 		case MBR_TO_IR_OPCODE:
-			MBR_TO_IR_OPCODE(animation.getValue().getValueAsBinary());
+			MBR_TO_IR_OPCODE(animation.getValue().getValueAsPreferredRepresentation());
 			break;
 		case MBR_TO_IR_OPERAND:
-			MBR_TO_IR_OPERAND(animation.getValue().getValueAsBinary());
+			MBR_TO_IR_OPERAND(animation.getValue().getValueAsPreferredRepresentation());
 			break;
 		case MEMORY_TO_MBR:
-			MEMORY_TO_MBR(animation.getValue().getValueAsBinary());
+			MEMORY_TO_MBR(animation.getValue().getValueAsPreferredRepresentation());
 			break;
 		case PC_TO_MAR:
-			PC_TO_MAR(animation.getValue().getValueAsBinary());
+			PC_TO_MAR(animation.getValue().getValueAsPreferredRepresentation());
 			break;
 		case ACC_TO_MBR:
-			ACC_TO_MBR(animation.getValue().getValueAsBinary());
+			ACC_TO_MBR(animation.getValue().getValueAsPreferredRepresentation());
 			break;
 		case IR_OPERAND_TO_ACC:
-			IR_OPERAND_TO_ACC(animation.getValue().getValueAsBinary());
+			IR_OPERAND_TO_ACC(animation.getValue().getValueAsPreferredRepresentation());
 			break;
 		case LED_CHANGE:
-			LED_CHANGE(animation.getValue().getValueAsBinary());
+			LED_CHANGE(animation.getValue().getValueAsPreferredRepresentation());
 			break;
 		case MBR_TO_LED:
-			MBR_TO_LED(animation.getValue().getValueAsBinary());
+			MBR_TO_LED(animation.getValue().getValueAsPreferredRepresentation());
 			break;
 		case MBR_TO_MEMORY:
-			MBR_TO_MEMORY(animation.getValue().getValueAsBinary());
+			MBR_TO_MEMORY(animation.getValue().getValueAsPreferredRepresentation());
 			break;
 		case STATUS_EXECUTE:
 			statusChange("Execution cycle");

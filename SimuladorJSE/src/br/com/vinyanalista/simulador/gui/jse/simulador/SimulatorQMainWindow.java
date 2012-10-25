@@ -14,6 +14,7 @@ import br.com.vinyanalista.simulador.software.ProgramParser;
 
 import com.trolltech.qt.QtBlockedSlot;
 import com.trolltech.qt.core.QByteArray;
+import com.trolltech.qt.core.QModelIndex;
 import com.trolltech.qt.core.QTimer;
 import com.trolltech.qt.core.Qt.WindowModality;
 import com.trolltech.qt.gui.QAbstractItemView.SelectionBehavior;
@@ -76,7 +77,7 @@ public class SimulatorQMainWindow extends QMainWindow implements AnimationEndLis
 					wigitem = new QTableWidgetItem(inst.get(i).getOpCode().getValueAsMnemonic());
 					tablePrincipal.setItem(i, j, wigitem);
 					}else{
-					wigitem = new QTableWidgetItem(inst.get(i).getOperand().getValueAsBinary());
+					wigitem = new QTableWidgetItem(inst.get(i).getOperand().getValueAsPreferredRepresentation());
 					tablePrincipal.setItem(i, j, wigitem);
 				}
 			}
@@ -178,41 +179,55 @@ public class SimulatorQMainWindow extends QMainWindow implements AnimationEndLis
 	}
 
 	public void play(){
-//		Data dt = new Data(110);
-//		Animation anima = new Animation(AnimationType.ACC_TO_ALU_IN_1, dt );
-//		
-//		animator.animate(anima);
 		simulation.start();
+	}
+	
+	public void pause(){
+		simulation.pause();
+	}
+	
+	public void stop(){
+		simulation.stop();
+		zeraLabels();
 	}
 	
 	@Override
 	public void onAnimationEnd() {
-		Data dt = new Data(110);
-		Animation anima = new Animation(AnimationType.ALU_IN_1_CHANGE, dt );
-	
-		animator.animate(anima);
+		
 	}
 	
-	public void table_memory_data(){
-		
-//		DataMemory me = new DataMemory();
-				
-		QTableWidget table = new QTableWidget();
-		table.setColumnCount(1);
-		table.setRowCount(256);
-		List<String> labels = new ArrayList<String>();
-		labels.add(0, "Conteudo");
-//		labels.add(1, "");
-		table.setHorizontalHeaderLabels(labels);
-		table.setSelectionMode(SelectionMode.SingleSelection);
-		table.setSelectionBehavior(SelectionBehavior.SelectRows);
-		table.setColumnWidth(0, 120);
-		table.selectRow(0);
-		table.setGeometry(800, 60, 270, 500);
-		table.setWindowTitle("Data Table");
-		table.setWindowModality(WindowModality.WindowModal);
-		table.show();
+public void table_program_memory(){
+		showMemoryDialog(MemoryDialog.OPERATION_PROGRAM);
+//		QTableWidget table = new QTableWidget();
+//		table.setColumnCount(10);
+//		table.setRowCount(13);
+//		List<String> labels = new ArrayList<String>();
+//		for(int i=0; i<13; i++){
+//			labels.add(String.valueOf(i));
+//		}
+//		table.setHorizontalHeaderLabels(labels);
+//		table.setVerticalHeaderLabels(labels);
+//		table.setSelectionMode(SelectionMode.SingleSelection);
+//		table.setSelectionBehavior(SelectionBehavior.SelectItems);
+//		for(int i=0; i<13; i++){
+//			for(int j=0; j<10; j++){
+//				int address = Integer.parseInt((i)+""+(j));
+//				if(address<128){
+//					wigitem = new QTableWidgetItem(simulation.getProgramMemory().readByte(address).getValueAsPreferredRepresentation());
+//					table.setItem(i, j, wigitem);
+//				}
+//			}
+//		}
+//		table.setGeometry(100, 100, table.width()+390, table.height()-17);
+//		table.setWindowTitle("Program Memory Table");
+//		table.setWindowModality(WindowModality.WindowModal);
+//		table.show();
 		}
+
+
+public void table_data_memory(){
+	showMemoryDialog(MemoryDialog.OPERATION_DATA);
+	}
 	
 	//construtor
 	public SimulatorQMainWindow() {
@@ -226,7 +241,7 @@ public class SimulatorQMainWindow extends QMainWindow implements AnimationEndLis
 //		animator.setAnimationEndListener(this);
 		simulation = new Simulation(ProgramParser.parseFrom(null), animator);
 		
-		
+				
 		
 		//***************************************************	
 		//*               Colocando a fonte                 *
@@ -291,35 +306,50 @@ public class SimulatorQMainWindow extends QMainWindow implements AnimationEndLis
 		bt[0] = new QPushButton(this);
 		bt[0].setText("Play");
 		bt[0].clicked.connect(this, "play()");
-		bt[0].setGeometry(805, 20, bt[0].width(), bt[0].height());
+		bt[0].setGeometry(830, 15, 50, bt[0].height());
+		
+		bt[0] = new QPushButton(this);
+		bt[0].setText("Pause");
+		bt[0].clicked.connect(this, "pause()");
+		bt[0].setGeometry(830+60, 15, 50, bt[0].height());
+		
+		bt[0] = new QPushButton(this);
+		bt[0].setText("Stop");
+		bt[0].clicked.connect(this, "stop()");
+		bt[0].setGeometry(830+120, 15, 50, bt[0].height());
 		
 		bt[1] = new QPushButton(this);
-		bt[1].setText("Data");
-//		bt[1].setFont(fonte);
-		bt[1].clicked.connect(this, "table_memory_data()");
-		bt[1].setGeometry(612, 416, bt[1].width(), bt[1].height());
-				
-//		QSignalMapper mapper;
-//		
-//		     Object sourceObject;
-//			sourceObject.loaded.connect(mapper, "map()");
-//		     mapper.setMapping(sourceObject, sourceObject);
+		bt[1].setText("Data Memory");
+		bt[1].clicked.connect(this, "table_data_memory()");
+		bt[1].setGeometry(551, 397, bt[1].width()+35+83, bt[1].height()+38);	
 		
-		
-//		bt[2] = new QPushButton(this);
-//		bt[2].setText("teste");
-//		bt[2].clicked.connect("11111111", "ACC_CHANGE()");
-//		bt[2].setGeometry(805, 100, bt[0].width(), bt[0].height());
-//		
+		bt[2] = new QPushButton(this);
+		bt[2].setText("Program Memory");
+		bt[2].clicked.connect(this, "table_program_memory()");
+		bt[2].setGeometry(551, 473, bt[2].width()+35+83, bt[2].height()+38);	
 		
 		statusBar = statusBar();
 		status = new QLabel("Click Play to start simulation.");
 		status.setPalette(corPreta);
 		statusBar.addWidget(status);
 		
-		resize(fundo.width()+250, fundo.height() + statusBar.height());
+		initLabels();
+		zeraLabels();
+		initabel();
+		
+		resize(fundo.width()+250, fundo.height() + statusBar.height()-10);
+		move(QApplication.desktop().screen().rect().center().x()
+				- this.rect().center().x(), QApplication.desktop().screen()
+				.rect().center().y()
+				- this.rect().center().y());
 		show();
 	}
+	
+	public void showMemoryDialog(int operation) {
+		MemoryDialog frd = new MemoryDialog(this, operation, simulation);
+		frd.exec();
+	}
+	
 	
 	@Override
 	@QtBlockedSlot
@@ -332,9 +362,6 @@ public class SimulatorQMainWindow extends QMainWindow implements AnimationEndLis
 	public static void main(String[] args) {
 		QApplication.initialize(args);
 		SimulatorQMainWindow anima = new SimulatorQMainWindow();
-		anima.initLabels();
-		anima.zeraLabels();
-		anima.initabel();
 		QApplication.exec();
 		
 	}

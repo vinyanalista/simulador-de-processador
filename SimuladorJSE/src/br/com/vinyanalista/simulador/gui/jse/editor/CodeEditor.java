@@ -82,7 +82,7 @@ public class CodeEditor extends QPlainTextEdit {
 		updateLineNumberAreaWidth(0);
 		highlightCurrentLine();
 
-		setWindowTitle("Code Editor Example");
+		setWindowTitle("Code Editor");
 		setWindowIcon(new QIcon("classpath:com/trolltech/images/qt-logo.png"));
 		defaultZoom();
 	}
