@@ -9,6 +9,7 @@ import br.com.vinyanalista.simulador.simulation.Animator.AnimationListener;
 import br.com.vinyanalista.simulador.simulation.Simulation;
 import br.com.vinyanalista.simulador.simulation.Simulation.SimulationListener;
 import br.com.vinyanalista.simulador.software.Instruction;
+import br.com.vinyanalista.simulador.software.Program;
 import br.com.vinyanalista.simulador.software.ProgramParser;
 
 import com.trolltech.qt.QtBlockedSlot;
@@ -48,6 +49,8 @@ public class SimulatorQMainWindow extends QMainWindow implements AnimationListen
 	
 	private static Simulation simulation;
 	QtAnimator animator;
+	
+	private Program program;
 	
 	//labels
 	public static QLabel labelAcc, labelALU1, labelALU2, labelALUResult, labelPC, labelIROPCODE, 
@@ -230,7 +233,7 @@ public void table_data_memory(){
 	}
 	
 	//construtor
-	public SimulatorQMainWindow() {
+	public SimulatorQMainWindow(Program prog) {
 		this.setWindowModified(false);
 		this.setWindowTitle("AES");
 		
@@ -239,7 +242,10 @@ public void table_data_memory(){
 
 		animator = new QtAnimator();
 		animator.addAnimationListener(this);
-		simulation = new Simulation(ProgramParser.parseFrom(null), animator);
+		
+		this.program = prog;
+		
+		simulation = new Simulation(program, animator);
 		simulation.addSimulationListener(this);
 		
 		//***************************************************	
@@ -374,12 +380,12 @@ public void table_data_memory(){
 		painter.drawPixmap(0, 0, fundo);
 	}
 
-	public static void main(String[] args) {
-		QApplication.initialize(args);
-		new SimulatorQMainWindow();
-		QApplication.exec();
-		
-	}
+//	public static void main(String[] args) {
+//		QApplication.initialize(args);
+//		new SimulatorQMainWindow(Program);
+//		QApplication.exec();
+//		
+//	}
 
 	@Override
 	public void onAnimationEnd() {

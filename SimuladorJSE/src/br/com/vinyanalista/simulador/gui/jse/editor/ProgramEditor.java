@@ -7,6 +7,7 @@ import java.text.DateFormat;
 import java.util.Date;
 
 import br.com.vinyanalista.simulador.gui.jse.editor.CodeHighlighter;
+import br.com.vinyanalista.simulador.gui.jse.simulador.ChooseQWindow;
 import br.com.vinyanalista.simulador.gui.jse.simulador.SimulatorQMainWindow;
 
 import com.trolltech.qt.QtBlockedSlot;
@@ -216,7 +217,7 @@ public class ProgramEditor extends QMainWindow {
 	}
 	
 	private void play() {
-		new SimulatorQMainWindow();
+		new ChooseQWindow();
 	}
 
 	// @Override
