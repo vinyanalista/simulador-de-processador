@@ -30,7 +30,7 @@ public class QtAnimator extends Animator {
 	QTimer mudarCorDaStatusBar = new QTimer();
 	
 	private static final int DURACAO_DO_PISCAR = 100;
-	private static final int DURACAO_DA_ANIMACAO = 100;
+	private static final int DURACAO_DA_ANIMACAO = 1500;
 	int mudarCorCount = 0;
 	
 	private static QFont fonte;

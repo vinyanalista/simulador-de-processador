@@ -1,34 +1,32 @@
 package br.com.vinyanalista.simulador.gui.jse.simulador;
+import java.awt.Color;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import br.com.vinyanalista.simulador.data.Data;
-import br.com.vinyanalista.simulador.simulation.Animation;
-import br.com.vinyanalista.simulador.simulation.AnimationType;
-import br.com.vinyanalista.simulador.simulation.Simulation;
 import br.com.vinyanalista.simulador.simulation.Animator.AnimationEndListener;
+import br.com.vinyanalista.simulador.simulation.Simulation;
 import br.com.vinyanalista.simulador.software.Instruction;
 import br.com.vinyanalista.simulador.software.ProgramParser;
 
 import com.trolltech.qt.QtBlockedSlot;
 import com.trolltech.qt.core.QByteArray;
-import com.trolltech.qt.core.QModelIndex;
+import com.trolltech.qt.core.QRect;
 import com.trolltech.qt.core.QTimer;
-import com.trolltech.qt.core.Qt.WindowModality;
 import com.trolltech.qt.gui.QAbstractItemView.SelectionBehavior;
 import com.trolltech.qt.gui.QAbstractItemView.SelectionMode;
 import com.trolltech.qt.gui.QApplication;
 import com.trolltech.qt.gui.QColor;
 import com.trolltech.qt.gui.QFont;
 import com.trolltech.qt.gui.QFontDatabase;
-import com.trolltech.qt.gui.QItemSelectionModel.SelectionFlag;
+import com.trolltech.qt.gui.QIcon;
 import com.trolltech.qt.gui.QLabel;
 import com.trolltech.qt.gui.QMainWindow;
 import com.trolltech.qt.gui.QPaintEvent;
 import com.trolltech.qt.gui.QPainter;
 import com.trolltech.qt.gui.QPalette;
+import com.trolltech.qt.gui.QPalette.ColorRole;
 import com.trolltech.qt.gui.QPixmap;
 import com.trolltech.qt.gui.QPushButton;
 import com.trolltech.qt.gui.QStatusBar;
@@ -42,6 +40,9 @@ public class SimulatorQMainWindow extends QMainWindow implements AnimationEndLis
 	static QPalette corVerde;
 	static QPalette corVermelha;
 	QPalette corPreta;
+	QTimer Timer;
+	
+	private int contaPisca=0;
 	
 	public static QTableWidget tablePrincipal;
 	QTableWidgetItem wigitem = null;
@@ -54,7 +55,12 @@ public class SimulatorQMainWindow extends QMainWindow implements AnimationEndLis
 	labelIROPERAND, labelMAR, labelMBR, labelLed;	
 	
 	private QPushButton[] bt = new QPushButton[20];
+	
+	
 	public static QLabel genericLabel;
+	
+	private static QLabel aguardeLabel;
+	private static QLabel[] dotLabel = new QLabel[3];
 
 	public static QLabel byteDeExemplo;
 	
@@ -178,18 +184,85 @@ public class SimulatorQMainWindow extends QMainWindow implements AnimationEndLis
 		tablePrincipal.setCurrentCell(simulation.getInstructionIndex() - 1, 0);
 	}
 
-	public void play(){
+	private void play(){
 		simulation.start();
 	}
 	
-	public void pause(){
+	private void pause(){
 		simulation.pause();
+		piscador("Aguarde...", true);
 	}
 	
-	public void stop(){
+	private void stop(){
 		simulation.stop();
+		piscador("Aguarde...", true);
 		zeraLabels();
+		tablePrincipal.selectRow(0);
 	}
+	
+	private void piscador(String texto, boolean seisPiscadas){
+		QPalette cor = new QPalette();
+		cor.setColor(QPalette.ColorRole.WindowText, QColor.darkBlue);
+		
+		QPalette cor2 = new QPalette();
+		cor2.setColor(QPalette.ColorRole.WindowText, QColor.gray);
+	
+		QFont f = new QFont();
+		f.setBold(true);
+		f.setPointSize(25);
+		
+		aguardeLabel = new QLabel(this);
+		aguardeLabel.setText(texto);
+		aguardeLabel.setPalette(corPreta);
+		aguardeLabel.setFont(f);
+		
+		aguardeLabel.setGeometry(240, 185, 200, 200);
+		
+	
+		
+		if(Timer == null || !Timer.isActive()){
+			Timer = new QTimer();
+			if(seisPiscadas){
+				Timer.timeout.connect(this, "pisca6()");
+				Timer.start(300);
+			}else{
+				Timer.timeout.connect(this, "pisca2()");
+				Timer.start(500);
+			}
+		}
+	}
+	
+	private void pisca6() {
+		if(aguardeLabel.isHidden()){
+			aguardeLabel.show();
+		}else{
+			aguardeLabel.hide();
+		}
+		if(contaPisca>6){
+			contaPisca = 0;
+			Timer.stop();
+		}else{
+			contaPisca++;
+		}
+		
+	}
+	
+	private void pisca2() {
+		if(aguardeLabel.isHidden()){
+			aguardeLabel.show();
+		}else{
+			aguardeLabel.hide();
+		}
+		if(contaPisca>2){
+			contaPisca = 0;
+			Timer.stop();
+		}else{
+			contaPisca++;
+		}
+		
+	}
+	
+	
 	
 	@Override
 	public void onAnimationEnd() {
@@ -197,35 +270,13 @@ public class SimulatorQMainWindow extends QMainWindow implements AnimationEndLis
 	}
 	
 public void table_program_memory(){
+		pause();
 		showMemoryDialog(MemoryDialog.OPERATION_PROGRAM);
-//		QTableWidget table = new QTableWidget();
-//		table.setColumnCount(10);
-//		table.setRowCount(13);
-//		List<String> labels = new ArrayList<String>();
-//		for(int i=0; i<13; i++){
-//			labels.add(String.valueOf(i));
-//		}
-//		table.setHorizontalHeaderLabels(labels);
-//		table.setVerticalHeaderLabels(labels);
-//		table.setSelectionMode(SelectionMode.SingleSelection);
-//		table.setSelectionBehavior(SelectionBehavior.SelectItems);
-//		for(int i=0; i<13; i++){
-//			for(int j=0; j<10; j++){
-//				int address = Integer.parseInt((i)+""+(j));
-//				if(address<128){
-//					wigitem = new QTableWidgetItem(simulation.getProgramMemory().readByte(address).getValueAsPreferredRepresentation());
-//					table.setItem(i, j, wigitem);
-//				}
-//			}
-//		}
-//		table.setGeometry(100, 100, table.width()+390, table.height()-17);
-//		table.setWindowTitle("Program Memory Table");
-//		table.setWindowModality(WindowModality.WindowModal);
-//		table.show();
 		}
 
 
 public void table_data_memory(){
+	pause();
 	showMemoryDialog(MemoryDialog.OPERATION_DATA);
 	}
 	
@@ -240,8 +291,6 @@ public void table_data_memory(){
 		animator = new QtAnimator();
 //		animator.setAnimationEndListener(this);
 		simulation = new Simulation(ProgramParser.parseFrom(null), animator);
-		
-				
 		
 		//***************************************************	
 		//*               Colocando a fonte                 *
@@ -296,8 +345,7 @@ public void table_data_memory(){
 		
 		corPreta = new QPalette();
 		corPreta.setColor(QPalette.ColorRole.WindowText, QColor.black);
-		//***************************************************
-	
+		//***************************************************		
 		
 		//***************************************************	
 		//*         Setando Botoes de teste                 *
@@ -306,27 +354,34 @@ public void table_data_memory(){
 		bt[0] = new QPushButton(this);
 		bt[0].setText("Play");
 		bt[0].clicked.connect(this, "play()");
+		bt[0].setIcon(new QIcon("icons/media_playback_start.png"));
 		bt[0].setGeometry(830, 15, 50, bt[0].height());
 		
-		bt[0] = new QPushButton(this);
-		bt[0].setText("Pause");
-		bt[0].clicked.connect(this, "pause()");
-		bt[0].setGeometry(830+60, 15, 50, bt[0].height());
-		
-		bt[0] = new QPushButton(this);
-		bt[0].setText("Stop");
-		bt[0].clicked.connect(this, "stop()");
-		bt[0].setGeometry(830+120, 15, 50, bt[0].height());
-		
 		bt[1] = new QPushButton(this);
-		bt[1].setText("Data Memory");
-		bt[1].clicked.connect(this, "table_data_memory()");
-		bt[1].setGeometry(551, 397, bt[1].width()+35+83, bt[1].height()+38);	
+		bt[1].setText("Pause");
+		bt[1].clicked.connect(this, "pause()");
+		bt[1].setIcon(new QIcon("icons/media_playback_pause.png"));
+		bt[1].setGeometry(830+60, 15, 55, bt[0].height());
 		
 		bt[2] = new QPushButton(this);
-		bt[2].setText("Program Memory");
-		bt[2].clicked.connect(this, "table_program_memory()");
-		bt[2].setGeometry(551, 473, bt[2].width()+35+83, bt[2].height()+38);	
+		bt[2].setText("Stop");
+		bt[2].clicked.connect(this, "stop()");
+		bt[2].setIcon(new QIcon("icons/media_playback_stop.png"));
+		bt[2].setGeometry(830+120, 15, 50, bt[0].height());
+		
+		bt[3] = new QPushButton(this);
+		bt[3].setText("Data Memory");
+		bt[3].clicked.connect(this, "table_data_memory()");
+		bt[3].setGeometry(551, 397, bt[3].width()+35+83, bt[3].height()+38);	
+		
+		bt[4] = new QPushButton(this);
+		bt[4].setText("Program Memory");
+		bt[4].clicked.connect(this, "table_program_memory()");
+		bt[4].setGeometry(551, 473, bt[4].width()+35+83, bt[4].height()+38);
+		
+		
+		
+		
 		
 		statusBar = statusBar();
 		status = new QLabel("Click Play to start simulation.");
@@ -337,11 +392,12 @@ public void table_data_memory(){
 		zeraLabels();
 		initabel();
 		
-		resize(fundo.width()+250, fundo.height() + statusBar.height()-10);
+		resize(fundo.width()+240, fundo.height() + statusBar.height()-10);
 		move(QApplication.desktop().screen().rect().center().x()
 				- this.rect().center().x(), QApplication.desktop().screen()
 				.rect().center().y()
 				- this.rect().center().y());
+		this.setFixedSize(this.size());
 		show();
 	}
 	
@@ -361,7 +417,7 @@ public void table_data_memory(){
 
 	public static void main(String[] args) {
 		QApplication.initialize(args);
-		SimulatorQMainWindow anima = new SimulatorQMainWindow();
+		new SimulatorQMainWindow();
 		QApplication.exec();
 		
 	}
