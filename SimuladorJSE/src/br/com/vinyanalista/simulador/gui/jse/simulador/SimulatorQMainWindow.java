@@ -186,11 +186,16 @@ public class SimulatorQMainWindow extends QMainWindow implements AnimationListen
 
 	private void play(){
 		simulation.start();
+		bt[0].hide();
+		bt[1].show();
+		bt[2].setEnabled(true);
 	}
 	
 	private void pause(){
 		exibirAguarde("Aguarde...");
 		simulation.pause();
+		bt[1].hide();
+		bt[0].show();
 	}
 	
 	private void stop(){
@@ -198,6 +203,9 @@ public class SimulatorQMainWindow extends QMainWindow implements AnimationListen
 		simulation.stop();
 		zeraLabels();
 		tablePrincipal.selectRow(0);
+		bt[2].setEnabled(false);
+		bt[1].hide();
+		bt[0].show();
 	}
 	
 	private void exibirAguarde(String texto){
@@ -214,7 +222,6 @@ public void table_program_memory(){
 		pause();
 		showMemoryDialog(MemoryDialog.OPERATION_PROGRAM);
 		}
-
 
 public void table_data_memory(){
 	if (!simulation.isPaused() && !simulation.isStopped())
@@ -293,24 +300,26 @@ public void table_data_memory(){
 		//***************************************************	
 		//*         Setando Botoes de teste                 *
 		//***************************************************
-	
+		
 		bt[0] = new QPushButton(this);
 		bt[0].setText("Play");
 		bt[0].clicked.connect(this, "play()");
 		bt[0].setIcon(new QIcon("icons/media_playback_start.png"));
-		bt[0].setGeometry(830, 15, 50, bt[0].height());
+		bt[0].setGeometry(815, 15, 55, bt[0].height());
 		
 		bt[1] = new QPushButton(this);
 		bt[1].setText("Pause");
 		bt[1].clicked.connect(this, "pause()");
 		bt[1].setIcon(new QIcon("icons/media_playback_pause.png"));
-		bt[1].setGeometry(830+60, 15, 55, bt[0].height());
+		bt[1].setGeometry(815, 15, 55, bt[0].height());
+		bt[1].hide();
 		
 		bt[2] = new QPushButton(this);
 		bt[2].setText("Stop");
 		bt[2].clicked.connect(this, "stop()");
 		bt[2].setIcon(new QIcon("icons/media_playback_stop.png"));
-		bt[2].setGeometry(830+120, 15, 50, bt[0].height());
+		bt[2].setGeometry(815+65/*805+120*/, 15, 55, bt[0].height());
+		bt[2].setEnabled(false);
 		
 		bt[3] = new QPushButton(this);
 		bt[3].setText("Program Memory");
@@ -342,7 +351,7 @@ public void table_data_memory(){
 		zeraLabels();
 		initabel();
 		
-		resize(fundo.width()+240, fundo.height() + statusBar.height()-10);
+		resize(fundo.width()+155, fundo.height() + statusBar.height()-10);
 		move(QApplication.desktop().screen().rect().center().x()
 				- this.rect().center().x(), QApplication.desktop().screen()
 				.rect().center().y()
