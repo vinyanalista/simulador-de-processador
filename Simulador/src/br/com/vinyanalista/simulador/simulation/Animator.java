@@ -1,22 +1,29 @@
 package br.com.vinyanalista.simulador.simulation;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public abstract class Animator {
 
-	public interface AnimationEndListener {
+	public interface AnimationListener {
 		public void onAnimationEnd();
 	}
 
-	private AnimationEndListener listener = null;
+	private List<AnimationListener> listeners = new ArrayList<AnimationListener>();
 
 	public abstract void animate(Animation animation);
 
 	protected final void callAnimationEndListener() {
-		if (listener != null)
+		for (AnimationListener listener : listeners)
 			listener.onAnimationEnd();
 	}
 
-	public final void setAnimationEndListener(AnimationEndListener listener) {
-		this.listener = listener;
+	public final void addAnimationListener(AnimationListener listener) {
+		listeners.add(listener);
+	}
+
+	public final void removeAnimationListener(AnimationListener listener) {
+		listeners.remove(listener);
 	}
 
 }

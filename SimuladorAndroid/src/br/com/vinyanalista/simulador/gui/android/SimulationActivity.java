@@ -4,15 +4,22 @@ import java.util.List;
 
 import com.actionbarsherlock.app.SherlockActivity;
 
+import br.com.vinyanalista.simulador.data.Byte;
+import br.com.vinyanalista.simulador.hardware.InstructionRegister;
+import br.com.vinyanalista.simulador.hardware.Processor;
+import br.com.vinyanalista.simulador.simulation.Animator.AnimationListener;
 import br.com.vinyanalista.simulador.simulation.Simulation;
+import br.com.vinyanalista.simulador.simulation.Simulation.SimulationListener;
 import br.com.vinyanalista.simulador.software.Instruction;
 import br.com.vinyanalista.simulador.software.ProgramParser;
 
 import android.os.Bundle;
+import android.app.ProgressDialog;
 import android.content.Context;
 
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
+import com.actionbarsherlock.view.SubMenu;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,9 +28,9 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-public class SimulationActivity extends SherlockActivity {
+public class SimulationActivity extends SherlockActivity implements
+		AnimationListener, SimulationListener {
 
 	public static final String EXTRA_PROGRAM = "program";
 
@@ -37,11 +44,42 @@ public class SimulationActivity extends SherlockActivity {
 
 	InstructionArrayAdapter adapter;
 
-	private MenuItem playPause;
-	private MenuItem stop;
+	private MenuItem playPause, stop, representationRecommended,
+			representationDecimal, representationHexadecimal,
+			representationBinary;
 
 	private Simulation simulation;
 	private AndroidAnimator animator;
+	private ProgressDialog progressDialog;
+
+	private void showWaitMessage() {
+		animator.addAnimationListener(this);
+		progressDialog = ProgressDialog.show(this, "", "Wait...");
+	}
+
+	private void hideWaitMessage() {
+		progressDialog.dismiss();
+	}
+
+	private void changeRepresentation(MenuItem representationChecked) {
+		if (representationChecked.equals(representationRecommended))
+			simulation.setRepresentation(Byte.REPRESENTATION_RECOMMENDED);
+		else if (representationChecked.equals(representationDecimal))
+			simulation.setRepresentation(Byte.REPRESENTATION_DECIMAL);
+		else if (representationChecked.equals(representationHexadecimal))
+			simulation.setRepresentation(Byte.REPRESENTATION_HEX);
+		else if (representationChecked.equals(representationBinary))
+			simulation.setRepresentation(Byte.REPRESENTATION_BINARY);
+		representationRecommended.setChecked(representationChecked
+				.equals(representationRecommended));
+		representationDecimal.setChecked(representationChecked
+				.equals(representationDecimal));
+		representationHexadecimal.setChecked(representationChecked
+				.equals(representationHexadecimal));
+		representationBinary.setChecked(representationChecked
+				.equals(representationBinary));
+
+	}
 
 	// http://www.mkyong.com/android/android-listview-example/
 	private class InstructionArrayAdapter extends ArrayAdapter<Instruction> {
@@ -125,7 +163,9 @@ public class SimulationActivity extends SherlockActivity {
 		status.setText("Click Resume to start the simulation!");
 
 		animator = new AndroidAnimator(this);
+
 		simulation = new Simulation(ProgramParser.parseFrom(null), animator);
+		simulation.addSimulationListener(this);
 
 		instructionsListView = (ListView) findViewById(R.id.instructions);
 
@@ -154,40 +194,117 @@ public class SimulationActivity extends SherlockActivity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		playPause = menu.add("Resume").setIcon(R.drawable.media_playback_start);
-		playPause.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM
+		playPause.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS
 				| MenuItem.SHOW_AS_ACTION_WITH_TEXT);
 		stop = menu.add("Stop").setIcon(R.drawable.media_playback_stop);
-		stop.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM
+		stop.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS
 				| MenuItem.SHOW_AS_ACTION_WITH_TEXT);
+		stop.setEnabled(false);
+
+		SubMenu representation = menu.addSubMenu("Representation").setIcon(
+				R.drawable.page_zoom);
+		representation.getItem()
+				.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+
+		representationRecommended = representation.add("Recommended")
+				.setCheckable(true).setChecked(true);
+		representationDecimal = representation.add("Decimal")
+				.setCheckable(true).setChecked(false);
+		representationHexadecimal = representation.add("Hexadecimal")
+				.setCheckable(true).setChecked(false);
+		representationBinary = representation.add("Binary").setCheckable(true)
+				.setChecked(false);
+
 		return true;
 	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		Toast.makeText(this, "Got click: " + item, Toast.LENGTH_SHORT).show();
 		if (item.equals(playPause)) {
 			if (item.getTitle().equals("Resume")) {
 				item.setTitle("Pause");
 				item.setIcon(R.drawable.media_playback_pause);
+				stop.setEnabled(true);
 				simulation.start();
 			} else {
+				showWaitMessage();
+				simulation.pause();
 				item.setTitle("Resume");
 				item.setIcon(R.drawable.media_playback_start);
-				simulation.pause();
 			}
-		}
-		if (item.equals(stop)) {
-			playPause.setTitle("Resume");
-			playPause.setIcon(R.drawable.media_playback_start);
+		} else if (item.equals(stop)) {
+			if (!simulation.isPaused() && !simulation.isStopped())
+				showWaitMessage();
 			simulation.stop();
-			atualizarPonteiroDeInstrucao();
-			status.setText("Click Resume to start the simulation!");
-		}
+		} else if (item.equals(representationRecommended)
+				|| item.equals(representationDecimal)
+				|| item.equals(representationHexadecimal)
+				|| item.equals(representationBinary))
+			changeRepresentation(item);
 		return true;
 	}
 
 	void atualizarPonteiroDeInstrucao() {
 		adapter.notifyDataSetChanged();
+	}
+
+	@Override
+	public void onAnimationEnd() {
+		animator.removeAnimationListener(this);
+		hideWaitMessage();
+	}
+
+	@Override
+	public void onProgramCrash() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void onProgramHalt() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void onRepresentationChange() {
+		// TODO Auto-generated method stub
+		Processor processor = simulation.getProcessor();
+		alu1.setText(processor.getALU().getIn1()
+				.getValueAsPreferredRepresentation());
+		alu2.setText(processor.getALU().getIn2()
+				.getValueAsPreferredRepresentation());
+		alu_out.setText(processor.getALU().getOut()
+				.getValueAsPreferredRepresentation());
+		acc.setText(processor.getRegister(Processor.ACC).getValue()
+				.getValueAsPreferredRepresentation());
+		pc.setText(processor.getRegister(Processor.PC).getValue()
+				.getValueAsPreferredRepresentation());
+		mbr.setText(processor.getRegister(Processor.MBR).getValue()
+				.getValueAsPreferredRepresentation());
+		mar.setText(processor.getRegister(Processor.MAR).getValue()
+				.getValueAsPreferredRepresentation());
+		ir1.setText(((InstructionRegister) processor.getRegister(Processor.IR))
+				.getInstruction().getOpCode()
+				.getValueAsPreferredRepresentation());
+		ir2.setText(((InstructionRegister) processor.getRegister(Processor.IR))
+				.getInstruction().getOperand()
+				.getValueAsPreferredRepresentation());
+	}
+
+	@Override
+	public void beforeStart() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void onSimulationStop() {
+		playPause.setTitle("Resume");
+		playPause.setIcon(R.drawable.media_playback_start);
+		stop.setEnabled(false);
+		atualizarPonteiroDeInstrucao();
+		status.setText("Click Resume to start the simulation!");
 	}
 
 	// @Override

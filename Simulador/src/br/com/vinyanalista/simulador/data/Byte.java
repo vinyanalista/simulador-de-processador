@@ -3,17 +3,20 @@ package br.com.vinyanalista.simulador.data;
 import java.util.Random;
 
 public abstract class Byte {
-	public static final int REPRESENTATION_DECIMAL = 0;
-	public static final int REPRESENTATION_BINARY = 1;
+	public static final int REPRESENTATION_RECOMMENDED = 0;
+	public static final int REPRESENTATION_DECIMAL = 1;
 	public static final int REPRESENTATION_HEX = 2;
+	public static final int REPRESENTATION_BINARY = 3;
 
 	protected static int preferredRepresentation = REPRESENTATION_DECIMAL;
 
-	protected static void setRepresentation(int representation) {
+	public static void setRepresentation(int representation) {
 		switch (representation) {
+		case REPRESENTATION_RECOMMENDED:
+			preferredRepresentation = REPRESENTATION_DECIMAL;
 		case REPRESENTATION_DECIMAL:
-		case REPRESENTATION_BINARY:
 		case REPRESENTATION_HEX:
+		case REPRESENTATION_BINARY:
 			preferredRepresentation = representation;
 		default:
 			throw new IllegalArgumentException();
@@ -47,10 +50,10 @@ public abstract class Byte {
 		switch (preferredRepresentation) {
 		case REPRESENTATION_DECIMAL:
 			return Integer.toString(value);
-		case REPRESENTATION_BINARY:
-			return getValueAsBinary();
 		case REPRESENTATION_HEX:
 			return getValueAsHex();
+		case REPRESENTATION_BINARY:
+			return getValueAsBinary();
 		default:
 			return null;
 		}
@@ -66,39 +69,40 @@ public abstract class Byte {
 		}
 	}
 
-//	public abstract void setValueAsBinary(String value);
-//
-//	protected void setValueAsBinary(String value, int minValue, int maxValue) {
-//		if (validateBinary(value)) {
-//			try {
-//				setValue(Integer.parseInt(value, 2));
-//			} catch (OutOfRangeException e) {
-//				throw new OutOfRangeException("Value " + value
-//						+ " is out of range [" + toBinary(minValue) + ".."
-//						+ toBinary(maxValue) + "]", e);
-//			}
-//		} else {
-//			throw new IllegalArgumentException("Value " + value
-//					+ " is not a valid binary!");
-//		}
-//	}
-//
-//	public abstract void setValueAsHex(String value);
-//
-//	protected void setValueAsHex(String value, int minValue, int maxValue) {
-//		if (validateHex(value)) {
-//			try {
-//				setValue(Integer.parseInt(value, 16));
-//			} catch (OutOfRangeException e) {
-//				throw new OutOfRangeException("Value " + value
-//						+ " is out of range [" + Integer.toHexString(minValue)
-//						+ ".." + Integer.toHexString(maxValue) + "]", e);
-//			}
-//		} else {
-//			throw new IllegalArgumentException("Value " + value
-//					+ " is not a valid hex!");
-//		}
-//	}
+	// public abstract void setValueAsBinary(String value);
+	//
+	// protected void setValueAsBinary(String value, int minValue, int maxValue)
+	// {
+	// if (validateBinary(value)) {
+	// try {
+	// setValue(Integer.parseInt(value, 2));
+	// } catch (OutOfRangeException e) {
+	// throw new OutOfRangeException("Value " + value
+	// + " is out of range [" + toBinary(minValue) + ".."
+	// + toBinary(maxValue) + "]", e);
+	// }
+	// } else {
+	// throw new IllegalArgumentException("Value " + value
+	// + " is not a valid binary!");
+	// }
+	// }
+	//
+	// public abstract void setValueAsHex(String value);
+	//
+	// protected void setValueAsHex(String value, int minValue, int maxValue) {
+	// if (validateHex(value)) {
+	// try {
+	// setValue(Integer.parseInt(value, 16));
+	// } catch (OutOfRangeException e) {
+	// throw new OutOfRangeException("Value " + value
+	// + " is out of range [" + Integer.toHexString(minValue)
+	// + ".." + Integer.toHexString(maxValue) + "]", e);
+	// }
+	// } else {
+	// throw new IllegalArgumentException("Value " + value
+	// + " is not a valid hex!");
+	// }
+	// }
 
 	@Override
 	public boolean equals(Object obj) {
@@ -126,9 +130,9 @@ public abstract class Byte {
 		return value.matches("[01]{8}");
 	}
 
-//	public static final boolean validateHex(String value) {
-//		return value.matches("[0-9A-Fa-f]+");
-//	}
+	// public static final boolean validateHex(String value) {
+	// return value.matches("[0-9A-Fa-f]+");
+	// }
 
 	public static void main(String[] args) {
 		byte teste1 = (byte) 127;

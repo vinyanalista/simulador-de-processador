@@ -15,11 +15,34 @@ import br.com.vinyanalista.simulador.hardware.Led;
 import br.com.vinyanalista.simulador.hardware.Processor;
 import br.com.vinyanalista.simulador.hardware.ProgramMemory;
 import br.com.vinyanalista.simulador.hardware.Register;
-import br.com.vinyanalista.simulador.simulation.Animator.AnimationEndListener;
+import br.com.vinyanalista.simulador.simulation.Animator.AnimationListener;
 import br.com.vinyanalista.simulador.software.Instruction;
 import br.com.vinyanalista.simulador.software.Program;
 
-public class Simulation implements AnimationEndListener {
+public class Simulation implements AnimationListener {
+
+	public interface SimulationListener {
+		public void beforeStart();
+
+		public void onProgramCrash();
+
+		public void onProgramHalt();
+
+		public void onRepresentationChange();
+
+		public void onSimulationStop();
+	}
+
+	private List<SimulationListener> listeners = new ArrayList<SimulationListener>();
+
+	public final void addSimulationListener(SimulationListener listener) {
+		listeners.add(listener);
+	}
+
+	public final void removeSimulationListener(SimulationListener listener) {
+		listeners.remove(listener);
+	}
+
 	private final static int STOPPED = -1;
 
 	private Program program;
@@ -72,7 +95,7 @@ public class Simulation implements AnimationEndListener {
 	public Simulation(Program program, Animator animator) {
 		this.program = program;
 		this.animator = animator;
-		animator.setAnimationEndListener(this);
+		animator.addAnimationListener(this);
 		processor = new Processor();
 		dataMemory = new DataMemory();
 		programMemory = new ProgramMemory();
@@ -81,6 +104,13 @@ public class Simulation implements AnimationEndListener {
 		animations = new ArrayList<Animation>();
 		animationsIterator = null;
 		stop();
+	}
+
+	public void setRepresentation(int representation) {
+		Byte.setRepresentation(representation);
+		OpCode.setRepresentation(representation);
+		for (SimulationListener listener : listeners)
+			listener.onRepresentationChange();
 	}
 
 	public void start() {
@@ -100,6 +130,8 @@ public class Simulation implements AnimationEndListener {
 		stopped = true;
 		animations.clear();
 		animationsIterator = null;
+		for (SimulationListener listener : listeners)
+			listener.onSimulationStop();
 	}
 
 	private void populateProgramMemory() {

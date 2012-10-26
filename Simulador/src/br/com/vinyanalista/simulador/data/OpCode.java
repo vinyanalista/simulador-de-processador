@@ -1,16 +1,17 @@
 package br.com.vinyanalista.simulador.data;
 
 public class OpCode extends Byte {
-	public static final int REPRESENTATION_MNEMONIC = 3;
+	public static final int REPRESENTATION_MNEMONIC = 4;
 
 	protected static int preferredRepresentation = REPRESENTATION_MNEMONIC;
 
-	protected static void setRepresentation(int representation) {
+	public static void setRepresentation(int representation) {
 		switch (representation) {
+		case REPRESENTATION_RECOMMENDED:
+			preferredRepresentation = REPRESENTATION_MNEMONIC;
 		case REPRESENTATION_DECIMAL:
-		case REPRESENTATION_BINARY:
 		case REPRESENTATION_HEX:
-		case REPRESENTATION_MNEMONIC:
+		case REPRESENTATION_BINARY:
 			preferredRepresentation = representation;
 		default:
 			throw new IllegalArgumentException();
@@ -126,14 +127,14 @@ public class OpCode extends Byte {
 		setValue(value, MIN_VALUE, MAX_VALUE);
 	}
 
-//	@Override
-//	public void setValueAsBinary(String value) {
-//		setValueAsBinary(value, MIN_VALUE, MIN_VALUE);
-//	}
-//
-//	@Override
-//	public void setValueAsHex(String value) {
-//		setValueAsHex(value, MIN_VALUE, MIN_VALUE);
-//	}
+	// @Override
+	// public void setValueAsBinary(String value) {
+	// setValueAsBinary(value, MIN_VALUE, MIN_VALUE);
+	// }
+	//
+	// @Override
+	// public void setValueAsHex(String value) {
+	// setValueAsHex(value, MIN_VALUE, MIN_VALUE);
+	// }
 
 }
