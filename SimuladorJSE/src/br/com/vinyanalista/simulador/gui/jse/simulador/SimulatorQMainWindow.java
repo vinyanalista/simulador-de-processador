@@ -382,7 +382,6 @@ public void table_data_memory(){
 		QApplication.initialize(args);
 		new SimulatorQMainWindow();
 		QApplication.exec();
-		
 	}
 
 	@Override

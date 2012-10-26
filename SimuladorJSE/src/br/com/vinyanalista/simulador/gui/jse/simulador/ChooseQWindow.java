@@ -3,6 +3,8 @@ package br.com.vinyanalista.simulador.gui.jse.simulador;
 import java.util.ArrayList;
 import java.util.List;
 
+import br.com.vinyanalista.simulador.examples.Example;
+
 import com.trolltech.qt.gui.QAbstractItemView;
 import com.trolltech.qt.gui.QApplication;
 import com.trolltech.qt.gui.QColor;
@@ -20,7 +22,7 @@ public class ChooseQWindow extends QMainWindow {
 	private QLabel message;
 	private QTableWidget table;
 	private QTableWidgetItem wigitem;
-	private int rowCount = 5;
+	private int rowCount = 4;
 	
 	private void initTable(){	
 		table = new QTableWidget(this);
@@ -28,9 +30,10 @@ public class ChooseQWindow extends QMainWindow {
 		table.setRowCount(rowCount);
 		table.setAutoScroll(true);
 		List<String> samplers = new ArrayList<String>();
-		samplers.add("Somador");
-		samplers.add("Subtrator");
-		samplers.add("Not sampler");
+		samplers.add(Example.ADD.toString());
+		samplers.add(Example.SUB.toString());
+		samplers.add(Example.OVERFLOW.toString());
+		samplers.add(Example.NOT.toString());
 		for(int i=0; i<samplers.size(); i++){
 					wigitem = new QTableWidgetItem(samplers.get(i));
 					table.setItem(i, 0, wigitem);
