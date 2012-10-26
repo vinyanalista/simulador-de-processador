@@ -11,6 +11,7 @@ import com.trolltech.qt.core.Qt.Orientation;
 import com.trolltech.qt.core.Qt.WindowModality;
 import com.trolltech.qt.gui.QAbstractItemView.SelectionBehavior;
 import com.trolltech.qt.gui.QAbstractItemView.SelectionMode;
+import com.trolltech.qt.gui.QAbstractItemView;
 import com.trolltech.qt.gui.QDialog;
 import com.trolltech.qt.gui.QDialogButtonBox;
 import com.trolltech.qt.gui.QFormLayout;
@@ -27,15 +28,16 @@ public class MemoryDialog extends QDialog {
 	
 	private QTabWidget tabWidget;
 
-	public static final int OPERATION_DATA = 0;
-	public static final int OPERATION_PROGRAM = 1;
-	
+	public static final int OPERATION_PROGRAM = 0;
+	public static final int OPERATION_DATA = 1;
 
 	private class DataTab extends QWidget {
 		public DataTab() {
 			QHBoxLayout mainLayout = new QHBoxLayout();			
 			QTableWidget table = new QTableWidget(this);
 			table.setColumnCount(10);
+			for(int column = 0; column < 10; column++)
+				table.setColumnWidth(column, 65);
 			table.setRowCount(14);
 			List<String> labels = new ArrayList<String>();
 			for(int i=12; i<26; i++){
@@ -60,11 +62,13 @@ public class MemoryDialog extends QDialog {
 					}
 				}
 			}
-			table.setGeometry(100, 100, table.width()+390, table.height()-17);
+			table.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers);
+//			table.setGeometry(100, 100, table.width()+390, table.height()-17);
 			table.setWindowTitle("Data Memory Table");
 			table.setWindowModality(WindowModality.WindowModal);
 			
 			mainLayout.addWidget(table);
+			resize(table.width(), table.height());
 			setLayout(mainLayout);
 		}
 	}
@@ -74,6 +78,8 @@ public class MemoryDialog extends QDialog {
 			QHBoxLayout mainLayout = new QHBoxLayout();
 			QTableWidget table = new QTableWidget();
 			table.setColumnCount(10);
+			for(int column = 0; column < 10; column++)
+				table.setColumnWidth(column, 65);
 			table.setRowCount(13);
 			List<String> labels = new ArrayList<String>();
 			for(int i=0; i<13; i++){
@@ -92,12 +98,14 @@ public class MemoryDialog extends QDialog {
 					}
 				}
 			}
-			table.setGeometry(100, 100, table.width()+390, table.height()-17);
+			table.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers);
+//			table.setGeometry(100, 100, table.width()+390, table.height()-17);
 			table.setWindowTitle("Program Memory Table");
 			table.setWindowModality(WindowModality.WindowModal);
 			
 			
 			mainLayout.addWidget(table);
+			resize(table.width(), table.height());
 			setLayout(mainLayout);
 		}
 	}
@@ -109,14 +117,14 @@ public class MemoryDialog extends QDialog {
 		this.simulation = simulation;
 		tabWidget = new QTabWidget(this);
 
-		tabWidget.addTab(new DataTab(), new QIcon("icons/edit-find.png"),
+		tabWidget.addTab(new ProgramTab(), new QIcon(
+				"icons/system_run.png"), tr("Program Memory"));
+		
+		tabWidget.addTab(new DataTab(), new QIcon("icons/server_database.png"),
 				tr("Data Memory"));
 
-		tabWidget.addTab(new ProgramTab(), new QIcon(
-				"icons/edit-find-replace.png"), tr("Program Memory"));
-
 		tabWidget.setCurrentIndex(operation);
-		tabWidget.resize(1050, 500);
+		tabWidget.resize(720, 500);
 		setFixedSize(tabWidget.size());
 	}
 }

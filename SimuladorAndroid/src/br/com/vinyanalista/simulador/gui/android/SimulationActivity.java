@@ -61,25 +61,24 @@ public class SimulationActivity extends SherlockActivity implements
 		progressDialog.dismiss();
 	}
 
-	private void changeRepresentation(MenuItem representationChecked) {
-		if (representationChecked.equals(representationRecommended))
-			simulation.setRepresentation(Byte.REPRESENTATION_RECOMMENDED);
-		else if (representationChecked.equals(representationDecimal))
-			simulation.setRepresentation(Byte.REPRESENTATION_DECIMAL);
-		else if (representationChecked.equals(representationHexadecimal))
-			simulation.setRepresentation(Byte.REPRESENTATION_HEX);
-		else if (representationChecked.equals(representationBinary))
-			simulation.setRepresentation(Byte.REPRESENTATION_BINARY);
-		representationRecommended.setChecked(representationChecked
-				.equals(representationRecommended));
-		representationDecimal.setChecked(representationChecked
-				.equals(representationDecimal));
-		representationHexadecimal.setChecked(representationChecked
-				.equals(representationHexadecimal));
-		representationBinary.setChecked(representationChecked
-				.equals(representationBinary));
-
-	}
+	// private void changeRepresentation(MenuItem representationChecked) {
+	// if (representationChecked.equals(representationRecommended))
+	// simulation.setRepresentation(Byte.REPRESENTATION_RECOMMENDED);
+	// else if (representationChecked.equals(representationDecimal))
+	// simulation.setRepresentation(Byte.REPRESENTATION_DECIMAL);
+	// else if (representationChecked.equals(representationHexadecimal))
+	// simulation.setRepresentation(Byte.REPRESENTATION_HEX);
+	// else if (representationChecked.equals(representationBinary))
+	// simulation.setRepresentation(Byte.REPRESENTATION_BINARY);
+	// representationRecommended.setChecked(representationChecked
+	// .equals(representationRecommended));
+	// representationDecimal.setChecked(representationChecked
+	// .equals(representationDecimal));
+	// representationHexadecimal.setChecked(representationChecked
+	// .equals(representationHexadecimal));
+	// representationBinary.setChecked(representationChecked
+	// .equals(representationBinary));
+	// }
 
 	// http://www.mkyong.com/android/android-listview-example/
 	private class InstructionArrayAdapter extends ArrayAdapter<Instruction> {
@@ -201,19 +200,20 @@ public class SimulationActivity extends SherlockActivity implements
 				| MenuItem.SHOW_AS_ACTION_WITH_TEXT);
 		stop.setEnabled(false);
 
-		SubMenu representation = menu.addSubMenu("Representation").setIcon(
-				R.drawable.page_zoom);
-		representation.getItem()
-				.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-
-		representationRecommended = representation.add("Recommended")
-				.setCheckable(true).setChecked(true);
-		representationDecimal = representation.add("Decimal")
-				.setCheckable(true).setChecked(false);
-		representationHexadecimal = representation.add("Hexadecimal")
-				.setCheckable(true).setChecked(false);
-		representationBinary = representation.add("Binary").setCheckable(true)
-				.setChecked(false);
+		// SubMenu representation = menu.addSubMenu("Representation").setIcon(
+		// R.drawable.page_zoom);
+		// representation.getItem()
+		// .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+		//
+		// representationRecommended = representation.add("Recommended")
+		// .setCheckable(true).setChecked(true);
+		// representationDecimal = representation.add("Decimal")
+		// .setCheckable(true).setChecked(false);
+		// representationHexadecimal = representation.add("Hexadecimal")
+		// .setCheckable(true).setChecked(false);
+		// representationBinary =
+		// representation.add("Binary").setCheckable(true)
+		// .setChecked(false);
 
 		return true;
 	}
@@ -236,11 +236,12 @@ public class SimulationActivity extends SherlockActivity implements
 			if (!simulation.isPaused() && !simulation.isStopped())
 				showWaitMessage();
 			simulation.stop();
-		} else if (item.equals(representationRecommended)
-				|| item.equals(representationDecimal)
-				|| item.equals(representationHexadecimal)
-				|| item.equals(representationBinary))
-			changeRepresentation(item);
+		}
+		// } else if (item.equals(representationRecommended)
+		// || item.equals(representationDecimal)
+		// || item.equals(representationHexadecimal)
+		// || item.equals(representationBinary))
+		// changeRepresentation(item);
 		return true;
 	}
 

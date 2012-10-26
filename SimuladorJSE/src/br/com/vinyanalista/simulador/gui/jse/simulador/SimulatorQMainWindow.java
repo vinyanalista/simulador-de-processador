@@ -5,8 +5,9 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import br.com.vinyanalista.simulador.simulation.Animator.AnimationEndListener;
+import br.com.vinyanalista.simulador.simulation.Animator.AnimationListener;
 import br.com.vinyanalista.simulador.simulation.Simulation;
+import br.com.vinyanalista.simulador.simulation.Simulation.SimulationListener;
 import br.com.vinyanalista.simulador.software.Instruction;
 import br.com.vinyanalista.simulador.software.ProgramParser;
 
@@ -14,6 +15,7 @@ import com.trolltech.qt.QtBlockedSlot;
 import com.trolltech.qt.core.QByteArray;
 import com.trolltech.qt.core.QRect;
 import com.trolltech.qt.core.QTimer;
+import com.trolltech.qt.gui.QAbstractItemView;
 import com.trolltech.qt.gui.QAbstractItemView.SelectionBehavior;
 import com.trolltech.qt.gui.QAbstractItemView.SelectionMode;
 import com.trolltech.qt.gui.QApplication;
@@ -33,16 +35,13 @@ import com.trolltech.qt.gui.QStatusBar;
 import com.trolltech.qt.gui.QTableWidget;
 import com.trolltech.qt.gui.QTableWidgetItem;
 
-public class SimulatorQMainWindow extends QMainWindow implements AnimationEndListener {
+public class SimulatorQMainWindow extends QMainWindow implements AnimationListener, SimulationListener {
 
 	private QPixmap fundo;
 	private static QFont fonte;
 	static QPalette corVerde;
 	static QPalette corVermelha;
 	QPalette corPreta;
-	QTimer Timer;
-	
-	private int contaPisca=0;
 	
 	public static QTableWidget tablePrincipal;
 	QTableWidgetItem wigitem = null;
@@ -94,10 +93,11 @@ public class SimulatorQMainWindow extends QMainWindow implements AnimationEndLis
 		tablePrincipal.setHorizontalHeaderLabels(labels);
 		tablePrincipal.setSelectionMode(SelectionMode.SingleSelection);
 		tablePrincipal.setSelectionBehavior(SelectionBehavior.SelectRows);
-		tablePrincipal.setColumnWidth(0, 102);
-		tablePrincipal.setColumnWidth(1, 102);
+		tablePrincipal.setColumnWidth(0, 65);
+		tablePrincipal.setColumnWidth(1, 65);
+		tablePrincipal.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers);
 		tablePrincipal.selectRow(0);
-		tablePrincipal.setGeometry(800, 60, 270, 500);
+		tablePrincipal.setGeometry(800, 60, 180, 500);
 		tablePrincipal.show();
 	}
 	
@@ -189,93 +189,35 @@ public class SimulatorQMainWindow extends QMainWindow implements AnimationEndLis
 	}
 	
 	private void pause(){
+		exibirAguarde("Aguarde...");
 		simulation.pause();
-		piscador("Aguarde...", true);
 	}
 	
 	private void stop(){
+		exibirAguarde("Aguarde...");
 		simulation.stop();
-		piscador("Aguarde...", true);
 		zeraLabels();
 		tablePrincipal.selectRow(0);
 	}
 	
-	private void piscador(String texto, boolean seisPiscadas){
-		QPalette cor = new QPalette();
-		cor.setColor(QPalette.ColorRole.WindowText, QColor.darkBlue);
-		
-		QPalette cor2 = new QPalette();
-		cor2.setColor(QPalette.ColorRole.WindowText, QColor.gray);
-	
-		QFont f = new QFont();
-		f.setBold(true);
-		f.setPointSize(25);
-		
-		aguardeLabel = new QLabel(this);
+	private void exibirAguarde(String texto){
 		aguardeLabel.setText(texto);
-		aguardeLabel.setPalette(corPreta);
-		aguardeLabel.setFont(f);
-		
-		aguardeLabel.setGeometry(240, 185, 200, 200);
-		
-	
-		
-		if(Timer == null || !Timer.isActive()){
-			Timer = new QTimer();
-			if(seisPiscadas){
-				Timer.timeout.connect(this, "pisca6()");
-				Timer.start(300);
-			}else{
-				Timer.timeout.connect(this, "pisca2()");
-				Timer.start(500);
-			}
-		}
+		aguardeLabel.show();
 	}
 	
-	private void pisca6() {
-		if(aguardeLabel.isHidden()){
-			aguardeLabel.show();
-		}else{
-			aguardeLabel.hide();
-		}
-		if(contaPisca>6){
-			contaPisca = 0;
-			Timer.stop();
-		}else{
-			contaPisca++;
-		}
-		
-	}
-	
-	private void pisca2() {
-		if(aguardeLabel.isHidden()){
-			aguardeLabel.show();
-		}else{
-			aguardeLabel.hide();
-		}
-		if(contaPisca>2){
-			contaPisca = 0;
-			Timer.stop();
-		}else{
-			contaPisca++;
-		}
-		
-	}
-	
-	
-	
-	@Override
-	public void onAnimationEnd() {
-		
+	private void esconderAguarde(){
+		aguardeLabel.hide();
 	}
 	
 public void table_program_memory(){
+		if (!simulation.isPaused() && !simulation.isStopped())
 		pause();
 		showMemoryDialog(MemoryDialog.OPERATION_PROGRAM);
 		}
 
 
 public void table_data_memory(){
+	if (!simulation.isPaused() && !simulation.isStopped())
 	pause();
 	showMemoryDialog(MemoryDialog.OPERATION_DATA);
 	}
@@ -289,8 +231,9 @@ public void table_data_memory(){
 		byteDeExemplo.hide();
 
 		animator = new QtAnimator();
-//		animator.setAnimationEndListener(this);
+		animator.addAnimationListener(this);
 		simulation = new Simulation(ProgramParser.parseFrom(null), animator);
+		simulation.addSimulationListener(this);
 		
 		//***************************************************	
 		//*               Colocando a fonte                 *
@@ -370,23 +313,30 @@ public void table_data_memory(){
 		bt[2].setGeometry(830+120, 15, 50, bt[0].height());
 		
 		bt[3] = new QPushButton(this);
-		bt[3].setText("Data Memory");
-		bt[3].clicked.connect(this, "table_data_memory()");
+		bt[3].setText("Program Memory");
+		bt[3].clicked.connect(this, "table_program_memory()");
 		bt[3].setGeometry(551, 397, bt[3].width()+35+83, bt[3].height()+38);	
 		
 		bt[4] = new QPushButton(this);
-		bt[4].setText("Program Memory");
-		bt[4].clicked.connect(this, "table_program_memory()");
+		bt[4].setText("Data Memory");
+		bt[4].clicked.connect(this, "table_data_memory()");
 		bt[4].setGeometry(551, 473, bt[4].width()+35+83, bt[4].height()+38);
-		
-		
-		
-		
 		
 		statusBar = statusBar();
 		status = new QLabel("Click Play to start simulation.");
 		status.setPalette(corPreta);
 		statusBar.addWidget(status);
+		
+		QFont f = new QFont();
+		f.setBold(true);
+		f.setPointSize(25);
+		
+		aguardeLabel = new QLabel(this);
+		aguardeLabel.setText("Aguarde...");
+		aguardeLabel.setPalette(corPreta);
+		aguardeLabel.setFont(f);
+		aguardeLabel.setGeometry(240, 185, 200, 200);
+		aguardeLabel.setVisible(false);
 		
 		initLabels();
 		zeraLabels();
@@ -420,6 +370,36 @@ public void table_data_memory(){
 		new SimulatorQMainWindow();
 		QApplication.exec();
 		
+	}
+
+	@Override
+	public void onAnimationEnd() {
+		esconderAguarde();
+	}
+
+	@Override
+	public void beforeStart() {
+		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public void onProgramCrash() {
+		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public void onProgramHalt() {
+		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public void onRepresentationChange() {
+		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public void onSimulationStop() {
+		// TODO Auto-generated method stub
 	}
 	
 }
