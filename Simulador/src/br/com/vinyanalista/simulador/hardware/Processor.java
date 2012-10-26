@@ -43,7 +43,6 @@ public class Processor {
 				new Register().setName(Register.MBR_NAME)
 						.setCompleteName(Register.MBR_COMPLETE_NAME)
 						.setDescription(Register.MBR_DESCRIPTION));
-		registers.put(IR,
-				new InstructionRegister().setValue(new InstructionAddress(0)));
+		registers.put(IR, new InstructionRegister());
 	}
 }

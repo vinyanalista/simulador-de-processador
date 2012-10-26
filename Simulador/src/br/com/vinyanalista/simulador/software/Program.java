@@ -6,7 +6,7 @@ import java.util.List;
 public class Program {
 	List<Instruction> instructions = new ArrayList<Instruction>();
 	String sourceCode;
-
+	
 	public List<Instruction> getInstructions() {
 		return instructions;
 	}
@@ -14,4 +14,9 @@ public class Program {
 	public String getSourceCode() {
 		return sourceCode;
 	}
+	
+	public void setSourceCode(String sourceCode) {
+		this.sourceCode = sourceCode;
+	}
+	
 }

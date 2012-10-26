@@ -5,6 +5,8 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import br.com.vinyanalista.simulador.hardware.InstructionRegister;
+import br.com.vinyanalista.simulador.hardware.Processor;
 import br.com.vinyanalista.simulador.simulation.Animator.AnimationListener;
 import br.com.vinyanalista.simulador.simulation.Simulation;
 import br.com.vinyanalista.simulador.simulation.Simulation.SimulationListener;
@@ -82,8 +84,10 @@ public class SimulatorQMainWindow extends QMainWindow implements AnimationListen
 					wigitem = new QTableWidgetItem(inst.get(i).getOpCode().getValueAsMnemonic());
 					tablePrincipal.setItem(i, j, wigitem);
 					}else{
-					wigitem = new QTableWidgetItem(inst.get(i).getOperand().getValueAsPreferredRepresentation());
-					tablePrincipal.setItem(i, j, wigitem);
+						if (inst.get(i).getOperand() != null) {
+							wigitem = new QTableWidgetItem(inst.get(i).getOperand().getValueAsPreferredRepresentation());
+							tablePrincipal.setItem(i, j, wigitem);
+						}
 				}
 			}
 		}
@@ -165,15 +169,15 @@ public class SimulatorQMainWindow extends QMainWindow implements AnimationListen
 	
 	private void zeraLabels(){
 		labelLed.setText("00000000");
-		labelAcc.setText("00000000");
-		labelALU1.setText("00000000");
-		labelALU2.setText("00000000");
-		labelALUResult.setText("00000000");
-		labelPC.setText("00000000");
-		labelIROPCODE.setText("00000000");
-		labelIROPERAND.setText("00000000");
-		labelMAR.setText("00000000");
-		labelMBR.setText("00000000");
+		labelAcc.setText(simulation.getProcessor().getRegister(Processor.ACC).getValue().getValueAsPreferredRepresentation());
+		labelALU1.setText(simulation.getProcessor().getALU().getIn1().getValueAsPreferredRepresentation());
+		labelALU2.setText(simulation.getProcessor().getALU().getIn2().getValueAsPreferredRepresentation());
+		labelALUResult.setText(simulation.getProcessor().getALU().getOut().getValueAsPreferredRepresentation());
+		labelPC.setText(simulation.getProcessor().getRegister(Processor.PC).getValue().getValueAsPreferredRepresentation());
+		labelIROPCODE.setText(((InstructionRegister)simulation.getProcessor().getRegister(Processor.IR)).getInstruction().getOpCode().getValueAsPreferredRepresentation());
+		labelIROPERAND.setText(((InstructionRegister)simulation.getProcessor().getRegister(Processor.IR)).getInstruction().getOperand().getValueAsPreferredRepresentation());
+		labelMAR.setText(simulation.getProcessor().getRegister(Processor.MAR).getValue().getValueAsPreferredRepresentation());
+		labelMBR.setText(simulation.getProcessor().getRegister(Processor.MBR).getValue().getValueAsPreferredRepresentation());
 	}
 
 	public static void setGenericLabel(QLabel gener) {

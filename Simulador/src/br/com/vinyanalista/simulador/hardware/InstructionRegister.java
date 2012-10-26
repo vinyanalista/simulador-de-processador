@@ -37,4 +37,9 @@ public class InstructionRegister extends Register {
 	public Byte getValue() {
 		return null;
 	}
+	
+	@Override
+	public Register setValue(Byte value) {
+		return null;
+	}
 }

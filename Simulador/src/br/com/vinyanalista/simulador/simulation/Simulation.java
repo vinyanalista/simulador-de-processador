@@ -97,6 +97,7 @@ public class Simulation implements AnimationListener {
 		this.animator = animator;
 		animator.addAnimationListener(this);
 		processor = new Processor();
+		resetProcessor();
 		dataMemory = new DataMemory();
 		programMemory = new ProgramMemory();
 		populateProgramMemory();
@@ -117,6 +118,9 @@ public class Simulation implements AnimationListener {
 		if (isStopped()) {
 			processor.getRegister(Processor.PC).setValue(
 					new InstructionAddress(0));
+			animations.add(new Animation(AnimationType.PC_CHANGE, getRegister(
+					Processor.PC).getValue()));
+			animationsIterator = animations.iterator();
 		}
 		stopped = false;
 		animate();
@@ -134,12 +138,27 @@ public class Simulation implements AnimationListener {
 			listener.onSimulationStop();
 	}
 
+	private void resetProcessor() {
+		getRegister(Processor.ACC).setValue(new Data());
+		getRegister(Processor.PC).setValue(new InstructionAddress());
+		getRegister(Processor.MAR).setValue(new InstructionAddress());
+		getRegister(Processor.MBR).setValue(new Data());
+		getInstructionRegister().setInstruction(
+				new Instruction(new OpCode(), new Data()));
+		processor.getALU().setIn1(new Data());
+		processor.getALU().setIn2(new Data());
+		processor.getALU().setOut(new Data());
+	}
+
 	private void populateProgramMemory() {
 		int address = programMemory.getMinAddress();
 		for (Instruction instruction : program.getInstructions()) {
 			programMemory.writeByte(address, instruction.getOpCode());
 			address++;
-			programMemory.writeByte(address, instruction.getOperand());
+			if (instruction.getOperand() != null)
+				programMemory.writeByte(address, instruction.getOperand());
+			else
+				programMemory.writeByte(address, new Data());
 			address++;
 		}
 	}
@@ -274,6 +293,7 @@ public class Simulation implements AnimationListener {
 		animations.add(new Animation(AnimationType.STATUS_FETCH_OPERAND, null));
 		switch (getInstruction().getOpCode().getValue()) {
 		case OpCode.ADD_OPCODE:
+		case OpCode.SUB_OPCODE:
 			readFromMemory(getInstruction().getOperand().getValue());
 			animations.add(new Animation(AnimationType.ACC_TO_ALU_IN_1,
 					getRegister(Processor.ACC).getValue()));
@@ -325,7 +345,22 @@ public class Simulation implements AnimationListener {
 			setAcc((Data) getRegister(Processor.MBR).getValue());
 			break;
 		case OpCode.ADD_OPCODE:
-			processor.getALU().add();
+		case OpCode.SUB_OPCODE:
+			if (getInstruction().getOpCode().getValue() == OpCode.ADD_OPCODE)
+				processor.getALU().add();
+			else
+				processor.getALU().sub();
+			animations.add(new Animation(AnimationType.ALU_OUTPUT_CHANGE,
+					processor.getALU().getOut()));
+			animations.add(new Animation(AnimationType.ALU_OUTPUT_TO_ACC,
+					processor.getALU().getOut()));
+			setAcc((Data) processor.getALU().getOut());
+			break;
+		case OpCode.NOT_OPCODE:
+			animations.add(new Animation(AnimationType.ACC_TO_ALU_IN_1,
+					getRegister(Processor.ACC).getValue()));
+			setAlu1((Data) getRegister(Processor.ACC).getValue());
+			processor.getALU().not();
 			animations.add(new Animation(AnimationType.ALU_OUTPUT_CHANGE,
 					processor.getALU().getOut()));
 			animations.add(new Animation(AnimationType.ALU_OUTPUT_TO_ACC,

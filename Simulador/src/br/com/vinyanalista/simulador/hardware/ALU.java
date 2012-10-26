@@ -35,4 +35,14 @@ public class ALU {
 		out = new Data((byte) (in1.getValue() + in2.getValue()));
 		return out;
 	}
+
+	public Data sub() {
+		out = new Data((byte) (in1.getValue() - in2.getValue()));
+		return out;
+	}
+	
+	public Data not() {
+		out = new Data((byte) (255 - in1.getValue()));
+		return out;
+	}
 }
