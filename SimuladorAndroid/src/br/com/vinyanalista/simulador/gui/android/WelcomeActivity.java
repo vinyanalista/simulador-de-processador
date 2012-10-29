@@ -4,47 +4,45 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import com.actionbarsherlock.app.SherlockActivity;
+import br.com.vinyanalista.simulador.gui.android.R;
+import br.com.vinyanalista.simulador.gui.android.editor.ProgramEditorActivity;
+
+import com.actionbarsherlock.app.SherlockListActivity;
 
 import android.os.Bundle;
-import android.app.Activity;
 import android.content.Intent;
-import android.view.Menu;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.Toast;
 
-public class WelcomeActivity extends SherlockActivity {
+public class WelcomeActivity extends SherlockListActivity {
 
 	// http://wptrafficanalyzer.in/blog/listview-with-images-and-text-using-simple-adapter-in-android/
-	private ListView menu;
 
-	protected static final int OPCAO_ABRIR = 0;
-	protected static final int OPCAO_RECENTES = 1;
-	protected static final int OPCAO_SOBRE = 2;
-	protected static final int OPCAO_TESTE = 3;
-
-	private String ICONE = "icone";
-	private String ROTULO = "opcao";
-
-	String[] rotulos = new String[] { "Abrir programa", "Programas recentes",
-			"Sobre", "Teste das animações", };
-
-	int[] icones = new int[] { R.drawable.document_open,
-			R.drawable.document_open_recent, R.drawable.document_open_recent,
-			R.drawable.help_about };
+	protected static final int OPCAO_NOVO = 0;
+	protected static final int OPCAO_ABRIR = 1;
+	protected static final int OPCAO_RECENTES = 2;
+	protected static final int OPCAO_EXEMPLOS = 3;
+	protected static final int OPCAO_SOBRE = 4;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.welcome);
+
+		String ICONE = "icone";
+		String ROTULO = "opcao";
+
+		String[] rotulos = new String[] { "Novo programa", "Abrir programa",
+				"Programas recentes", "Programas de exemplo", "Sobre" };
+
+		int[] icones = new int[] { R.drawable.document_new,
+				R.drawable.document_open, R.drawable.document_open_recent,
+				R.drawable.document_open_recent, R.drawable.help_about };
 
 		List<HashMap<String, String>> aList = new ArrayList<HashMap<String, String>>();
 
-		for (int opcao = 0; opcao < 4; opcao++) {
+		for (int opcao = 0; opcao < 5; opcao++) {
 			HashMap<String, String> hm = new HashMap<String, String>();
 			hm.put(ICONE, Integer.toString(icones[opcao]));
 			hm.put(ROTULO, rotulos[opcao]);
@@ -58,30 +56,36 @@ public class WelcomeActivity extends SherlockActivity {
 		SimpleAdapter adapter = new SimpleAdapter(getBaseContext(), aList,
 				R.layout.list_view_icon_label_layout, from, to);
 
-		menu = (ListView) findViewById(R.id.welcome_menu);
-		menu.setAdapter(adapter);
-		menu.setOnItemClickListener(new OnItemClickListener() {
-			@Override
-			public void onItemClick(AdapterView<?> arg0, View arg1,
-					int position, long arg3) {
-				switch (position) {
-				case OPCAO_ABRIR:
-					startActivityForResult(new Intent(WelcomeActivity.this,
-							FileChooserActivity.class), OPCAO_ABRIR);
-					break;
-				case OPCAO_RECENTES:
-					startActivityForResult(new Intent(WelcomeActivity.this,
-							RecentFilesActivity.class), OPCAO_RECENTES);
-					break;
-				case OPCAO_TESTE:
-					startActivity(new Intent(WelcomeActivity.this,
-							SimulationActivity.class));
-					break;
-				default:
-					break;
-				}
-			}
-		});
+		getListView().setAdapter(adapter);
+	}
+
+	@Override
+	protected void onListItemClick(ListView l, View v, int position, long id) {
+		switch (position) {
+		case OPCAO_NOVO:
+			startActivity(new Intent(WelcomeActivity.this,
+					ProgramEditorActivity.class));
+			break;
+		case OPCAO_ABRIR:
+			startActivityForResult(new Intent(WelcomeActivity.this,
+					FileChooserActivity.class), OPCAO_ABRIR);
+			break;
+		case OPCAO_RECENTES:
+			startActivityForResult(new Intent(WelcomeActivity.this,
+					RecentFilesActivity.class), OPCAO_RECENTES);
+			break;
+		case OPCAO_EXEMPLOS:
+			startActivity(new Intent(WelcomeActivity.this,
+					ExamplesActivity.class));
+			break;
+		case OPCAO_SOBRE:
+			Toast.makeText(WelcomeActivity.this, "Não implementado ainda",
+					Toast.LENGTH_SHORT).show();
+			break;
+		default:
+			break;
+		}
+
 	}
 
 	// @Override
@@ -100,7 +104,7 @@ public class WelcomeActivity extends SherlockActivity {
 						"File Clicked: "
 								+ data.getStringExtra(FileChooserActivity.FILE_NAME),
 						Toast.LENGTH_SHORT).show();
-//				startActivity(new Intent(this, SimulationActivity.class));
+				// startActivity(new Intent(this, SimulationActivity.class));
 			}
 			break;
 		case OPCAO_RECENTES:
@@ -110,7 +114,7 @@ public class WelcomeActivity extends SherlockActivity {
 						"File Clicked: "
 								+ data.getStringExtra(RecentFilesActivity.FILE_NAME),
 						Toast.LENGTH_SHORT).show();
-//				startActivity(new Intent(this, SimulationActivity.class));
+				// startActivity(new Intent(this, SimulationActivity.class));
 			}
 			break;
 		}

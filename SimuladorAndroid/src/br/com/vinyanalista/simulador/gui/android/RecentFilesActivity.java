@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import br.com.vinyanalista.simulador.gui.android.R;
+
 import com.actionbarsherlock.app.SherlockListActivity;
 
 import android.content.Intent;

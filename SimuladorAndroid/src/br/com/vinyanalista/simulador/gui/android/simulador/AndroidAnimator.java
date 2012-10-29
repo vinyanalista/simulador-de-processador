@@ -1,4 +1,4 @@
-package br.com.vinyanalista.simulador.gui.android;
+package br.com.vinyanalista.simulador.gui.android.simulador;
 
 import com.nineoldandroids.animation.Animator.AnimatorListener;
 import com.nineoldandroids.animation.AnimatorSet;

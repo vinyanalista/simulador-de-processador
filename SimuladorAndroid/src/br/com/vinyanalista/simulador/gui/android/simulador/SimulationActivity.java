@@ -1,10 +1,13 @@
-package br.com.vinyanalista.simulador.gui.android;
+package br.com.vinyanalista.simulador.gui.android.simulador;
 
 import java.util.List;
 
 import com.actionbarsherlock.app.SherlockActivity;
 
 import br.com.vinyanalista.simulador.data.Byte;
+import br.com.vinyanalista.simulador.examples.Example;
+import br.com.vinyanalista.simulador.examples.Examples;
+import br.com.vinyanalista.simulador.gui.android.R;
 import br.com.vinyanalista.simulador.hardware.InstructionRegister;
 import br.com.vinyanalista.simulador.hardware.Processor;
 import br.com.vinyanalista.simulador.simulation.Animator.AnimationListener;
@@ -12,10 +15,12 @@ import br.com.vinyanalista.simulador.simulation.Simulation;
 import br.com.vinyanalista.simulador.simulation.Simulation.SimulationListener;
 import br.com.vinyanalista.simulador.software.Instruction;
 import br.com.vinyanalista.simulador.software.ProgramParser;
+import br.com.vinyanalista.simulador.software.Program;
 
 import android.os.Bundle;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
@@ -23,14 +28,16 @@ import com.actionbarsherlock.view.SubMenu;
 
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
 public class SimulationActivity extends SherlockActivity implements
-		AnimationListener, SimulationListener {
+		AnimationListener, SimulationListener, OnClickListener {
 
 	public static final String EXTRA_PROGRAM = "program";
 
@@ -44,13 +51,16 @@ public class SimulationActivity extends SherlockActivity implements
 
 	InstructionArrayAdapter adapter;
 
-	private MenuItem playPause, stop, representationRecommended,
-			representationDecimal, representationHexadecimal,
-			representationBinary;
+	private MenuItem playPause, stop;
+	// private MenuItem representationRecommended,
+	// representationDecimal, representationHexadecimal,
+	// representationBinary;
 
 	private Simulation simulation;
 	private AndroidAnimator animator;
 	private ProgressDialog progressDialog;
+
+	private Button instructionsMemory, dataMemory;
 
 	private void showWaitMessage() {
 		animator.addAnimationListener(this);
@@ -108,8 +118,11 @@ public class SimulationActivity extends SherlockActivity implements
 
 			instructionOpcode.setText(instructions.get(position).getOpCode()
 					.getValueAsPreferredRepresentation());
-			instructionOperand.setText(instructions.get(position).getOperand()
-					.getValueAsPreferredRepresentation());
+			if (instructions.get(position).getOperand() != null)
+				instructionOperand.setText(instructions.get(position)
+						.getOperand().getValueAsPreferredRepresentation());
+			else
+				instructionOperand.setText("");
 			instructionIcon.setImageResource(R.drawable.arrow_right);
 
 			if (position == simulation.getInstructionIndex() - 1) {
@@ -163,8 +176,27 @@ public class SimulationActivity extends SherlockActivity implements
 
 		animator = new AndroidAnimator(this);
 
-		simulation = new Simulation(ProgramParser.parseFrom(null), animator);
+		Program program = null;
+
+		switch (getIntent().getExtras().getInt(EXTRA_PROGRAM)) {
+		case 0:
+			program = Examples.getExample(Example.ADD);
+			break;
+		case 1:
+			program = Examples.getExample(Example.SUB);
+			break;
+		case 2:
+			program = Examples.getExample(Example.OVERFLOW);
+			break;
+		case 3:
+			program = Examples.getExample(Example.NOT);
+			break;
+		}
+
+		simulation = new Simulation(program, animator);
 		simulation.addSimulationListener(this);
+
+		resetProcessor();
 
 		instructionsListView = (ListView) findViewById(R.id.instructions);
 
@@ -188,6 +220,35 @@ public class SimulationActivity extends SherlockActivity implements
 		// android.R.layout.simple_list_item_1, animations));
 		// animationsListView.setOnItemClickListener(this);
 
+		instructionsMemory = (Button) findViewById(R.id.instructions_memory);
+		instructionsMemory.setOnClickListener(this);
+		dataMemory = (Button) findViewById(R.id.data_memory);
+		dataMemory.setOnClickListener(this);
+
+	}
+
+	private void resetProcessor() {
+		led.setText("00000000");
+		acc.setText(simulation.getProcessor().getRegister(Processor.ACC)
+				.getValue().getValueAsPreferredRepresentation());
+		alu1.setText(simulation.getProcessor().getALU().getIn1()
+				.getValueAsPreferredRepresentation());
+		alu2.setText(simulation.getProcessor().getALU().getIn2()
+				.getValueAsPreferredRepresentation());
+		alu_out.setText(simulation.getProcessor().getALU().getOut()
+				.getValueAsPreferredRepresentation());
+		pc.setText(simulation.getProcessor().getRegister(Processor.PC)
+				.getValue().getValueAsPreferredRepresentation());
+		ir1.setText(((InstructionRegister) simulation.getProcessor()
+				.getRegister(Processor.IR)).getInstruction().getOpCode()
+				.getValueAsPreferredRepresentation());
+		ir2.setText(((InstructionRegister) simulation.getProcessor()
+				.getRegister(Processor.IR)).getInstruction().getOperand()
+				.getValueAsPreferredRepresentation());
+		mar.setText(simulation.getProcessor().getRegister(Processor.MAR)
+				.getValue().getValueAsPreferredRepresentation());
+		mbr.setText(simulation.getProcessor().getRegister(Processor.MBR)
+				.getValue().getValueAsPreferredRepresentation());
 	}
 
 	@Override
@@ -220,23 +281,13 @@ public class SimulationActivity extends SherlockActivity implements
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		if (item.equals(playPause)) {
-			if (item.getTitle().equals("Resume")) {
-				item.setTitle("Pause");
-				item.setIcon(R.drawable.media_playback_pause);
-				stop.setEnabled(true);
-				simulation.start();
-			} else {
-				showWaitMessage();
-				simulation.pause();
-				item.setTitle("Resume");
-				item.setIcon(R.drawable.media_playback_start);
-			}
-		} else if (item.equals(stop)) {
-			if (!simulation.isPaused() && !simulation.isStopped())
-				showWaitMessage();
-			simulation.stop();
-		}
+		if (item.equals(playPause))
+			if (item.getTitle().equals("Resume"))
+				resume();
+			else
+				pause();
+		else if (item.equals(stop))
+			stop();
 		// } else if (item.equals(representationRecommended)
 		// || item.equals(representationDecimal)
 		// || item.equals(representationHexadecimal)
@@ -247,6 +298,29 @@ public class SimulationActivity extends SherlockActivity implements
 
 	void atualizarPonteiroDeInstrucao() {
 		adapter.notifyDataSetChanged();
+		instructionsListView.smoothScrollToPosition(simulation
+				.getInstructionIndex() - 1);
+	}
+
+	void pause() {
+		if (!simulation.isPaused() && !simulation.isStopped())
+			showWaitMessage();
+		simulation.pause();
+		playPause.setTitle("Resume");
+		playPause.setIcon(R.drawable.media_playback_start);
+	}
+
+	void resume() {
+		playPause.setTitle("Pause");
+		playPause.setIcon(R.drawable.media_playback_pause);
+		stop.setEnabled(true);
+		simulation.start();
+	}
+
+	void stop() {
+		if (!simulation.isPaused() && !simulation.isStopped())
+			showWaitMessage();
+		simulation.stop();
 	}
 
 	@Override
@@ -306,6 +380,23 @@ public class SimulationActivity extends SherlockActivity implements
 		stop.setEnabled(false);
 		atualizarPonteiroDeInstrucao();
 		status.setText("Click Resume to start the simulation!");
+	}
+
+	void showMemoryContent(int whichMemory) {
+		MemoryActivity.DATA_MEMORY = simulation.getDataMemory();
+		MemoryActivity.INSTRUCTION_MEMORY = simulation.getProgramMemory();
+		Intent i = new Intent(this, MemoryActivity.class);
+		i.putExtra(MemoryActivity.MEMORY_TO_DISPLAY, whichMemory);
+		startActivity(i);
+	}
+
+	@Override
+	public void onClick(View view) {
+		pause();
+		if (view.equals(instructionsMemory))
+			showMemoryContent(MemoryActivity.DISPLAY_INSTRUCTION_MEMORY);
+		else if (view.equals(dataMemory))
+			showMemoryContent(MemoryActivity.DISPLAY_DATA_MEMORY);
 	}
 
 	// @Override
