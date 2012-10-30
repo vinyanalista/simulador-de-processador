@@ -75,39 +75,25 @@ comando_invalido(X,Y,'OPERATION_DOES_NOT_REQUIRE_VALUE') :-
     nao_pede_valor(X), !, 
     \+ noOprdCode(Y).
 
-/*
- * Quebra um bloco de texto pelos caracteres de nova linha (\n) e checa se todas 
- * as linhas são válidas. As isntruções e os erros são armazenados em Es e Is, 
- * respectivamente. 
- */
-valida_bloco(X,Is,Es) :- 
-    lines(X,ProgS), 
-    map_valida(ProgS,Fs,Is,1), 
-    parse_errors(Fs,Es).
+valida(X,Instr,Erro,Linha) :- 
+    valida_(X,F,Instr,Linha), 
+    parse_errors(F,Erro).
 
-parse_errors([],[]).
-parse_errors([[L | F] | Fs],[[L | E] | Es]) :- 
+parse_errors([],[]) :- !.
+parse_errors([L,F],[L,E]) :- 
     extrai_comando(F,C,V), 
-    comando_invalido(C,V,E),
-    parse_errors(Fs,Es).
+    comando_invalido(C,V,E).
 
-map_valida([],[],[],_).
-map_valida([X| Xs],Fs,Is,C) :- 
-    Co is C + 1,
+valida_(X,_,_,_) :-
     (vazia(X); 
-    comentario(X)), !,
-    map_valida(Xs,Fs,Is,Co).
-map_valida([X | Xs],Fs,[[Oprd | Opcd] | Is],C) :- 
-    Co is C + 1,
-    valida_linha(X,Opcd,Oprd), !,
-    map_valida(Xs,Fs,Is,Co).
-map_valida([X | Xs],[[C | X] | Fs],Is,C) :- 
-    Co is C + 1,
-    map_valida(Xs,Fs,Is,Co).
+    comentario(X)), !. 
+valida_(X,_,[Oprd | Opcd],_) :- 
+    valida_linha(X,Opcd,Oprd), !.
+valida_(X,[L,X],_,L).
 
 /*
  * Código auto-explicativo, mas se você precisa de instruções para usar palitos de 
- * dente (Até mais e obrigado pelos peixes), vamos lá.
+ * dente (Até mais e obrigado pelos peixes), vamos lá...
  * Checa se uma linha é válida, podendo sê-la apenas em 3 casos: 
  *   1) Há um comando linha e ele é válido;
  *   2) A linha é um comentário;

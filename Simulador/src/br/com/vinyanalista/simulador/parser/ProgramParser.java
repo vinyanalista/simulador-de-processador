@@ -1,7 +1,9 @@
 package br.com.vinyanalista.simulador.parser;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.StringTokenizer;
 
 import alice.tuprolog.MalformedGoalException;
 import alice.tuprolog.NoSolutionException;
@@ -13,12 +15,20 @@ import br.com.vinyanalista.simulador.data.DataAddress;
 import br.com.vinyanalista.simulador.data.OpCode;
 import br.com.vinyanalista.simulador.data.OutOfRangeException;
 import br.com.vinyanalista.simulador.software.Instruction;
+import br.com.vinyanalista.simulador.parser.ParsingError;
+import br.com.vinyanalista.simulador.parser.ParsingException;
 import br.com.vinyanalista.simulador.software.Program;
 
 public class ProgramParser {
-	private Prolog engine;
-
+	private final Prolog engine;
 	private static ProgramParser instance;
+
+	public static ProgramParser getParser() {
+		if (instance == null) {
+			instance = new ProgramParser();
+		}
+		return instance;
+	}
 
 	private ProgramParser() {
 		engine = new Prolog();
@@ -84,23 +94,34 @@ public class ProgramParser {
 	public Program parseFrom(String sourceCode) throws ParsingException {
 		SolveInfo solution;
 		StringBuilder builder;
-		List<ParsingError> errors;
-		List<Instruction> instructions;
+		List<ParsingError> allErrors = new ArrayList<ParsingError>();
+		List<Instruction> instructions = new ArrayList<Instruction>();
 		try {
-			builder = new StringBuilder();
-			builder.append("valida_bloco('").append(sourceCode)
-					.append("',X,Y).");
-			System.out.println(builder);
-			solution = engine.solve(builder.toString());
-			builder.delete(0, builder.length());
-			builder.append(solution.getVarValue("X").toString());
-			errors = getErrors(builder);
-			if (!errors.isEmpty()) {
-				throw new ParsingException(errors);
+			StringTokenizer st = new StringTokenizer(sourceCode, "\n");
+			String line;
+			for (int lineNumber = 1; st.hasMoreTokens(); lineNumber++, line = st
+					.nextToken()) {
+				line = st.nextToken();
+				builder = new StringBuilder();
+				builder.append("valida('").append(line)
+						.append("',InstrS,ErrorS," + lineNumber + ").");
+				solution = engine.solve(builder.toString());
+				builder.delete(0, builder.length()).append(
+						solution.getVarValue("ErrorS").toString());
+				List<ParsingError> errors = getErrors(builder);
+				if (errors.isEmpty()) {
+					builder.delete(0, builder.length()).append(
+							solution.getVarValue("InstrS").toString());
+					instructions.addAll(getInstructions(builder));
+				} else {
+					allErrors.addAll(errors);
+				}
 			}
-			builder.delete(0, builder.length()).append(
-					solution.getVarValue("InstrS").toString());
-			instructions = getInstructions(builder);
+			if (!allErrors.isEmpty()) {
+				throw new ParsingException(allErrors);
+			} else {
+				return new Program(sourceCode, instructions);
+			}
 		} catch (MalformedGoalException mge) {
 			System.err.println(mge.getMessage());
 			throw new RuntimeException("Erro inesperado no prolog", mge);
@@ -108,14 +129,6 @@ public class ProgramParser {
 			System.err.println(nse.getMessage());
 			throw new RuntimeException("Erro inesperado no prolog", nse);
 		}
-		return new Program(sourceCode, instructions);
-	}
-
-	public static ProgramParser getParser() {
-		if (instance == null) {
-			instance = new ProgramParser();
-		}
-		return instance;
 	}
 
 }
