@@ -335,10 +335,13 @@ public class Simulation implements AnimationListener {
 			switch (getInstruction().getOpCode().getValue()) {
 			case OpCode.ADD_OPCODE:
 			case OpCode.SUB_OPCODE:
+<<<<<<< HEAD
 			case OpCode.OR_OPCODE:
 			case OpCode.AND_OPCODE:
 				animations.add(new Animation(AnimationType.IR_OPERAND_TO_MAR,
 						getInstruction().getOperand()));
+=======
+>>>>>>> refs/remotes/origin/master
 				readFromMemory(getInstruction().getOperand().getValue());
 				animations.add(new Animation(AnimationType.ACC_TO_ALU_IN_1,
 						getRegister(Processor.ACC).getValue()));
@@ -395,6 +398,7 @@ public class Simulation implements AnimationListener {
 				break;
 			case OpCode.ADD_OPCODE:
 			case OpCode.SUB_OPCODE:
+<<<<<<< HEAD
 			case OpCode.OR_OPCODE:
 			case OpCode.AND_OPCODE:
 				if (getInstruction().getOpCode().getValue() == OpCode.ADD_OPCODE)
@@ -405,6 +409,12 @@ public class Simulation implements AnimationListener {
 					processor.getALU().or();
 				else if (getInstruction().getOpCode().getValue() == OpCode.AND_OPCODE)
 					processor.getALU().and();
+=======
+				if (getInstruction().getOpCode().getValue() == OpCode.ADD_OPCODE)
+					processor.getALU().add();
+				else
+					processor.getALU().sub();
+>>>>>>> refs/remotes/origin/master
 				animations.add(new Animation(AnimationType.ALU_OUTPUT_CHANGE,
 						processor.getALU().getOut()));
 				animations.add(new Animation(AnimationType.ALU_OUTPUT_TO_ACC,

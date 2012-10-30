@@ -94,8 +94,11 @@ public class Examples {
 		program.getInstructions().add(
 				new Instruction(new OpCode(OpCode.OUT_OPCODE), new DataAddress(
 						130)));
+<<<<<<< HEAD
 		program.getInstructions().add(
 				new Instruction(new OpCode(OpCode.HLT_OPCODE), null));
+=======
+>>>>>>> refs/remotes/origin/master
 		return program;
 	}
 
@@ -162,6 +165,7 @@ public class Examples {
 		program.setSourceCode(null);
 		program.getInstructions().add(
 				new Instruction(new OpCode(OpCode.NOP_OPCODE), null));
+<<<<<<< HEAD
 		return program;
 	}
 
@@ -242,6 +246,8 @@ public class Examples {
 						130)));
 		program.getInstructions().add(
 				new Instruction(new OpCode(OpCode.HLT_OPCODE), null));
+=======
+>>>>>>> refs/remotes/origin/master
 		return program;
 	}
 
@@ -257,10 +263,13 @@ public class Examples {
 			return not();
 		case CRASH:
 			return crash();
+<<<<<<< HEAD
 		case AND:
 			return and();
 		case OR:
 			return or();
+=======
+>>>>>>> refs/remotes/origin/master
 		default:
 			return null;
 		}

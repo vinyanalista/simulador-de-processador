@@ -13,6 +13,11 @@ public abstract class Byte {
 	public static void setRepresentation(int representation) {
 		switch (representation) {
 		case REPRESENTATION_RECOMMENDED:
+<<<<<<< HEAD
+=======
+			preferredRepresentation = REPRESENTATION_DECIMAL;
+			break;
+>>>>>>> refs/remotes/origin/master
 		case REPRESENTATION_DECIMAL:
 			preferredRepresentation = REPRESENTATION_DECIMAL;
 			break;
