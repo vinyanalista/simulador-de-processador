@@ -347,6 +347,34 @@ private void IR_OPERAND_TO_MAR(String valor) {
 	moverValorDaMemoriaParaMAR.finished.connect(this, "callAnimationEndListener()");
 }
 
+
+private void IR_OPERAND_TO_PC(String valor) {
+	byteDeExemploInit(valor);
+
+	// http://doc.qt.digia.com/4.6/animation-overview.html#animating-qt-properties
+	QPropertyAnimation moverValorDaMemoriaParaMAR = new QPropertyAnimation(
+			SimulatorQMainWindow.byteDeExemplo, new QByteArray("geometry"));
+	moverValorDaMemoriaParaMAR.setDuration(DURACAO_DA_ANIMACAO);
+
+	moverValorDaMemoriaParaMAR.setKeyValueAt(0, new QRect(147, 320,
+			SimulatorQMainWindow.byteDeExemplo.width(), SimulatorQMainWindow.byteDeExemplo.height()));
+	moverValorDaMemoriaParaMAR.setKeyValueAt(0.2, new QRect(147, 270,
+			SimulatorQMainWindow.byteDeExemplo.width(), SimulatorQMainWindow.byteDeExemplo.height()));
+	moverValorDaMemoriaParaMAR.setKeyValueAt(0.8, new QRect(388, 270,
+			SimulatorQMainWindow.byteDeExemplo.width(), SimulatorQMainWindow.byteDeExemplo.height()));
+	moverValorDaMemoriaParaMAR.setKeyValueAt(0.99, new QRect(388, 210,
+			SimulatorQMainWindow.byteDeExemplo.width(), SimulatorQMainWindow.byteDeExemplo.height()));
+	moverValorDaMemoriaParaMAR.setKeyValueAt(1, new QRect(2000, 2000,
+			SimulatorQMainWindow.byteDeExemplo.width(), SimulatorQMainWindow.byteDeExemplo.height()));
+
+	moverValorDaMemoriaParaMAR.start();
+
+//	moverValorDaMemoriaParaMAR.finished.connect(this, "callAnimationEndListener()");
+	moverValorDaMemoriaParaMAR.finished.connect(this, "callAnimationEndListener()");
+}
+
+
+
 private void MBR_TO_ACC(String valor){
 	byteDeExemploInit(valor);
 
@@ -683,6 +711,9 @@ private void statusChange(String valor) {
 		case MBR_TO_MEMORY:
 			MBR_TO_MEMORY(animation.getValue().getValueAsPreferredRepresentation());
 			break;
+		case IR_OPERAND_TO_PC:
+			IR_OPERAND_TO_PC(animation.getValue().getValueAsPreferredRepresentation());
+			break;	
 		case STATUS_EXECUTE:
 			statusChange("Execution cycle");
 			break;
