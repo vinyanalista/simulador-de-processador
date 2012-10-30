@@ -43,7 +43,7 @@ public class ChooseQWindow extends QMainWindow {
 		table.setAutoScroll(true);
 		List<String> samplers = new ArrayList<String>();
 		samplers.add(Example.ADD.toString());
-		samplers.add(Example.SUB.toString());
+		samplers.add(Example.AND.toString());
 		samplers.add(Example.OVERFLOW.toString());
 		samplers.add(Example.NOT.toString());
 		for(int i=0; i<samplers.size(); i++){
@@ -93,7 +93,7 @@ public class ChooseQWindow extends QMainWindow {
 			p=Examples.getExample(Example.ADD);
 		}
 		if(list.get(0).row()==1){
-			p=Examples.getExample(Example.SUB);
+			p=Examples.getExample(Example.AND);
 		}
 		if(list.get(0).row()==2){
 			p=Examples.getExample(Example.OVERFLOW);

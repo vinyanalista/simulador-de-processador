@@ -1,5 +1,4 @@
 package br.com.vinyanalista.simulador.gui.jse.simulador;
-import java.awt.Color;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -7,7 +6,6 @@ import java.util.List;
 
 import br.com.vinyanalista.simulador.hardware.InstructionRegister;
 import br.com.vinyanalista.simulador.hardware.Processor;
-import br.com.vinyanalista.simulador.parser.ProgramParser;
 import br.com.vinyanalista.simulador.simulation.Animator.AnimationListener;
 import br.com.vinyanalista.simulador.simulation.Simulation;
 import br.com.vinyanalista.simulador.simulation.Simulation.SimulationListener;
@@ -16,8 +14,6 @@ import br.com.vinyanalista.simulador.software.Program;
 
 import com.trolltech.qt.QtBlockedSlot;
 import com.trolltech.qt.core.QByteArray;
-import com.trolltech.qt.core.QRect;
-import com.trolltech.qt.core.QTimer;
 import com.trolltech.qt.gui.QAbstractItemView;
 import com.trolltech.qt.gui.QAbstractItemView.SelectionBehavior;
 import com.trolltech.qt.gui.QAbstractItemView.SelectionMode;
@@ -31,7 +27,6 @@ import com.trolltech.qt.gui.QMainWindow;
 import com.trolltech.qt.gui.QPaintEvent;
 import com.trolltech.qt.gui.QPainter;
 import com.trolltech.qt.gui.QPalette;
-import com.trolltech.qt.gui.QPalette.ColorRole;
 import com.trolltech.qt.gui.QPixmap;
 import com.trolltech.qt.gui.QPushButton;
 import com.trolltech.qt.gui.QStatusBar;
@@ -239,7 +234,8 @@ public void table_data_memory(){
 	//construtor
 	public SimulatorQMainWindow(Program prog) {
 		this.setWindowModified(false);
-		this.setWindowTitle("AES");
+		this.setWindowTitle("AES Processor Simulator");
+		setWindowIcon(new QIcon("icons/cpu.png"));
 		
 		byteDeExemplo = new QLabel(this);
 		byteDeExemplo.hide();
