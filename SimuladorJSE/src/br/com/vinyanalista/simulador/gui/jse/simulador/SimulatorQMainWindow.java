@@ -4,6 +4,8 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import br.com.vinyanalista.simulador.examples.Example;
+import br.com.vinyanalista.simulador.examples.Examples;
 import br.com.vinyanalista.simulador.hardware.InstructionRegister;
 import br.com.vinyanalista.simulador.hardware.Processor;
 import br.com.vinyanalista.simulador.simulation.Animator.AnimationListener;
@@ -99,7 +101,7 @@ public class SimulatorQMainWindow extends QMainWindow implements AnimationListen
 		tablePrincipal.setColumnWidth(1, 65);
 		tablePrincipal.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers);
 		tablePrincipal.selectRow(0);
-		tablePrincipal.setGeometry(800, 60, 180, 500);
+		tablePrincipal.setGeometry(800, 90, 180, 500);
 		tablePrincipal.show();
 	}
 	
@@ -208,6 +210,17 @@ public class SimulatorQMainWindow extends QMainWindow implements AnimationListen
 		bt[2].setEnabled(false);
 		bt[1].hide();
 		bt[0].show();
+	}
+	
+	private void config(){
+		exibirAguarde("Aguarde...");
+		simulation.stop();
+		zeraLabels();
+		tablePrincipal.selectRow(0);
+		bt[2].setEnabled(false);
+		bt[1].hide();
+		bt[0].show();
+		
 	}
 	
 	private void exibirAguarde(String texto){
@@ -337,6 +350,13 @@ public void table_data_memory(){
 		bt[4].clicked.connect(this, "table_data_memory()");
 		bt[4].setGeometry(551, 473, bt[4].width()+35+83, bt[4].height()+38);
 		
+		bt[5] = new QPushButton(this);
+		bt[5].setText("Config");
+		bt[5].clicked.connect(this, "config()");
+		bt[5].setIcon(new QIcon("icons/system_run.png"));
+		bt[5].setGeometry(815+32, bt[0].height()+25, 60, bt[0].height());
+		bt[5].setEnabled(false);
+				
 		statusBar = statusBar();
 		status = new QLabel("Click Play to start simulation.");
 		status.setPalette(corPreta);
@@ -380,12 +400,12 @@ public void table_data_memory(){
 		painter.drawPixmap(0, 0, fundo);
 	}
 
-//	public static void main(String[] args) {
-//		QApplication.initialize(args);
-//		new SimulatorQMainWindow(Program);
-//		QApplication.exec();
-//		
-//	}
+	public static void main(String[] args) {
+		QApplication.initialize(args);
+		new SimulatorQMainWindow(Examples.getExample(Example.CRASH));
+		QApplication.exec();
+		
+	}
 
 	@Override
 	public void onAnimationEnd() {
@@ -400,11 +420,13 @@ public void table_data_memory(){
 	@Override
 	public void onProgramCrash() {
 		// TODO Auto-generated method stub
+		new EndProgramWindow(false);
 	}
 
 	@Override
 	public void onProgramHalt() {
 		// TODO Auto-generated method stub
+		new EndProgramWindow(true);
 	}
 
 	@Override

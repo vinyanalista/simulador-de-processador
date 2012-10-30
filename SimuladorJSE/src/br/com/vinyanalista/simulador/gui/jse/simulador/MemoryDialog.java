@@ -35,31 +35,28 @@ public class MemoryDialog extends QDialog {
 		public DataTab() {
 			QHBoxLayout mainLayout = new QHBoxLayout();			
 			QTableWidget table = new QTableWidget(this);
-			table.setColumnCount(10);
-			for(int column = 0; column < 10; column++)
-				table.setColumnWidth(column, 65);
-			table.setRowCount(14);
+			table.setColumnCount(1);
+			table.setColumnWidth(0, this.width());
+			table.setRowCount(128);
 			List<String> labels = new ArrayList<String>();
-			for(int i=12; i<26; i++){
+			for(int i=128; i<256; i++){
 				labels.add(String.valueOf(i));
 			}
 			table.setVerticalHeaderLabels(labels);
 			List<String> labels1 = new ArrayList<String>();
-			for(int i=0; i<10; i++){
-				labels1.add(String.valueOf(i));
-			}
+			labels1.add("Data");
 			table.setHorizontalHeaderLabels(labels1);
 			table.setSelectionMode(SelectionMode.SingleSelection);
 			table.setSelectionBehavior(SelectionBehavior.SelectItems);
-			for(int i=12; i<26; i++){
-				for(int j=0; j<10; j++){
+			for(int i=128; i<256; i++){
+//				for(int j=0; j<10; j++){
 //					wigitem = new QTableWidgetItem((i)+""+(j));
-					int address = Integer.parseInt((i)+""+(j));
+					int address = (i);
 					
 					if((address>127)&&(address<256)){
 						wigitem = new QTableWidgetItem(simulation.getDataMemory().readByte(address).getValueAsPreferredRepresentation());
-					table.setItem(i-12, j, wigitem);
-					}
+					table.setItem(i-128, 0, wigitem);
+					
 				}
 			}
 			table.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers);
@@ -75,29 +72,30 @@ public class MemoryDialog extends QDialog {
 
 	private class ProgramTab extends QWidget {
 		public ProgramTab() {
-			QHBoxLayout mainLayout = new QHBoxLayout();
-			QTableWidget table = new QTableWidget();
-			table.setColumnCount(10);
-			for(int column = 0; column < 10; column++)
-				table.setColumnWidth(column, 65);
-			table.setRowCount(13);
+			QHBoxLayout mainLayout = new QHBoxLayout();			
+			QTableWidget table = new QTableWidget(this);
+			table.setColumnCount(1);
+			table.setColumnWidth(0, this.width());
+			table.setRowCount(128);
 			List<String> labels = new ArrayList<String>();
-			for(int i=0; i<13; i++){
+			for(int i=0; i<128; i++){
 				labels.add(String.valueOf(i));
 			}
-			table.setHorizontalHeaderLabels(labels);
 			table.setVerticalHeaderLabels(labels);
+			List<String> labels1 = new ArrayList<String>();
+			labels1.add("Instructions");
+			table.setHorizontalHeaderLabels(labels1);
 			table.setSelectionMode(SelectionMode.SingleSelection);
 			table.setSelectionBehavior(SelectionBehavior.SelectItems);
-			for(int i=0; i<13; i++){
-				for(int j=0; j<10; j++){
-					int address = Integer.parseInt((i)+""+(j));
+			for(int i=0; i<128; i++){
+//				for(int j=0; j<10; j++){
+//					wigitem = new QTableWidgetItem((i)+""+(j));
+					int address = (i);
 					if(address<128){
 						wigitem = new QTableWidgetItem(simulation.getProgramMemory().readByte(address).getValueAsPreferredRepresentation());
-						table.setItem(i, j, wigitem);
+						table.setItem(i, 0, wigitem);
 					}
 				}
-			}
 			table.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers);
 //			table.setGeometry(100, 100, table.width()+390, table.height()-17);
 			table.setWindowTitle("Program Memory Table");
@@ -124,7 +122,7 @@ public class MemoryDialog extends QDialog {
 				tr("Data Memory"));
 
 		tabWidget.setCurrentIndex(operation);
-		tabWidget.resize(720, 500);
+		tabWidget.resize(250, 500);
 		setFixedSize(tabWidget.size());
 	}
 }

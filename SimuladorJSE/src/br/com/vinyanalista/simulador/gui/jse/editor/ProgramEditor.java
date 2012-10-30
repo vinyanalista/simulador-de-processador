@@ -6,7 +6,6 @@ package br.com.vinyanalista.simulador.gui.jse.editor;
 import java.text.DateFormat;
 import java.util.Date;
 
-import br.com.vinyanalista.simulador.gui.jse.simulador.ChooseQWindow;
 import br.com.vinyanalista.simulador.gui.jse.simulador.SimulatorQMainWindow;
 import br.com.vinyanalista.simulador.parser.ParsingException;
 import br.com.vinyanalista.simulador.parser.ProgramParser;
@@ -235,8 +234,11 @@ public class ProgramEditor extends QMainWindow {
 		String sourceCode = editor.toPlainText();
 		ProgramParser parse = ProgramParser.getParser();
 		try{
-			if(sourceCode.length()>5){
+			if(sourceCode.length()>4){
 				new SimulatorQMainWindow(parse.parseFrom(sourceCode));
+				console.close();
+				console = new ConsoleTab(this, "Run");
+				addConsole(console);
 			}else{
 				console.close();
 				console = new ConsoleTab(this, "Nothing to play");
@@ -253,26 +255,6 @@ public class ProgramEditor extends QMainWindow {
 			console = new ConsoleTab(this, e.getMessage());
 			addConsole(console);
 		}
-		
-		
-		
-		
-//		System.out.println(editor.toPlainText());
-//		StringTokenizer toke = new StringTokenizer(texto);
-//		
-//		while (toke.hasMoreTokens())  
-//	      {  
-//	        toke.nextToken();  
-//	      }
-		
-		
-//		if(!console.isEnabled()){
-//			this.addDockWidget(DockWidgetArea.BottomDockWidgetArea, console);
-//		}else{
-//			console = new ConsoleTab(this);
-//			this.addDockWidget(DockWidgetArea.BottomDockWidgetArea, console);
-//		}
-//		new ChooseQWindow();
 	}
 	
 	private void samplers(){
