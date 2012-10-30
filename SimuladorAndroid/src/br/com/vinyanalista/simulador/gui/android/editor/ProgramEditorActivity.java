@@ -17,8 +17,14 @@ import android.view.Gravity;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Toast;
+import br.com.vinyanalista.simulador.gui.android.ExamplesActivity;
 import br.com.vinyanalista.simulador.gui.android.FileChooserActivity;
+import br.com.vinyanalista.simulador.gui.android.GenericDialog;
 import br.com.vinyanalista.simulador.gui.android.R;
+import br.com.vinyanalista.simulador.gui.android.simulador.SimulationActivity;
+import br.com.vinyanalista.simulador.parser.ParsingException;
+import br.com.vinyanalista.simulador.parser.ProgramParser;
+import br.com.vinyanalista.simulador.software.Program;
 
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
@@ -211,6 +217,24 @@ public class ProgramEditorActivity extends SherlockActivity implements
 		zoomOut.setEnabled(editor.getTextSize() != MIN_ZOOM);
 	}
 
+	private static final int REQUEST_RUN = 2;
+
+	private void run() {
+		ProgramParser parser = ProgramParser.getParser();
+		try {
+			Program program = parser.parseFrom(editor.getText().toString());
+			SimulationActivity.PROGRAM = program;
+			startActivity(new Intent(this, SimulationActivity.class));
+		} catch (ParsingException e) {
+			String[] options = { "OK" };
+			Intent i = new Intent(this, GenericDialog.class);
+			i.putExtra(GenericDialog.TITLE, "Error while parsing");
+			i.putExtra(GenericDialog.TEXT, e.getErrors().get(0).toString());
+			i.putExtra(GenericDialog.OPTIONS, options);
+			startActivityForResult(i, REQUEST_RUN);
+		}
+	}
+
 	private void showNotImplementedYet() {
 		Toast.makeText(this, "Not implemented yet.", Toast.LENGTH_LONG).show();
 	}
@@ -227,6 +251,8 @@ public class ProgramEditorActivity extends SherlockActivity implements
 			defaultZoom();
 		else if (item.equals(zoomOut))
 			zoomOut();
+		else if (item.equals(run))
+			run();
 		else
 			showNotImplementedYet();
 		return false;

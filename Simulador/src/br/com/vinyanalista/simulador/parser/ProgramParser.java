@@ -20,7 +20,7 @@ import br.com.vinyanalista.simulador.parser.ParsingException;
 import br.com.vinyanalista.simulador.software.Program;
 
 public class ProgramParser {
-	private final Prolog engine;
+	private Prolog engine;
 	private static ProgramParser instance;
 
 	public static ProgramParser getParser() {

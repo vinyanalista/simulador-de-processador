@@ -5,8 +5,10 @@ import java.util.HashMap;
 import java.util.List;
 
 import br.com.vinyanalista.simulador.examples.Example;
+import br.com.vinyanalista.simulador.examples.Examples;
 import br.com.vinyanalista.simulador.gui.android.R;
 import br.com.vinyanalista.simulador.gui.android.simulador.SimulationActivity;
+import br.com.vinyanalista.simulador.software.Program;
 
 import com.actionbarsherlock.app.SherlockListActivity;
 
@@ -52,8 +54,23 @@ public class ExamplesActivity extends SherlockListActivity {
 	@Override
 	protected void onListItemClick(ListView l, View v, int position, long id) {
 		super.onListItemClick(l, v, position, id);
-		Intent i = new Intent(ExamplesActivity.this, SimulationActivity.class);
-		i.putExtra(SimulationActivity.EXTRA_PROGRAM, position);
-		startActivity(i);
+		Program program = null;
+		switch (position) {
+		case 0:
+			program = Examples.getExample(Example.ADD);
+			break;
+		case 1:
+			program = Examples.getExample(Example.SUB);
+			break;
+		case 2:
+			program = Examples.getExample(Example.OVERFLOW);
+			break;
+		case 3:
+			program = Examples.getExample(Example.NOT);
+			break;
+		}
+		SimulationActivity.PROGRAM = program;
+		startActivity(new Intent(ExamplesActivity.this,
+				SimulationActivity.class));
 	}
 }

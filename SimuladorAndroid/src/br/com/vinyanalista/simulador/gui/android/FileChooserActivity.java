@@ -259,12 +259,20 @@ public class FileChooserActivity extends SherlockListActivity implements
 			return;
 		}
 		if (fileExists) {
-			Intent i = new Intent(this, TwoButtonDialog.class);
-			i.putExtra(TwoButtonDialog.TITLE, "File exists");
-			i.putExtra(TwoButtonDialog.TEXT,
+			// Intent i = new Intent(this, TwoButtonDialog.class);
+			// i.putExtra(TwoButtonDialog.TITLE, "File exists");
+			// i.putExtra(TwoButtonDialog.TEXT,
+			// "Are you sure you want to overwrite this file?");
+			// i.putExtra(TwoButtonDialog.OPTION_1, "Overwrite");
+			// i.putExtra(TwoButtonDialog.OPTION_2, "Cancel");
+			// startActivityForResult(i, REQUEST_CONFIRM_OVERWRITE);
+
+			String[] options = { "Overwrite", "Cancel" };
+			Intent i = new Intent(this, GenericDialog.class);
+			i.putExtra(GenericDialog.TITLE, "File exists");
+			i.putExtra(GenericDialog.TEXT,
 					"Are you sure you want to overwrite this file?");
-			i.putExtra(TwoButtonDialog.OPTION_1, "Overwrite");
-			i.putExtra(TwoButtonDialog.OPTION_2, "Cancel");
+			i.putExtra(GenericDialog.OPTIONS, options);
 			startActivityForResult(i, REQUEST_CONFIRM_OVERWRITE);
 		} else {
 			returnFileName(file.getAbsolutePath());
@@ -274,7 +282,7 @@ public class FileChooserActivity extends SherlockListActivity implements
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (requestCode == REQUEST_CONFIRM_OVERWRITE) {
-			if (resultCode == TwoButtonDialog.RESULT_1) {
+			if (resultCode == 0) {
 				returnFileName(new File(currentDir, fileName.getText()
 						.toString()).getAbsolutePath());
 			}

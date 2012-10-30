@@ -4,7 +4,7 @@
     android:versionName="1.0" >
 
     <uses-sdk
-        android:minSdkVersion="8"
+        android:minSdkVersion="9"
         android:targetSdkVersion="15" />
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -30,6 +30,9 @@
         <activity android:name=".editor.ProgramEditorActivity" />
         <activity
             android:name=".TwoButtonDialog"
+            android:theme="@style/Theme.Sherlock.Dialog" />
+        <activity
+            android:name=".GenericDialog"
             android:theme="@style/Theme.Sherlock.Dialog" />
         <activity
             android:name=".ThreeButtonDialog"

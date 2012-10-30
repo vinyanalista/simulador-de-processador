@@ -36,8 +36,6 @@ import android.widget.TextView;
 public class SimulationActivity extends SherlockActivity implements
 		AnimationListener, SimulationListener, OnClickListener {
 
-	public static final String EXTRA_PROGRAM = "program";
-
 	TextView from_memory_1, from_memory_2, to_pc_or_mar, to_pc, pc, to_mar,
 			mar, to_acc_or_mbr, to_acc, acc, to_mbr, mbr, to_alu2_or_ir2,
 			to_alu2, alu2, to_ir2, ir2, to_alu1_or_ir1, to_alu1, alu1, to_ir1,
@@ -52,6 +50,8 @@ public class SimulationActivity extends SherlockActivity implements
 	// private MenuItem representationRecommended,
 	// representationDecimal, representationHexadecimal,
 	// representationBinary;
+
+	public static Program PROGRAM;
 
 	private Simulation simulation;
 	private AndroidAnimator animator;
@@ -173,24 +173,7 @@ public class SimulationActivity extends SherlockActivity implements
 
 		animator = new AndroidAnimator(this);
 
-		Program program = null;
-
-		switch (getIntent().getExtras().getInt(EXTRA_PROGRAM)) {
-		case 0:
-			program = Examples.getExample(Example.ADD);
-			break;
-		case 1:
-			program = Examples.getExample(Example.SUB);
-			break;
-		case 2:
-			program = Examples.getExample(Example.OVERFLOW);
-			break;
-		case 3:
-			program = Examples.getExample(Example.NOT);
-			break;
-		}
-
-		simulation = new Simulation(program, animator);
+		simulation = new Simulation(PROGRAM, animator);
 		simulation.addSimulationListener(this);
 
 		resetProcessor();
