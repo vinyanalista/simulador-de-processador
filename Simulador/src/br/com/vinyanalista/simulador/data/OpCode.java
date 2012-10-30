@@ -2,24 +2,12 @@ package br.com.vinyanalista.simulador.data;
 
 public class OpCode extends Byte {
 	private Operation operation;
-	
+
 	public enum Operation {
-		NOP(0, "NOP"), 
-		STA(1, "STA"), 
-		LDA(2, "LDA"), 
-		ADD(3, "ADD"), 
-		SUB(4, "SUB"), 
-		OR (5, "OR"), 
-		AND(6, "AND"), 
-		NOT(7, "NOT"), 
-		JMP(8, "JMP"), 
-		JN (9, "JN"), 
-		JZ (10, "JZ"), 
-		JNZ(11, "JNZ"), 
-		IN (12, "IN"), 
-		OUT(13, "OUT"), 
-		LDI(14, "LDI"), 
-		HLT(15, "HLT");
+		NOP(0, "NOP"), STA(1, "STA"), LDA(2, "LDA"), ADD(3, "ADD"), SUB(4,
+				"SUB"), OR(5, "OR"), AND(6, "AND"), NOT(7, "NOT"), JMP(8, "JMP"), JN(
+				9, "JN"), JZ(10, "JZ"), JNZ(11, "JNZ"), IN(12, "IN"), OUT(13,
+				"OUT"), LDI(14, "LDI"), HLT(15, "HLT");
 
 		private int code;
 		private String mnemonic;
@@ -37,7 +25,7 @@ public class OpCode extends Byte {
 			return mnemonic;
 		}
 	}
-	
+
 	public static final int REPRESENTATION_MNEMONIC = 4;
 
 	protected static int preferredRepresentation = REPRESENTATION_MNEMONIC;
@@ -46,10 +34,12 @@ public class OpCode extends Byte {
 		switch (representation) {
 		case REPRESENTATION_RECOMMENDED:
 			preferredRepresentation = REPRESENTATION_MNEMONIC;
+			break;
 		case REPRESENTATION_DECIMAL:
 		case REPRESENTATION_HEX:
 		case REPRESENTATION_BINARY:
 			preferredRepresentation = representation;
+			break;
 		default:
 			throw new IllegalArgumentException();
 		}
@@ -100,7 +90,7 @@ public class OpCode extends Byte {
 	public OpCode(int value) {
 		super(value);
 	}
-	
+
 	public OpCode(Operation operation) {
 		super(operation.getCode());
 		this.operation = operation;
@@ -181,7 +171,7 @@ public class OpCode extends Byte {
 	// public void setValueAsHex(String value) {
 	// setValueAsHex(value, MIN_VALUE, MIN_VALUE);
 	// }
-	
+
 	@Override
 	public String toString() {
 		return this.operation.toString();

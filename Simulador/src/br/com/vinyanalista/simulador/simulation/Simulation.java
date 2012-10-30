@@ -54,6 +54,7 @@ public class Simulation implements AnimationListener {
 	private Iterator<Animation> animationsIterator;
 
 	private boolean stopped;
+	private boolean halt;
 
 	private Animator animator;
 
@@ -116,13 +117,13 @@ public class Simulation implements AnimationListener {
 
 	public void start() {
 		if (isStopped()) {
-			processor.getRegister(Processor.PC).setValue(
-					new InstructionAddress(0));
+			getRegister(Processor.PC).setValue(new InstructionAddress(0));
 			animations.add(new Animation(AnimationType.PC_CHANGE, getRegister(
 					Processor.PC).getValue()));
 			animationsIterator = animations.iterator();
 		}
 		stopped = false;
+		halt = false;
 		animate();
 	}
 
@@ -174,6 +175,9 @@ public class Simulation implements AnimationListener {
 		fetchOperand();
 		// Execução da instrução
 		execute();
+		if ((getInstructionIndex() > program.getInstructions().size())
+				|| (getInstruction().getOpCode().getValue() == OpCode.HLT_OPCODE))
+			halt = true;
 		animationsIterator = animations.iterator();
 	}
 
@@ -182,9 +186,29 @@ public class Simulation implements AnimationListener {
 			return;
 		else {
 			if (animationsIterator == null || !animationsIterator.hasNext())
-				process();
+				if (!halt)
+					process();
+				else if (getInstruction().getOpCode().getValue() == OpCode.HLT_OPCODE) {
+					halt();
+					return;
+				} else {
+					crash();
+					return;
+				}
 			animator.animate(animationsIterator.next());
 		}
+	}
+
+	private void crash() {
+		for (SimulationListener listener : listeners)
+			listener.onProgramCrash();
+		stop();
+	}
+
+	private void halt() {
+		for (SimulationListener listener : listeners)
+			listener.onProgramHalt();
+		stop();
 	}
 
 	@Override
@@ -219,59 +243,74 @@ public class Simulation implements AnimationListener {
 	}
 
 	private void readFromMemory(int addressToBeRead) {
-		Byte address;
-		Byte readByte;
-		if ((addressToBeRead >= DataAddress.MIN_VALUE)
-				&& (addressToBeRead <= DataAddress.MAX_VALUE)) {
-			address = new DataAddress(addressToBeRead);
-			readByte = dataMemory.readByte(addressToBeRead);
-		} else {
-			address = new InstructionAddress(addressToBeRead);
-			readByte = programMemory.readByte(addressToBeRead);
+		try {
+			Byte address;
+			Byte readByte;
+			if ((addressToBeRead >= DataAddress.MIN_VALUE)
+					&& (addressToBeRead <= DataAddress.MAX_VALUE)) {
+				address = new DataAddress(addressToBeRead);
+				readByte = dataMemory.readByte(addressToBeRead);
+			} else {
+				address = new InstructionAddress(addressToBeRead);
+				readByte = programMemory.readByte(addressToBeRead);
+			}
+			setMar(address);
+			animations.add(new Animation(AnimationType.MAR_TO_MEMORY, address));
+			animations
+					.add(new Animation(AnimationType.MEMORY_TO_MBR, readByte));
+			setMbr(readByte);
+		} catch (Exception e) {
+			crash();
 		}
-		setMar(address);
-		animations.add(new Animation(AnimationType.MAR_TO_MEMORY, address));
-		animations.add(new Animation(AnimationType.MEMORY_TO_MBR, readByte));
-		setMbr(readByte);
-	}
-
-	private void incrementPC() {
-		animations.add(new Animation(AnimationType.STATUS_PC_INCREMENT, null));
-		getRegister(Processor.PC).setValue(
-				new InstructionAddress(getRegister(Processor.PC).getValue()
-						.getValue() + 1));
-		animations.add(new Animation(AnimationType.PC_CHANGE, getRegister(
-				Processor.PC).getValue()));
 	}
 
 	private void fetchNextInstruction() {
-		animations.add(new Animation(AnimationType.STATUS_FETCH_INSTRUCTION,
-				null));
-		animations.add(new Animation(AnimationType.UPDATE_INSTRUCTION, null));
-		animations.add(new Animation(AnimationType.PC_TO_MAR, getRegister(
-				Processor.PC).getValue()));
-		readFromMemory(getRegister(Processor.PC).getValue().getValue());
-		animations.add(new Animation(AnimationType.MBR_TO_IR_OPCODE,
-				getRegister(Processor.MBR).getValue()));
-		animations.add(new Animation(AnimationType.IR_OPCODE_CHANGE,
-				getRegister(Processor.MBR).getValue()));
-		OpCode opCode = new OpCode(getRegister(Processor.MBR).getValue()
-				.getValue());
-		getRegister(Processor.PC).setValue(
-				new InstructionAddress(getRegister(Processor.PC).getValue()
-						.getValue() + 1));
-		animations.add(new Animation(AnimationType.PC_CHANGE, getRegister(
-				Processor.PC).getValue()));
-		animations.add(new Animation(AnimationType.PC_TO_MAR, getRegister(
-				Processor.PC).getValue()));
-		readFromMemory(getRegister(Processor.PC).getValue().getValue());
-		animations.add(new Animation(AnimationType.MBR_TO_IR_OPERAND,
-				getRegister(Processor.MBR).getValue()));
-		animations.add(new Animation(AnimationType.IR_OPERAND_CHANGE,
-				getRegister(Processor.MBR).getValue()));
-		Byte operand = getRegister(Processor.MBR).getValue();
-		getInstructionRegister().setInstruction(
-				new Instruction(opCode, operand));
+		try {
+			animations.add(new Animation(
+					AnimationType.STATUS_FETCH_INSTRUCTION, null));
+			animations
+					.add(new Animation(AnimationType.UPDATE_INSTRUCTION, null));
+			animations.add(new Animation(AnimationType.PC_TO_MAR, getRegister(
+					Processor.PC).getValue()));
+			readFromMemory(getRegister(Processor.PC).getValue().getValue());
+			animations.add(new Animation(AnimationType.MBR_TO_IR_OPCODE,
+					getRegister(Processor.MBR).getValue()));
+			animations.add(new Animation(AnimationType.IR_OPCODE_CHANGE,
+					getRegister(Processor.MBR).getValue()));
+			OpCode opCode = new OpCode(getRegister(Processor.MBR).getValue()
+					.getValue());
+			getRegister(Processor.PC).setValue(
+					new InstructionAddress(getRegister(Processor.PC).getValue()
+							.getValue() + 1));
+			animations.add(new Animation(AnimationType.PC_CHANGE, getRegister(
+					Processor.PC).getValue()));
+			animations.add(new Animation(AnimationType.PC_TO_MAR, getRegister(
+					Processor.PC).getValue()));
+			readFromMemory(getRegister(Processor.PC).getValue().getValue());
+			animations.add(new Animation(AnimationType.MBR_TO_IR_OPERAND,
+					getRegister(Processor.MBR).getValue()));
+			animations.add(new Animation(AnimationType.IR_OPERAND_CHANGE,
+					getRegister(Processor.MBR).getValue()));
+			Byte operand = getRegister(Processor.MBR).getValue();
+			getInstructionRegister().setInstruction(
+					new Instruction(opCode, operand));
+		} catch (Exception e) {
+			crash();
+		}
+	}
+
+	private void incrementPC() {
+		try {
+			animations.add(new Animation(AnimationType.STATUS_PC_INCREMENT,
+					null));
+			getRegister(Processor.PC).setValue(
+					new InstructionAddress(getRegister(Processor.PC).getValue()
+							.getValue() + 1));
+			animations.add(new Animation(AnimationType.PC_CHANGE, getRegister(
+					Processor.PC).getValue()));
+		} catch (Exception e) {
+			crash();
+		}
 	}
 
 	private void setAcc(Data data) {
@@ -290,92 +329,146 @@ public class Simulation implements AnimationListener {
 	}
 
 	private void fetchOperand() {
-		animations.add(new Animation(AnimationType.STATUS_FETCH_OPERAND, null));
-		switch (getInstruction().getOpCode().getValue()) {
-		case OpCode.ADD_OPCODE:
-		case OpCode.SUB_OPCODE:
-			readFromMemory(getInstruction().getOperand().getValue());
-			animations.add(new Animation(AnimationType.ACC_TO_ALU_IN_1,
-					getRegister(Processor.ACC).getValue()));
-			setAlu1((Data) getRegister(Processor.ACC).getValue());
-			animations.add(new Animation(AnimationType.MBR_TO_ACC, getRegister(
-					Processor.MBR).getValue()));
-			setAcc((Data) getRegister(Processor.MBR).getValue());
-			animations.add(new Animation(AnimationType.ACC_TO_ALU_IN_2,
-					getRegister(Processor.ACC).getValue()));
-			setAlu2((Data) getRegister(Processor.ACC).getValue());
-			break;
-		case OpCode.OUT_OPCODE:
-			readFromMemory(getInstruction().getOperand().getValue());
-			// TODO melhorar busca de operando da instrução OUT
-		default:
-			break;
+		try {
+			animations.add(new Animation(AnimationType.STATUS_FETCH_OPERAND,
+					null));
+			switch (getInstruction().getOpCode().getValue()) {
+			case OpCode.ADD_OPCODE:
+			case OpCode.SUB_OPCODE:
+				readFromMemory(getInstruction().getOperand().getValue());
+				animations.add(new Animation(AnimationType.ACC_TO_ALU_IN_1,
+						getRegister(Processor.ACC).getValue()));
+				setAlu1((Data) getRegister(Processor.ACC).getValue());
+				animations.add(new Animation(AnimationType.MBR_TO_ACC,
+						getRegister(Processor.MBR).getValue()));
+				setAcc((Data) getRegister(Processor.MBR).getValue());
+				animations.add(new Animation(AnimationType.ACC_TO_ALU_IN_2,
+						getRegister(Processor.ACC).getValue()));
+				setAlu2((Data) getRegister(Processor.ACC).getValue());
+				break;
+			case OpCode.OUT_OPCODE:
+				readFromMemory(getInstruction().getOperand().getValue());
+				// TODO melhorar busca de operando da instrução OUT
+			default:
+				break;
+			}
+		} catch (Exception e) {
+			crash();
 		}
 	}
 
 	private void execute() {
-		animations.add(new Animation(AnimationType.STATUS_EXECUTE, null));
-		switch (getInstruction().getOpCode().getValue()) {
-		case OpCode.LDI_OPCODE:
-			animations.add(new Animation(AnimationType.IR_OPERAND_TO_ACC,
-					getInstruction().getOperand()));
-			setAcc((Data) getInstruction().getOperand());
-			break;
-		case OpCode.STA_OPCODE:
-			animations.add(new Animation(AnimationType.IR_OPERAND_TO_MAR,
-					getInstruction().getOperand()));
-			setMar(getInstruction().getOperand());
-			animations.add(new Animation(AnimationType.ACC_TO_MBR, getRegister(
-					Processor.ACC).getValue()));
-			setMbr((Data) getRegister(Processor.ACC).getValue());
-			animations.add(new Animation(AnimationType.MAR_TO_MEMORY,
-					getRegister(Processor.MAR).getValue()));
-			animations.add(new Animation(AnimationType.MBR_TO_MEMORY,
-					getRegister(Processor.MBR).getValue()));
-			dataMemory.writeByte(getRegister(Processor.MAR).getValue()
-					.getValue(), new Data(getRegister(Processor.MBR).getValue()
-					.getValue()));
-			break;
-		case OpCode.LDA_OPCODE:
-			animations.add(new Animation(AnimationType.IR_OPERAND_TO_MAR,
-					getInstruction().getOperand()));
-			readFromMemory(getInstruction().getOperand().getValue());
-			animations.add(new Animation(AnimationType.MBR_TO_ACC, getRegister(
-					Processor.MBR).getValue()));
-			setAcc((Data) getRegister(Processor.MBR).getValue());
-			break;
-		case OpCode.ADD_OPCODE:
-		case OpCode.SUB_OPCODE:
-			if (getInstruction().getOpCode().getValue() == OpCode.ADD_OPCODE)
-				processor.getALU().add();
-			else
-				processor.getALU().sub();
-			animations.add(new Animation(AnimationType.ALU_OUTPUT_CHANGE,
-					processor.getALU().getOut()));
-			animations.add(new Animation(AnimationType.ALU_OUTPUT_TO_ACC,
-					processor.getALU().getOut()));
-			setAcc((Data) processor.getALU().getOut());
-			break;
-		case OpCode.NOT_OPCODE:
-			animations.add(new Animation(AnimationType.ACC_TO_ALU_IN_1,
-					getRegister(Processor.ACC).getValue()));
-			setAlu1((Data) getRegister(Processor.ACC).getValue());
-			processor.getALU().not();
-			animations.add(new Animation(AnimationType.ALU_OUTPUT_CHANGE,
-					processor.getALU().getOut()));
-			animations.add(new Animation(AnimationType.ALU_OUTPUT_TO_ACC,
-					processor.getALU().getOut()));
-			setAcc((Data) processor.getALU().getOut());
-			break;
-		case OpCode.OUT_OPCODE:
-			animations.add(new Animation(AnimationType.MBR_TO_LED, getRegister(
-					Processor.MBR).getValue()));
-			animations.add(new Animation(AnimationType.LED_CHANGE, getRegister(
-					Processor.MBR).getValue()));
-			led.setValue(getRegister(Processor.MBR).getValue());
-			break;
-		default:
-			break;
+		try {
+			animations.add(new Animation(AnimationType.STATUS_EXECUTE, null));
+			switch (getInstruction().getOpCode().getValue()) {
+			case OpCode.LDI_OPCODE:
+				animations.add(new Animation(AnimationType.IR_OPERAND_TO_ACC,
+						getInstruction().getOperand()));
+				setAcc((Data) getInstruction().getOperand());
+				break;
+			case OpCode.STA_OPCODE:
+				animations.add(new Animation(AnimationType.IR_OPERAND_TO_MAR,
+						getInstruction().getOperand()));
+				setMar(getInstruction().getOperand());
+				animations.add(new Animation(AnimationType.ACC_TO_MBR,
+						getRegister(Processor.ACC).getValue()));
+				setMbr((Data) getRegister(Processor.ACC).getValue());
+				animations.add(new Animation(AnimationType.MAR_TO_MEMORY,
+						getRegister(Processor.MAR).getValue()));
+				animations.add(new Animation(AnimationType.MBR_TO_MEMORY,
+						getRegister(Processor.MBR).getValue()));
+				dataMemory.writeByte(getRegister(Processor.MAR).getValue()
+						.getValue(), new Data(getRegister(Processor.MBR)
+						.getValue().getValue()));
+				break;
+			case OpCode.LDA_OPCODE:
+				animations.add(new Animation(AnimationType.IR_OPERAND_TO_MAR,
+						getInstruction().getOperand()));
+				readFromMemory(getInstruction().getOperand().getValue());
+				animations.add(new Animation(AnimationType.MBR_TO_ACC,
+						getRegister(Processor.MBR).getValue()));
+				setAcc((Data) getRegister(Processor.MBR).getValue());
+				break;
+			case OpCode.ADD_OPCODE:
+			case OpCode.SUB_OPCODE:
+				if (getInstruction().getOpCode().getValue() == OpCode.ADD_OPCODE)
+					processor.getALU().add();
+				else
+					processor.getALU().sub();
+				animations.add(new Animation(AnimationType.ALU_OUTPUT_CHANGE,
+						processor.getALU().getOut()));
+				animations.add(new Animation(AnimationType.ALU_OUTPUT_TO_ACC,
+						processor.getALU().getOut()));
+				setAcc((Data) processor.getALU().getOut());
+				break;
+			case OpCode.NOT_OPCODE:
+				animations.add(new Animation(AnimationType.ACC_TO_ALU_IN_1,
+						getRegister(Processor.ACC).getValue()));
+				setAlu1((Data) getRegister(Processor.ACC).getValue());
+				processor.getALU().not();
+				animations.add(new Animation(AnimationType.ALU_OUTPUT_CHANGE,
+						processor.getALU().getOut()));
+				animations.add(new Animation(AnimationType.ALU_OUTPUT_TO_ACC,
+						processor.getALU().getOut()));
+				setAcc((Data) processor.getALU().getOut());
+				break;
+			case OpCode.JMP_OPCODE:
+				animations.add(new Animation(AnimationType.IR_OPERAND_TO_PC,
+						getInstruction().getOperand()));
+				getRegister(Processor.PC).setValue(
+						new InstructionAddress(getInstruction().getOperand()
+								.getValue()));
+				animations.add(new Animation(AnimationType.PC_CHANGE,
+						getRegister(Processor.PC).getValue()));
+				break;
+			case OpCode.JN_OPCODE:
+				if (getRegister(Processor.ACC).getValue().getValue() < 0) {
+					animations.add(new Animation(
+							AnimationType.IR_OPERAND_TO_PC, getInstruction()
+									.getOperand()));
+					getRegister(Processor.PC).setValue(
+							new InstructionAddress(getInstruction()
+									.getOperand().getValue()));
+					animations.add(new Animation(AnimationType.PC_CHANGE,
+							getRegister(Processor.PC).getValue()));
+				}
+				break;
+			case OpCode.JZ_OPCODE:
+				if (getRegister(Processor.ACC).getValue().getValue() == 0) {
+					animations.add(new Animation(
+							AnimationType.IR_OPERAND_TO_PC, getInstruction()
+									.getOperand()));
+					getRegister(Processor.PC).setValue(
+							new InstructionAddress(getInstruction()
+									.getOperand().getValue()));
+					animations.add(new Animation(AnimationType.PC_CHANGE,
+							getRegister(Processor.PC).getValue()));
+				}
+				break;
+			case OpCode.JNZ_OPCODE:
+				if (getRegister(Processor.ACC).getValue().getValue() != 0) {
+					animations.add(new Animation(
+							AnimationType.IR_OPERAND_TO_PC, getInstruction()
+									.getOperand()));
+					getRegister(Processor.PC).setValue(
+							new InstructionAddress(getInstruction()
+									.getOperand().getValue()));
+					animations.add(new Animation(AnimationType.PC_CHANGE,
+							getRegister(Processor.PC).getValue()));
+				}
+				break;
+			case OpCode.OUT_OPCODE:
+				animations.add(new Animation(AnimationType.MBR_TO_LED,
+						getRegister(Processor.MBR).getValue()));
+				animations.add(new Animation(AnimationType.LED_CHANGE,
+						getRegister(Processor.MBR).getValue()));
+				led.setValue(getRegister(Processor.MBR).getValue());
+				break;
+			default:
+				break;
+			}
+		} catch (Exception e) {
+			crash();
 		}
 	}
 

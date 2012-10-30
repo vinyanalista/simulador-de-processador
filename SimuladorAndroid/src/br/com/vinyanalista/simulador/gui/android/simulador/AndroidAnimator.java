@@ -221,7 +221,7 @@ public class AndroidAnimator extends Animator {
 		case UPDATE_INSTRUCTION:
 			activity.atualizarPonteiroDeInstrucao();
 			callAnimationEndListener();
-			break;		
+			break;
 		case STATUS_FETCH_INSTRUCTION:
 			animator = changeStatusBarValue("Fetch instruction cycle");
 			break;
@@ -234,7 +234,10 @@ public class AndroidAnimator extends Animator {
 		case STATUS_EXECUTE:
 			animator = changeStatusBarValue("Execution cycle");
 			break;
-		
+		case IR_OPERAND_TO_PC:
+			animator = move(activity.to_ir2, activity.to_alu2_or_ir2,
+					activity.to_pc_or_mar, activity.to_pc, animation.getValue());
+			break;
 		default:
 			break;
 		}

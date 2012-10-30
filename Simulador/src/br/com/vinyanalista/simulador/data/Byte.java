@@ -14,10 +14,12 @@ public abstract class Byte {
 		switch (representation) {
 		case REPRESENTATION_RECOMMENDED:
 			preferredRepresentation = REPRESENTATION_DECIMAL;
+			break;
 		case REPRESENTATION_DECIMAL:
 		case REPRESENTATION_HEX:
 		case REPRESENTATION_BINARY:
 			preferredRepresentation = representation;
+			break;
 		default:
 			throw new IllegalArgumentException();
 		}

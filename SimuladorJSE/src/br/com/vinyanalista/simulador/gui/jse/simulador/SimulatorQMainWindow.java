@@ -7,12 +7,12 @@ import java.util.List;
 
 import br.com.vinyanalista.simulador.hardware.InstructionRegister;
 import br.com.vinyanalista.simulador.hardware.Processor;
+import br.com.vinyanalista.simulador.parser.ProgramParser;
 import br.com.vinyanalista.simulador.simulation.Animator.AnimationListener;
 import br.com.vinyanalista.simulador.simulation.Simulation;
 import br.com.vinyanalista.simulador.simulation.Simulation.SimulationListener;
 import br.com.vinyanalista.simulador.software.Instruction;
 import br.com.vinyanalista.simulador.software.Program;
-import br.com.vinyanalista.simulador.software.ProgramParser;
 
 import com.trolltech.qt.QtBlockedSlot;
 import com.trolltech.qt.core.QByteArray;
