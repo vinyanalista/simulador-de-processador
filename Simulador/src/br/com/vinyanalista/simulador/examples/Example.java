@@ -7,10 +7,10 @@ public enum Example {
 			return "Soma";
 		}
 	},
-	SUB {
+	NEGATIVE {
 		@Override
 		public String toString() {
-			return "Subtração";
+			return "Negativo";
 		}
 	},
 	OVERFLOW {
@@ -23,6 +23,12 @@ public enum Example {
 		@Override
 		public String toString() {
 			return "Negação lógica";
+		}
+	},
+	CRASH {
+		@Override
+		public String toString() {
+			return "Encerramento por falta do HLT";
 		}
 	};
 }

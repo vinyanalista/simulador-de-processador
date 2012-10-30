@@ -2,6 +2,7 @@ package br.com.vinyanalista.simulador.examples;
 
 import br.com.vinyanalista.simulador.data.Data;
 import br.com.vinyanalista.simulador.data.DataAddress;
+import br.com.vinyanalista.simulador.data.InstructionAddress;
 import br.com.vinyanalista.simulador.data.OpCode;
 import br.com.vinyanalista.simulador.software.Instruction;
 import br.com.vinyanalista.simulador.software.Program;
@@ -43,18 +44,22 @@ public class Examples {
 		program.getInstructions().add(
 				new Instruction(new OpCode(OpCode.OUT_OPCODE), new DataAddress(
 						130)));
-		// TODO acrescentar HLT
+		program.getInstructions().add(
+				new Instruction(new OpCode(OpCode.HLT_OPCODE), null));
 		return program;
 	}
 
-	private static final Program sub() {
+	private static final Program negative() {
 		// LDI 2
 		// STA 128 ;A = 2
 		// LDI 3
 		// STA 129 ;B = 3
 		// LDA 128
 		// SUB 129
-		// STA 130 ;C = A - B = -1
+		// JN 16
+		// HLT
+		// LDI 1
+		// STA 130 ;C = 1
 		// OUT 130
 		// HLT
 
@@ -77,12 +82,18 @@ public class Examples {
 				new Instruction(new OpCode(OpCode.SUB_OPCODE), new DataAddress(
 						129)));
 		program.getInstructions().add(
+				new Instruction(new OpCode(OpCode.JN_OPCODE),
+						new InstructionAddress(16)));
+		program.getInstructions().add(
+				new Instruction(new OpCode(OpCode.HLT_OPCODE), null));
+		program.getInstructions().add(
+				new Instruction(new OpCode(OpCode.LDI_OPCODE), new Data(1)));
+		program.getInstructions().add(
 				new Instruction(new OpCode(OpCode.STA_OPCODE), new DataAddress(
 						130)));
 		program.getInstructions().add(
 				new Instruction(new OpCode(OpCode.OUT_OPCODE), new DataAddress(
 						130)));
-		// TODO acrescentar HLT
 		return program;
 	}
 
@@ -113,12 +124,12 @@ public class Examples {
 		program.getInstructions().add(
 				new Instruction(new OpCode(OpCode.OUT_OPCODE), new DataAddress(
 						129)));
-		// TODO acrescentar HLT
+		program.getInstructions().add(
+				new Instruction(new OpCode(OpCode.HLT_OPCODE), null));
 		return program;
 	}
 
 	private static final Program not() {
-		// Programa exemplo da soma
 		// LDI 255
 		// NOT
 		// STA 128 ;A = NOT(11111111) = 00000000
@@ -137,7 +148,18 @@ public class Examples {
 		program.getInstructions().add(
 				new Instruction(new OpCode(OpCode.OUT_OPCODE), new DataAddress(
 						128)));
-		// TODO acrescentar HLT
+		// program.getInstructions().add(
+		// new Instruction(new OpCode(OpCode.HLT_OPCODE), null));
+		return program;
+	}
+
+	private static final Program crash() {
+		// NOP
+
+		Program program = new Program();
+		program.setSourceCode(null);
+		program.getInstructions().add(
+				new Instruction(new OpCode(OpCode.NOP_OPCODE), null));
 		return program;
 	}
 
@@ -145,12 +167,14 @@ public class Examples {
 		switch (name) {
 		case ADD:
 			return add();
-		case SUB:
-			return sub();
+		case NEGATIVE:
+			return negative();
 		case OVERFLOW:
 			return overflow();
 		case NOT:
 			return not();
+		case CRASH:
+			return crash();
 		default:
 			return null;
 		}

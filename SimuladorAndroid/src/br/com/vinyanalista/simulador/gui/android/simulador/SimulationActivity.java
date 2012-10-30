@@ -4,8 +4,8 @@ import java.util.List;
 
 import com.actionbarsherlock.app.SherlockActivity;
 
-import br.com.vinyanalista.simulador.examples.Example;
-import br.com.vinyanalista.simulador.examples.Examples;
+import br.com.vinyanalista.simulador.data.Byte;
+import br.com.vinyanalista.simulador.gui.android.GenericDialog;
 import br.com.vinyanalista.simulador.gui.android.R;
 import br.com.vinyanalista.simulador.hardware.InstructionRegister;
 import br.com.vinyanalista.simulador.hardware.Processor;
@@ -22,6 +22,7 @@ import android.content.Intent;
 
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
+import com.actionbarsherlock.view.SubMenu;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -47,9 +48,8 @@ public class SimulationActivity extends SherlockActivity implements
 	InstructionArrayAdapter adapter;
 
 	private MenuItem playPause, stop;
-	// private MenuItem representationRecommended,
-	// representationDecimal, representationHexadecimal,
-	// representationBinary;
+	private MenuItem representationRecommended, representationDecimal,
+			representationHexadecimal, representationBinary;
 
 	public static Program PROGRAM;
 
@@ -68,24 +68,24 @@ public class SimulationActivity extends SherlockActivity implements
 		progressDialog.dismiss();
 	}
 
-	// private void changeRepresentation(MenuItem representationChecked) {
-	// if (representationChecked.equals(representationRecommended))
-	// simulation.setRepresentation(Byte.REPRESENTATION_RECOMMENDED);
-	// else if (representationChecked.equals(representationDecimal))
-	// simulation.setRepresentation(Byte.REPRESENTATION_DECIMAL);
-	// else if (representationChecked.equals(representationHexadecimal))
-	// simulation.setRepresentation(Byte.REPRESENTATION_HEX);
-	// else if (representationChecked.equals(representationBinary))
-	// simulation.setRepresentation(Byte.REPRESENTATION_BINARY);
-	// representationRecommended.setChecked(representationChecked
-	// .equals(representationRecommended));
-	// representationDecimal.setChecked(representationChecked
-	// .equals(representationDecimal));
-	// representationHexadecimal.setChecked(representationChecked
-	// .equals(representationHexadecimal));
-	// representationBinary.setChecked(representationChecked
-	// .equals(representationBinary));
-	// }
+	private void changeRepresentation(MenuItem representationChecked) {
+		if (representationChecked.equals(representationRecommended))
+			simulation.setRepresentation(Byte.REPRESENTATION_RECOMMENDED);
+		else if (representationChecked.equals(representationDecimal))
+			simulation.setRepresentation(Byte.REPRESENTATION_DECIMAL);
+		else if (representationChecked.equals(representationHexadecimal))
+			simulation.setRepresentation(Byte.REPRESENTATION_HEX);
+		else if (representationChecked.equals(representationBinary))
+			simulation.setRepresentation(Byte.REPRESENTATION_BINARY);
+		representationRecommended.setChecked(representationChecked
+				.equals(representationRecommended));
+		representationDecimal.setChecked(representationChecked
+				.equals(representationDecimal));
+		representationHexadecimal.setChecked(representationChecked
+				.equals(representationHexadecimal));
+		representationBinary.setChecked(representationChecked
+				.equals(representationBinary));
+	}
 
 	// http://www.mkyong.com/android/android-listview-example/
 	private class InstructionArrayAdapter extends ArrayAdapter<Instruction> {
@@ -176,6 +176,7 @@ public class SimulationActivity extends SherlockActivity implements
 		simulation = new Simulation(PROGRAM, animator);
 		simulation.addSimulationListener(this);
 
+		led.setText("00000000");
 		resetProcessor();
 
 		instructionsListView = (ListView) findViewById(R.id.instructions);
@@ -208,7 +209,6 @@ public class SimulationActivity extends SherlockActivity implements
 	}
 
 	private void resetProcessor() {
-		led.setText("00000000");
 		acc.setText(simulation.getProcessor().getRegister(Processor.ACC)
 				.getValue().getValueAsPreferredRepresentation());
 		alu1.setText(simulation.getProcessor().getALU().getIn1()
@@ -241,20 +241,19 @@ public class SimulationActivity extends SherlockActivity implements
 				| MenuItem.SHOW_AS_ACTION_WITH_TEXT);
 		stop.setEnabled(false);
 
-		// SubMenu representation = menu.addSubMenu("Representation").setIcon(
-		// R.drawable.page_zoom);
-		// representation.getItem()
-		// .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-		//
-		// representationRecommended = representation.add("Recommended")
-		// .setCheckable(true).setChecked(true);
-		// representationDecimal = representation.add("Decimal")
-		// .setCheckable(true).setChecked(false);
-		// representationHexadecimal = representation.add("Hexadecimal")
-		// .setCheckable(true).setChecked(false);
-		// representationBinary =
-		// representation.add("Binary").setCheckable(true)
-		// .setChecked(false);
+		SubMenu representation = menu.addSubMenu("Representation").setIcon(
+				R.drawable.page_zoom);
+		representation.getItem()
+				.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+
+		representationRecommended = representation.add("Recommended")
+				.setCheckable(true).setChecked(true);
+		representationDecimal = representation.add("Decimal")
+				.setCheckable(true).setChecked(false);
+		representationHexadecimal = representation.add("Hexadecimal")
+				.setCheckable(true).setChecked(false);
+		representationBinary = representation.add("Binary").setCheckable(true)
+				.setChecked(false);
 
 		return true;
 	}
@@ -268,11 +267,13 @@ public class SimulationActivity extends SherlockActivity implements
 				pause();
 		else if (item.equals(stop))
 			stop();
-		// } else if (item.equals(representationRecommended)
-		// || item.equals(representationDecimal)
-		// || item.equals(representationHexadecimal)
-		// || item.equals(representationBinary))
-		// changeRepresentation(item);
+		else if (item.getTitle().equals("Representation"))
+			pause();
+		else if (item.equals(representationRecommended)
+				|| item.equals(representationDecimal)
+				|| item.equals(representationHexadecimal)
+				|| item.equals(representationBinary))
+			changeRepresentation(item);
 		return true;
 	}
 
@@ -311,46 +312,32 @@ public class SimulationActivity extends SherlockActivity implements
 
 	@Override
 	public void onProgramCrash() {
-		// TODO Auto-generated method stub
-
+		String[] options = { "OK" };
+		startActivity(new Intent(this, GenericDialog.class)
+				.putExtra(GenericDialog.TITLE, "Program crash")
+				.putExtra(GenericDialog.TEXT,
+						"An error in the program halt its execution abruptly")
+				.putExtra(GenericDialog.OPTIONS, options));
 	}
 
 	@Override
 	public void onProgramHalt() {
-		// TODO Auto-generated method stub
-
+		String[] options = { "OK" };
+		startActivity(new Intent(this, GenericDialog.class)
+				.putExtra(GenericDialog.TITLE, "Program halt")
+				.putExtra(GenericDialog.TEXT,
+						"The program finished its execution successfully!")
+				.putExtra(GenericDialog.OPTIONS, options));
 	}
 
 	@Override
 	public void onRepresentationChange() {
-		// TODO Auto-generated method stub
-		Processor processor = simulation.getProcessor();
-		alu1.setText(processor.getALU().getIn1()
-				.getValueAsPreferredRepresentation());
-		alu2.setText(processor.getALU().getIn2()
-				.getValueAsPreferredRepresentation());
-		alu_out.setText(processor.getALU().getOut()
-				.getValueAsPreferredRepresentation());
-		acc.setText(processor.getRegister(Processor.ACC).getValue()
-				.getValueAsPreferredRepresentation());
-		pc.setText(processor.getRegister(Processor.PC).getValue()
-				.getValueAsPreferredRepresentation());
-		mbr.setText(processor.getRegister(Processor.MBR).getValue()
-				.getValueAsPreferredRepresentation());
-		mar.setText(processor.getRegister(Processor.MAR).getValue()
-				.getValueAsPreferredRepresentation());
-		ir1.setText(((InstructionRegister) processor.getRegister(Processor.IR))
-				.getInstruction().getOpCode()
-				.getValueAsPreferredRepresentation());
-		ir2.setText(((InstructionRegister) processor.getRegister(Processor.IR))
-				.getInstruction().getOperand()
-				.getValueAsPreferredRepresentation());
+		resetProcessor();
 	}
 
 	@Override
 	public void beforeStart() {
 		// TODO Auto-generated method stub
-
 	}
 
 	@Override
