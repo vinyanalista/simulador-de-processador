@@ -19,5 +19,10 @@ public class Instruction {
 	public Byte getOperand() {
 		return operand;
 	}
+	
+	@Override
+	public String toString() {
+		return opCode.toString() + " " + operand;
+	}
 
 }

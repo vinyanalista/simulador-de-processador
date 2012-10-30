@@ -4,9 +4,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Program {
-	List<Instruction> instructions = new ArrayList<Instruction>();
-	String sourceCode;
+	private List<Instruction> instructions;
+	private String sourceCode;
 	
+	public Program(String sourceCode, List<Instruction> instructions) {
+		this.sourceCode = sourceCode;
+		this.instructions = instructions;
+	}
+	
+	@Deprecated
+	public Program() {
+		instructions = new ArrayList<Instruction>();
+		sourceCode = null;
+	}
+
 	public List<Instruction> getInstructions() {
 		return instructions;
 	}
@@ -17,6 +28,15 @@ public class Program {
 	
 	public void setSourceCode(String sourceCode) {
 		this.sourceCode = sourceCode;
+	}
+	
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		for (Instruction instruction : instructions) {
+			builder.append(instruction).append('\n');
+		}
+		return builder.toString();
 	}
 	
 }
