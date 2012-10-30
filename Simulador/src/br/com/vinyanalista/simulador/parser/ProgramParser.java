@@ -1,10 +1,12 @@
 package br.com.vinyanalista.simulador.parser;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.StringTokenizer;
 
+import alice.tuprolog.InvalidTheoryException;
 import alice.tuprolog.MalformedGoalException;
 import alice.tuprolog.NoSolutionException;
 import alice.tuprolog.Prolog;
@@ -20,8 +22,12 @@ import br.com.vinyanalista.simulador.parser.ParsingException;
 import br.com.vinyanalista.simulador.software.Program;
 
 public class ProgramParser {
-	private Prolog engine;
+	private final Prolog engine;
 	private static ProgramParser instance;
+
+	public static void main(String[] args) throws Exception {
+		ProgramParser.getParser().parseFrom("NOP");
+	}
 
 	public static ProgramParser getParser() {
 		if (instance == null) {
@@ -35,16 +41,20 @@ public class ProgramParser {
 		try {
 			engine.setTheory(new Theory(
 					ProgramParser.class
-							.getResourceAsStream("/br/com/vinyanalista/simulador/prolog/valida.pl")));
-		} catch (Exception e) {
-			throw new RuntimeException("Erro no arquivo prolog", e);
+							.getResourceAsStream("/br/com/vinyanalista/simulador/prolog/valida-novo.pl")));
+		} catch (InvalidTheoryException ite) {
+			System.err.println(ite.getMessage());
+			throw new RuntimeException("Erro no arquivo prolog!", ite);
+		} catch (IOException io) {
+			System.err.println(io.getMessage());
+			throw new RuntimeException("Arquivo não encontrado!", io);
 		}
 	}
 
 	private List<Instruction> getInstructions(StringBuilder builder) {
 		List<Instruction> instructions = new LinkedList<Instruction>();
 		while (builder.length() != 0) {
-			for (char c = builder.charAt(0); !Character.isDigit(c); c = builder
+			for (char c = builder.charAt(0); c != '[' && !Character.isDigit(c); c = builder
 					.charAt(0)) {
 				builder.deleteCharAt(0);
 			}
@@ -53,7 +63,11 @@ public class ProgramParser {
 			try {
 				value = new Data(v);
 			} catch (OutOfRangeException oore) {
-				value = new DataAddress(v);
+				try {
+					value = new DataAddress(v);
+				} catch (OutOfRangeException oore2) {
+					value = null;
+				}
 			}
 			builder.delete(0, builder.indexOf("|") + 1);
 			OpCode.Operation type = OpCode.Operation.valueOf(builder.substring(
@@ -72,7 +86,7 @@ public class ProgramParser {
 	private List<ParsingError> getErrors(StringBuilder builder) {
 		List<ParsingError> errors = new LinkedList<ParsingError>();
 		while (builder.length() != 0) {
-			for (char c = builder.charAt(0); !Character.isDigit(c); c = builder
+			for (char c = builder.charAt(0); c != '[' && !Character.isDigit(c); c = builder
 					.charAt(0)) {
 				builder.deleteCharAt(0);
 			}
@@ -106,8 +120,8 @@ public class ProgramParser {
 				builder.append("valida('").append(line)
 						.append("',InstrS,ErrorS," + lineNumber + ").");
 				solution = engine.solve(builder.toString());
-				builder.delete(0, builder.length()).append(
-						solution.getVarValue("ErrorS").toString());
+				builder.delete(0, builder.length());
+				builder.append(solution.getVarValue("ErrorS").toString());
 				List<ParsingError> errors = getErrors(builder);
 				if (errors.isEmpty()) {
 					builder.delete(0, builder.length()).append(
