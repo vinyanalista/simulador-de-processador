@@ -26,7 +26,10 @@ public class ProgramParser {
 	private static ProgramParser instance;
 
 	public static void main(String[] args) throws Exception {
-		ProgramParser.getParser().parseFrom("NOP");
+		Program program = ProgramParser.getParser().parseFrom(
+				"JMP 12\nADD 128\nNOP");
+		for (Instruction instruction : program.getInstructions())
+			System.out.println(instruction);
 	}
 
 	public static ProgramParser getParser() {
@@ -41,7 +44,7 @@ public class ProgramParser {
 		try {
 			engine.setTheory(new Theory(
 					ProgramParser.class
-							.getResourceAsStream("/br/com/vinyanalista/simulador/prolog/valida-novo.pl")));
+							.getResourceAsStream("/br/com/vinyanalista/simulador/prolog/valida.pl")));
 		} catch (InvalidTheoryException ite) {
 			System.err.println(ite.getMessage());
 			throw new RuntimeException("Erro no arquivo prolog!", ite);
@@ -53,10 +56,13 @@ public class ProgramParser {
 
 	private List<Instruction> getInstructions(StringBuilder builder) {
 		List<Instruction> instructions = new LinkedList<Instruction>();
+		if (builder.toString().equals("[]"))
+			return instructions;
 		while (builder.length() != 0) {
-			for (char c = builder.charAt(0); c != '[' && !Character.isDigit(c); c = builder
-					.charAt(0)) {
+			char c = builder.charAt(0);
+			while (!Character.isDigit(c)) {
 				builder.deleteCharAt(0);
+				c = builder.charAt(0);
 			}
 			int v = Integer.valueOf(builder.substring(0, builder.indexOf("|")));
 			br.com.vinyanalista.simulador.data.Byte value;
@@ -69,9 +75,9 @@ public class ProgramParser {
 					value = null;
 				}
 			}
-			builder.delete(0, builder.indexOf("|") + 1);
+			builder.delete(0, builder.indexOf("'") + 1);
 			OpCode.Operation type = OpCode.Operation.valueOf(builder.substring(
-					0, builder.indexOf("]")));
+					0, builder.indexOf("'")));
 			instructions.add(new Instruction(new OpCode(type), value));
 			int index = builder.indexOf("[");
 			if (index < 0) {
@@ -85,13 +91,16 @@ public class ProgramParser {
 
 	private List<ParsingError> getErrors(StringBuilder builder) {
 		List<ParsingError> errors = new LinkedList<ParsingError>();
+		if (builder.toString().equals("[]"))
+			return errors;
 		while (builder.length() != 0) {
-			for (char c = builder.charAt(0); c != '[' && !Character.isDigit(c); c = builder
-					.charAt(0)) {
+			char c = builder.charAt(0);
+			while (!Character.isDigit(c)) {
 				builder.deleteCharAt(0);
+				c = builder.charAt(0);
 			}
 			int value = Integer.valueOf(builder.substring(0,
-					builder.indexOf("|")));
+					builder.indexOf(",")));
 			builder.delete(0, builder.indexOf("'") + 1);
 			ParsingError.ErrorType type = ParsingError.ErrorType
 					.valueOf(builder.substring(0, builder.indexOf("'")));
@@ -106,6 +115,7 @@ public class ProgramParser {
 	}
 
 	public Program parseFrom(String sourceCode) throws ParsingException {
+		sourceCode = sourceCode.toUpperCase();
 		SolveInfo solution;
 		StringBuilder builder;
 		List<ParsingError> allErrors = new ArrayList<ParsingError>();
@@ -113,8 +123,8 @@ public class ProgramParser {
 		try {
 			StringTokenizer st = new StringTokenizer(sourceCode, "\n");
 			String line;
-			for (int lineNumber = 1; st.hasMoreTokens(); lineNumber++, line = st
-					.nextToken()) {
+			int lineNumber = 1;
+			while (st.hasMoreTokens()) {
 				line = st.nextToken();
 				builder = new StringBuilder();
 				builder.append("valida('").append(line)
@@ -124,12 +134,13 @@ public class ProgramParser {
 				builder.append(solution.getVarValue("ErrorS").toString());
 				List<ParsingError> errors = getErrors(builder);
 				if (errors.isEmpty()) {
-					builder.delete(0, builder.length()).append(
-							solution.getVarValue("InstrS").toString());
+					builder = new StringBuilder(solution.getVarValue("InstrS")
+							.toString());
 					instructions.addAll(getInstructions(builder));
 				} else {
 					allErrors.addAll(errors);
 				}
+				lineNumber++;
 			}
 			if (!allErrors.isEmpty()) {
 				throw new ParsingException(allErrors);
@@ -144,5 +155,4 @@ public class ProgramParser {
 			throw new RuntimeException("Erro inesperado no prolog", nse);
 		}
 	}
-
 }

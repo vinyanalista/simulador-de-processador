@@ -190,15 +190,6 @@ public class ProgramEditorActivity extends SherlockActivity implements
 				REQUEST_SAVE_AS);
 	}
 
-	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		if (requestCode == REQUEST_SAVE_AS) {
-			if (resultCode == FileChooserActivity.RESULT_OK) {
-				save(data.getStringExtra(FileChooserActivity.FILE_PATH));
-			}
-		}
-	}
-
 	private void zoomIn() {
 		setTextSize(editor.getTextSize() + 2f);
 		zoomIn.setEnabled(editor.getTextSize() != MAX_ZOOM);
@@ -270,6 +261,39 @@ public class ProgramEditorActivity extends SherlockActivity implements
 
 	@Override
 	public void onTextChanged(CharSequence s, int start, int before, int count) {
+	}
+
+	private static final int REQUEST_CONFIRM_DISCARD_CHANGES = 3;
+
+	@Override
+	public void onBackPressed() {
+		String[] options = { "Save", "Discard", "Cancel" };
+		Intent i = new Intent(this, GenericDialog.class);
+		i.putExtra(GenericDialog.TITLE, "Save changes");
+		i.putExtra(GenericDialog.TEXT,
+				"Text has been modified.\n\nDo you want to save the changes?");
+		i.putExtra(GenericDialog.OPTIONS, options);
+		startActivityForResult(i, REQUEST_CONFIRM_DISCARD_CHANGES);
+	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if (requestCode == REQUEST_SAVE_AS) {
+			if (resultCode == FileChooserActivity.RESULT_OK) {
+				save(data.getStringExtra(FileChooserActivity.FILE_PATH));
+			}
+		} else if (requestCode == REQUEST_CONFIRM_DISCARD_CHANGES) {
+			switch (resultCode) {
+			case 0:
+				save();
+				if (fileChanged())
+					break;
+			case 1:
+				finish();
+			default:
+				break;
+			}
+		}
 	}
 
 }

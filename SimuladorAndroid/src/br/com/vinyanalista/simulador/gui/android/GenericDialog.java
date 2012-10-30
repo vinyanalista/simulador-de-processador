@@ -25,19 +25,19 @@ public class GenericDialog extends SherlockActivity implements OnClickListener {
 		super.onCreate(savedInstanceState);
 
 		setTitle(getIntent().getStringExtra(TITLE));
-		
+
 		TextView text = new TextView(this);
 		text.setLayoutParams(new LinearLayout.LayoutParams(
 				LinearLayout.LayoutParams.MATCH_PARENT,
 				LinearLayout.LayoutParams.WRAP_CONTENT));
 		text.setText(getIntent().getStringExtra(TEXT));
-		
+
 		LinearLayout buttonsLayout = new LinearLayout(this);
 		buttonsLayout.setLayoutParams(new LinearLayout.LayoutParams(
 				LinearLayout.LayoutParams.WRAP_CONTENT,
 				LinearLayout.LayoutParams.WRAP_CONTENT));
 		buttonsLayout.setOrientation(LinearLayout.HORIZONTAL);
-		
+
 		options = getIntent().getStringArrayExtra(OPTIONS);
 
 		buttons = new Button[options.length];
@@ -51,25 +51,26 @@ public class GenericDialog extends SherlockActivity implements OnClickListener {
 			buttonsLayout.addView(button);
 			buttonIndex++;
 		}
-		
+
 		LinearLayout buttonsWrapper = new LinearLayout(this);
 		buttonsWrapper.setLayoutParams(new LinearLayout.LayoutParams(
 				LinearLayout.LayoutParams.MATCH_PARENT,
 				LinearLayout.LayoutParams.WRAP_CONTENT));
 		buttonsWrapper.setOrientation(LinearLayout.HORIZONTAL);
 		buttonsWrapper.setGravity(Gravity.CENTER_HORIZONTAL);
-		
+
 		buttonsWrapper.addView(buttonsLayout);
 
 		LinearLayout mainLayout = new LinearLayout(this);
 		mainLayout.setLayoutParams(new LinearLayout.LayoutParams(
 				LinearLayout.LayoutParams.MATCH_PARENT,
 				LinearLayout.LayoutParams.MATCH_PARENT));
+		mainLayout.setGravity(Gravity.CENTER_HORIZONTAL);
 		mainLayout.setOrientation(LinearLayout.VERTICAL);
-		
+
 		mainLayout.addView(text);
 		mainLayout.addView(buttonsWrapper);
-		
+
 		setContentView(mainLayout);
 	}
 
