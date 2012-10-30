@@ -29,21 +29,13 @@ public class ExamplesActivity extends SherlockListActivity {
 		String ROTULO = "opcao";
 
 		String[] rotulos = new String[] { Example.ADD.toString(),
-<<<<<<< HEAD
 				Example.OVERFLOW.toString(), Example.NEGATIVE.toString(),
 				Example.OR.toString(), Example.AND.toString(),
-=======
-				Example.NEGATIVE.toString(), Example.OVERFLOW.toString(),
->>>>>>> refs/remotes/origin/master
 				Example.NOT.toString(), Example.CRASH.toString() };
 
 		List<HashMap<String, String>> aList = new ArrayList<HashMap<String, String>>();
 
-<<<<<<< HEAD
 		for (int opcao = 0; opcao < 7; opcao++) {
-=======
-		for (int opcao = 0; opcao < 5; opcao++) {
->>>>>>> refs/remotes/origin/master
 			HashMap<String, String> hm = new HashMap<String, String>();
 			hm.put(ICONE, Integer.toString(R.drawable.application_x_m4));
 			hm.put(ROTULO, rotulos[opcao]);
@@ -69,12 +61,6 @@ public class ExamplesActivity extends SherlockListActivity {
 			program = Examples.getExample(Example.ADD);
 			break;
 		case 1:
-<<<<<<< HEAD
-=======
-			program = Examples.getExample(Example.NEGATIVE);
-			break;
-		case 2:
->>>>>>> refs/remotes/origin/master
 			program = Examples.getExample(Example.OVERFLOW);
 			break;
 		case 2:
@@ -89,11 +75,7 @@ public class ExamplesActivity extends SherlockListActivity {
 		case 5:
 			program = Examples.getExample(Example.NOT);
 			break;
-<<<<<<< HEAD
 		case 6:
-=======
-		case 4:
->>>>>>> refs/remotes/origin/master
 			program = Examples.getExample(Example.CRASH);
 			break;
 		}

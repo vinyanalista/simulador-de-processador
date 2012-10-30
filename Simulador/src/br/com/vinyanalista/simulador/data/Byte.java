@@ -13,11 +13,6 @@ public abstract class Byte {
 	public static void setRepresentation(int representation) {
 		switch (representation) {
 		case REPRESENTATION_RECOMMENDED:
-<<<<<<< HEAD
-=======
-			preferredRepresentation = REPRESENTATION_DECIMAL;
-			break;
->>>>>>> refs/remotes/origin/master
 		case REPRESENTATION_DECIMAL:
 			preferredRepresentation = REPRESENTATION_DECIMAL;
 			break;
@@ -153,22 +148,5 @@ public abstract class Byte {
 	// public static final boolean validateHex(String value) {
 	// return value.matches("[0-9A-Fa-f]+");
 	// }
-
-	public static void main(String[] args) {
-		byte teste1 = (byte) 127;
-		System.out.println(teste1);
-		byte teste2 = (byte) 128;
-		System.out.println(teste2);
-		byte teste3 = (byte) 129;
-		System.out.println(teste3);
-		byte teste4 = (byte) -127;
-		System.out.println(teste4);
-		byte teste5 = (byte) -128;
-		System.out.println(teste5);
-		byte teste6 = (byte) -129;
-		System.out.println(teste6);
-		byte teste7 = (byte) (teste1 + 1);
-		System.out.println(teste7);
-	}
 
 }

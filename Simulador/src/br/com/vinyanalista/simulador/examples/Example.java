@@ -7,15 +7,6 @@ public enum Example {
 			return "Soma";
 		}
 	},
-<<<<<<< HEAD
-=======
-	NEGATIVE {
-		@Override
-		public String toString() {
-			return "Negativo";
-		}
-	},
->>>>>>> refs/remotes/origin/master
 	OVERFLOW {
 		@Override
 		public String toString() {
@@ -44,12 +35,6 @@ public enum Example {
 		@Override
 		public String toString() {
 			return "NÃO lógico";
-		}
-	},
-	CRASH {
-		@Override
-		public String toString() {
-			return "Encerramento por falta do HLT";
 		}
 	},
 	CRASH {
