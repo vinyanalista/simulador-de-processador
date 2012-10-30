@@ -182,9 +182,9 @@ public class FileChooserActivity extends SherlockListActivity implements
 	private void fillInList(File f) {
 		File[] dirs = f.listFiles();
 		if (currentDir.getParent() != null)
-			setTitle("Current directory: " + f.getName());
+			setTitle("Pasta atual: " + f.getName());
 		else
-			setTitle("Current directory: ROOT");
+			setTitle("Pasta atual: RAIZ");
 		List<Option> dir = new ArrayList<Option>();
 		List<Option> fls = new ArrayList<Option>();
 		try {
@@ -245,7 +245,7 @@ public class FileChooserActivity extends SherlockListActivity implements
 	public void onClick(View v) {
 		String fileName = this.fileName.getText().toString();
 		if (fileName.length() == 0) {
-			Toast.makeText(this, "You must provide a file name!",
+			Toast.makeText(this, "Você deve fornecer um nome para o arquivo!",
 					Toast.LENGTH_LONG).show();
 			return;
 		}
@@ -255,7 +255,8 @@ public class FileChooserActivity extends SherlockListActivity implements
 		boolean fileExists = file.exists();
 		File parent = file.getParentFile();
 		if (!fileExists && !parent.canWrite()) {
-			Toast.makeText(this, "Access denied!", Toast.LENGTH_LONG).show();
+			Toast.makeText(this, "Erro: accesso negado!", Toast.LENGTH_LONG)
+					.show();
 			return;
 		}
 		if (fileExists) {
@@ -267,11 +268,12 @@ public class FileChooserActivity extends SherlockListActivity implements
 			// i.putExtra(TwoButtonDialog.OPTION_2, "Cancel");
 			// startActivityForResult(i, REQUEST_CONFIRM_OVERWRITE);
 
-			String[] options = { "Overwrite", "Cancel" };
+			String[] options = { "Sobrescrever", "Cancelar" };
 			Intent i = new Intent(this, GenericDialog.class);
-			i.putExtra(GenericDialog.TITLE, "File exists");
+			i.putExtra(GenericDialog.TITLE,
+					"Um arquivo com esse nome já existe");
 			i.putExtra(GenericDialog.TEXT,
-					"Are you sure you want to overwrite this file?");
+					"Você deseja sobrescrever este arquivo?");
 			i.putExtra(GenericDialog.OPTIONS, options);
 			startActivityForResult(i, REQUEST_CONFIRM_OVERWRITE);
 		} else {

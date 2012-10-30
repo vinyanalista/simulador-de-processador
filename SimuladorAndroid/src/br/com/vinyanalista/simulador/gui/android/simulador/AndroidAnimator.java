@@ -223,16 +223,16 @@ public class AndroidAnimator extends Animator {
 			callAnimationEndListener();
 			break;
 		case STATUS_FETCH_INSTRUCTION:
-			animator = changeStatusBarValue("Fetch instruction cycle");
+			animator = changeStatusBarValue("Ciclo de busca de instrução");
 			break;
 		case STATUS_FETCH_OPERAND:
-			animator = changeStatusBarValue("Fetch operand cycle");
+			animator = changeStatusBarValue("Ciclo de busca de operando");
 			break;
 		case STATUS_PC_INCREMENT:
-			animator = changeStatusBarValue("Program Counter (PC) increment");
+			animator = changeStatusBarValue("Incremento do Program Counter (PC)");
 			break;
 		case STATUS_EXECUTE:
-			animator = changeStatusBarValue("Execution cycle");
+			animator = changeStatusBarValue("Ciclo de execução");
 			break;
 		case IR_OPERAND_TO_PC:
 			animator = move(activity.to_ir2, activity.to_alu2_or_ir2,

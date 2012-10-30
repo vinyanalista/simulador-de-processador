@@ -27,25 +27,34 @@ public class GenericDialog extends SherlockActivity implements OnClickListener {
 		setTitle(getIntent().getStringExtra(TITLE));
 
 		TextView text = new TextView(this);
-		text.setLayoutParams(new LinearLayout.LayoutParams(
+		LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
 				LinearLayout.LayoutParams.MATCH_PARENT,
-				LinearLayout.LayoutParams.WRAP_CONTENT));
+				LinearLayout.LayoutParams.WRAP_CONTENT);
+		params.setMargins(30, 30, 30, 30);
+		text.setLayoutParams(params);
+		text.setMinWidth(600);
 		text.setText(getIntent().getStringExtra(TEXT));
 
 		LinearLayout buttonsLayout = new LinearLayout(this);
-		buttonsLayout.setLayoutParams(new LinearLayout.LayoutParams(
+		params = new LinearLayout.LayoutParams(
 				LinearLayout.LayoutParams.WRAP_CONTENT,
-				LinearLayout.LayoutParams.WRAP_CONTENT));
+				LinearLayout.LayoutParams.WRAP_CONTENT);
+		buttonsLayout.setLayoutParams(params);
 		buttonsLayout.setOrientation(LinearLayout.HORIZONTAL);
 
 		options = getIntent().getStringArrayExtra(OPTIONS);
 
 		buttons = new Button[options.length];
+		params = new LinearLayout.LayoutParams(
+				LinearLayout.LayoutParams.WRAP_CONTENT,
+				LinearLayout.LayoutParams.WRAP_CONTENT);
 
 		int buttonIndex = 0;
 		for (String option : options) {
 			Button button = new Button(this);
+			button.setLayoutParams(params);
 			button.setText(option);
+			button.setMinWidth(100);
 			button.setOnClickListener(this);
 			buttons[buttonIndex] = button;
 			buttonsLayout.addView(button);
@@ -53,20 +62,24 @@ public class GenericDialog extends SherlockActivity implements OnClickListener {
 		}
 
 		LinearLayout buttonsWrapper = new LinearLayout(this);
-		buttonsWrapper.setLayoutParams(new LinearLayout.LayoutParams(
+		params = new LinearLayout.LayoutParams(
 				LinearLayout.LayoutParams.MATCH_PARENT,
-				LinearLayout.LayoutParams.WRAP_CONTENT));
+				LinearLayout.LayoutParams.WRAP_CONTENT);
+		buttonsWrapper.setLayoutParams(params);
+		buttonsWrapper.setMinimumWidth(600);
 		buttonsWrapper.setOrientation(LinearLayout.HORIZONTAL);
 		buttonsWrapper.setGravity(Gravity.CENTER_HORIZONTAL);
 
 		buttonsWrapper.addView(buttonsLayout);
 
 		LinearLayout mainLayout = new LinearLayout(this);
-		mainLayout.setLayoutParams(new LinearLayout.LayoutParams(
+		params = new LinearLayout.LayoutParams(
 				LinearLayout.LayoutParams.MATCH_PARENT,
-				LinearLayout.LayoutParams.MATCH_PARENT));
+				LinearLayout.LayoutParams.MATCH_PARENT);
+		mainLayout.setLayoutParams(params);
 		mainLayout.setGravity(Gravity.CENTER_HORIZONTAL);
 		mainLayout.setOrientation(LinearLayout.VERTICAL);
+		mainLayout.setMinimumWidth(600);
 
 		mainLayout.addView(text);
 		mainLayout.addView(buttonsWrapper);

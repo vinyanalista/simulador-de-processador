@@ -23,7 +23,9 @@ public class ExamplesActivity extends SherlockListActivity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setTitle("Examples");
+		setTitle("Exemplos");
+
+		getSupportActionBar().setIcon(R.drawable.help_hint);
 
 		String ICONE = "icone";
 		String ROTULO = "opcao";

@@ -61,7 +61,7 @@ public class SimulationActivity extends SherlockActivity implements
 
 	private void showWaitMessage() {
 		animator.addAnimationListener(this);
-		progressDialog = ProgressDialog.show(this, "", "Wait...");
+		progressDialog = ProgressDialog.show(this, "", "Aguarde...");
 	}
 
 	private void hideWaitMessage() {
@@ -136,7 +136,7 @@ public class SimulationActivity extends SherlockActivity implements
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.simulation);
-		setTitle("Simulation");
+		setTitle("Simulação");
 
 		from_memory_1 = (TextView) findViewById(R.id.from_memory_1);
 		from_memory_2 = (TextView) findViewById(R.id.from_memory_2);
@@ -169,7 +169,7 @@ public class SimulationActivity extends SherlockActivity implements
 		led = (TextView) findViewById(R.id.led);
 		moving_byte = (TextView) findViewById(R.id.moving_byte);
 		status = (TextView) findViewById(R.id.status);
-		status.setText("Click Resume to start the simulation!");
+		status.setText("Clique em Iniciar para começar a simulação.");
 
 		animator = new AndroidAnimator(this);
 
@@ -233,26 +233,27 @@ public class SimulationActivity extends SherlockActivity implements
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		playPause = menu.add("Resume").setIcon(R.drawable.media_playback_start);
+		playPause = menu.add("Iniciar")
+				.setIcon(R.drawable.media_playback_start);
 		playPause.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS
 				| MenuItem.SHOW_AS_ACTION_WITH_TEXT);
-		stop = menu.add("Stop").setIcon(R.drawable.media_playback_stop);
+		stop = menu.add("Parar").setIcon(R.drawable.media_playback_stop);
 		stop.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS
 				| MenuItem.SHOW_AS_ACTION_WITH_TEXT);
 		stop.setEnabled(false);
 
-		SubMenu representation = menu.addSubMenu("Representation").setIcon(
+		SubMenu representation = menu.addSubMenu("Exibir").setIcon(
 				R.drawable.page_zoom);
 		representation.getItem()
 				.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
 
-		representationRecommended = representation.add("Recommended")
+		representationRecommended = representation.add("Recomendado")
 				.setCheckable(true).setChecked(true);
 		representationDecimal = representation.add("Decimal")
 				.setCheckable(true).setChecked(false);
 		representationHexadecimal = representation.add("Hexadecimal")
 				.setCheckable(true).setChecked(false);
-		representationBinary = representation.add("Binary").setCheckable(true)
+		representationBinary = representation.add("Binário").setCheckable(true)
 				.setChecked(false);
 
 		return true;
@@ -261,13 +262,13 @@ public class SimulationActivity extends SherlockActivity implements
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		if (item.equals(playPause))
-			if (item.getTitle().equals("Resume"))
+			if (item.getTitle().equals("Iniciar"))
 				resume();
 			else
 				pause();
 		else if (item.equals(stop))
 			stop();
-		else if (item.getTitle().equals("Representation"))
+		else if (item.getTitle().equals("Exibir"))
 			pause();
 		else if (item.equals(representationRecommended)
 				|| item.equals(representationDecimal)
@@ -287,12 +288,12 @@ public class SimulationActivity extends SherlockActivity implements
 		if (!simulation.isPaused() && !simulation.isStopped())
 			showWaitMessage();
 		simulation.pause();
-		playPause.setTitle("Resume");
+		playPause.setTitle("Iniciar");
 		playPause.setIcon(R.drawable.media_playback_start);
 	}
 
 	void resume() {
-		playPause.setTitle("Pause");
+		playPause.setTitle("Pausar");
 		playPause.setIcon(R.drawable.media_playback_pause);
 		stop.setEnabled(true);
 		simulation.start();
@@ -314,9 +315,9 @@ public class SimulationActivity extends SherlockActivity implements
 	public void onProgramCrash() {
 		String[] options = { "OK" };
 		startActivity(new Intent(this, GenericDialog.class)
-				.putExtra(GenericDialog.TITLE, "Program crash")
+				.putExtra(GenericDialog.TITLE, "Erro")
 				.putExtra(GenericDialog.TEXT,
-						"An error in the program halt its execution abruptly")
+						"A execução do programa foi interrompida de maneira inesperada!")
 				.putExtra(GenericDialog.OPTIONS, options));
 	}
 
@@ -324,9 +325,9 @@ public class SimulationActivity extends SherlockActivity implements
 	public void onProgramHalt() {
 		String[] options = { "OK" };
 		startActivity(new Intent(this, GenericDialog.class)
-				.putExtra(GenericDialog.TITLE, "Program halt")
+				.putExtra(GenericDialog.TITLE, "Fim do programa")
 				.putExtra(GenericDialog.TEXT,
-						"The program finished its execution successfully!")
+						"A execução do programa foi finalizada com sucesso!")
 				.putExtra(GenericDialog.OPTIONS, options));
 	}
 
@@ -342,11 +343,11 @@ public class SimulationActivity extends SherlockActivity implements
 
 	@Override
 	public void onSimulationStop() {
-		playPause.setTitle("Resume");
+		playPause.setTitle("Iniciar");
 		playPause.setIcon(R.drawable.media_playback_start);
 		stop.setEnabled(false);
 		atualizarPonteiroDeInstrucao();
-		status.setText("Click Resume to start the simulation!");
+		status.setText("Clique em Iniciar para começar a simulação.");
 	}
 
 	void showMemoryContent(int whichMemory) {

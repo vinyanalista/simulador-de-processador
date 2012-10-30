@@ -34,11 +34,11 @@ public class WelcomeActivity extends SherlockListActivity {
 		String ROTULO = "opcao";
 
 		String[] rotulos = new String[] { "Novo programa", "Abrir programa",
-				"Programas recentes", "Programas de exemplo", "Sobre" };
+				"Programas recentes", "Exemplos", "Sobre" };
 
 		int[] icones = new int[] { R.drawable.document_new,
 				R.drawable.document_open, R.drawable.document_open_recent,
-				R.drawable.document_open_recent, R.drawable.help_about };
+				R.drawable.help_hint, R.drawable.help_about };
 
 		List<HashMap<String, String>> aList = new ArrayList<HashMap<String, String>>();
 
@@ -79,7 +79,9 @@ public class WelcomeActivity extends SherlockListActivity {
 					ExamplesActivity.class));
 			break;
 		case OPCAO_SOBRE:
-			Toast.makeText(WelcomeActivity.this, "Não implementado ainda",
+			Toast.makeText(
+					WelcomeActivity.this,
+					"Copyright 2012 Antônio Vinícius, Eric Moura e Saulo Lordão. Todos os direitos reservados.",
 					Toast.LENGTH_SHORT).show();
 			break;
 		default:

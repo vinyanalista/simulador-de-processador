@@ -27,19 +27,19 @@ public class MemoryActivity extends SherlockListActivity implements
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setTitle("Memory");
+		setTitle("Memória");
 
 		getSupportActionBar().setIcon(R.drawable.media_flash);
 		getSupportActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 
 		instrucionMemoryTab = getSupportActionBar().newTab();
-		instrucionMemoryTab.setText("Instructions");
+		instrucionMemoryTab.setText("Instruções");
 		instrucionMemoryTab.setIcon(R.drawable.system_run);
 		instrucionMemoryTab.setTabListener(this);
 		getSupportActionBar().addTab(instrucionMemoryTab);
 
 		dataMemoryTab = getSupportActionBar().newTab();
-		dataMemoryTab.setText("Data");
+		dataMemoryTab.setText("Dados");
 		dataMemoryTab.setIcon(R.drawable.server_database);
 		dataMemoryTab.setTabListener(this);
 		getSupportActionBar().addTab(dataMemoryTab);

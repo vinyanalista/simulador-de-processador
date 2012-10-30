@@ -30,6 +30,7 @@ public class RecentFilesActivity extends SherlockListActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setTitle("Programas recentes");
+		getSupportActionBar().setIcon(R.drawable.document_open_recent);
 		fetchRecentFiles();
 		fillInList();
 	}

@@ -1,5 +1,10 @@
 <resources>
 
     <string name="app_name">AES Processor Simulator</string>
+    <string name="welcome_activity_opcao_novo">Novo programa</string>
+    <string name="welcome_activity_opcao_abrir">Abrir programa</string>
+    <string name="welcome_activity_opcao_recentes">AES</string>
+    <string name="welcome_activity_opcao_exemplos">AES</string>
+    <string name="welcome_activity_opcao_sobre">AES</string>
 
 </resources>
