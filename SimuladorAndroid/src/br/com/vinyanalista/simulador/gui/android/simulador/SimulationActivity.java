@@ -114,10 +114,10 @@ public class SimulationActivity extends SherlockActivity implements
 					.findViewById(R.id.instruction_icon);
 
 			instructionOpcode.setText(instructions.get(position).getOpCode()
-					.getValueAsPreferredRepresentation());
+					.getValueAsRecommendedRepresentation());
 			if (instructions.get(position).getOperand() != null)
 				instructionOperand.setText(instructions.get(position)
-						.getOperand().getValueAsPreferredRepresentation());
+						.getOperand().getValueAsRecommendedRepresentation());
 			else
 				instructionOperand.setText("");
 			instructionIcon.setImageResource(R.drawable.arrow_right);

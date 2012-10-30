@@ -38,6 +38,7 @@ public class OpCode extends Byte {
 		case REPRESENTATION_DECIMAL:
 		case REPRESENTATION_HEX:
 		case REPRESENTATION_BINARY:
+		case REPRESENTATION_MNEMONIC:
 			preferredRepresentation = representation;
 			break;
 		default:
@@ -136,6 +137,21 @@ public class OpCode extends Byte {
 		}
 	}
 
+	@Override
+	protected String getValueAsRepresentation(int representation) {
+		switch (representation) {
+		case REPRESENTATION_DECIMAL:
+		case REPRESENTATION_HEX:
+		case REPRESENTATION_BINARY:
+			return super.getValueAsRepresentation(representation);
+		case REPRESENTATION_RECOMMENDED:
+		case REPRESENTATION_MNEMONIC:
+			return getValueAsMnemonic();
+		default:
+			throw new IllegalArgumentException();
+		}
+	}
+
 	@Deprecated
 	public String getValueAsMnemonic() {
 		return toMnemonic(value);
@@ -143,18 +159,12 @@ public class OpCode extends Byte {
 
 	@Override
 	public String getValueAsPreferredRepresentation() {
-		switch (preferredRepresentation) {
-		case REPRESENTATION_DECIMAL:
-			return Integer.toString(value);
-		case REPRESENTATION_BINARY:
-			return getValueAsBinary();
-		case REPRESENTATION_HEX:
-			return getValueAsHex();
-		case REPRESENTATION_MNEMONIC:
-			return getValueAsMnemonic();
-		default:
-			return null;
-		}
+		return getValueAsRepresentation(preferredRepresentation);
+	}
+
+	@Override
+	public String getValueAsRecommendedRepresentation() {
+		return getValueAsRepresentation(REPRESENTATION_RECOMMENDED);
 	}
 
 	@Override

@@ -13,9 +13,9 @@ public abstract class Byte {
 	public static void setRepresentation(int representation) {
 		switch (representation) {
 		case REPRESENTATION_RECOMMENDED:
+		case REPRESENTATION_DECIMAL:
 			preferredRepresentation = REPRESENTATION_DECIMAL;
 			break;
-		case REPRESENTATION_DECIMAL:
 		case REPRESENTATION_HEX:
 		case REPRESENTATION_BINARY:
 			preferredRepresentation = representation;
@@ -40,6 +40,24 @@ public abstract class Byte {
 		return value;
 	}
 
+	protected String getValueAsRepresentation(int representation) {
+		switch (representation) {
+		case REPRESENTATION_RECOMMENDED:
+		case REPRESENTATION_DECIMAL:
+			return getValueAsDecimal();
+		case REPRESENTATION_HEX:
+			return getValueAsHex();
+		case REPRESENTATION_BINARY:
+			return getValueAsBinary();
+		default:
+			throw new IllegalArgumentException();
+		}
+	}
+
+	public String getValueAsDecimal() {
+		return Integer.toString(value);
+	}
+
 	public String getValueAsBinary() {
 		return toBinary(value);
 	}
@@ -49,16 +67,11 @@ public abstract class Byte {
 	}
 
 	public String getValueAsPreferredRepresentation() {
-		switch (preferredRepresentation) {
-		case REPRESENTATION_DECIMAL:
-			return Integer.toString(value);
-		case REPRESENTATION_HEX:
-			return getValueAsHex();
-		case REPRESENTATION_BINARY:
-			return getValueAsBinary();
-		default:
-			return null;
-		}
+		return getValueAsRepresentation(preferredRepresentation);
+	}
+
+	public String getValueAsRecommendedRepresentation() {
+		return getValueAsRepresentation(REPRESENTATION_RECOMMENDED);
 	}
 
 	public abstract void setValue(int value);

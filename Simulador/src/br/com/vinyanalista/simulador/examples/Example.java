@@ -7,22 +7,34 @@ public enum Example {
 			return "Soma";
 		}
 	},
-	NEGATIVE {
-		@Override
-		public String toString() {
-			return "Negativo";
-		}
-	},
 	OVERFLOW {
 		@Override
 		public String toString() {
 			return "Overflow";
 		}
 	},
+	NEGATIVE {
+		@Override
+		public String toString() {
+			return "Negativo";
+		}
+	},
+	OR {
+		@Override
+		public String toString() {
+			return "OU lógico";
+		}
+	},
+	AND {
+		@Override
+		public String toString() {
+			return "E lógico";
+		}
+	},
 	NOT {
 		@Override
 		public String toString() {
-			return "Negação lógica";
+			return "NÃO lógico";
 		}
 	},
 	CRASH {

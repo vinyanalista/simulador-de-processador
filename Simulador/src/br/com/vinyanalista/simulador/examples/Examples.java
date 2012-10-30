@@ -94,6 +94,8 @@ public class Examples {
 		program.getInstructions().add(
 				new Instruction(new OpCode(OpCode.OUT_OPCODE), new DataAddress(
 						130)));
+		program.getInstructions().add(
+				new Instruction(new OpCode(OpCode.HLT_OPCODE), null));
 		return program;
 	}
 
@@ -163,6 +165,86 @@ public class Examples {
 		return program;
 	}
 
+	private static final Program and() {
+		// LDI 3
+		// STA 128 ;A = 00000011
+		// LDI 5
+		// STA 129 ;B = 00000101
+		// LDA 128
+		// AND 129
+		// STA 130 ;C = A and B = 00000111
+		// OUT 130
+		// HLT
+
+		Program program = new Program();
+		program.setSourceCode(null);
+		program.getInstructions().add(
+				new Instruction(new OpCode(OpCode.LDI_OPCODE), new Data(3)));
+		program.getInstructions().add(
+				new Instruction(new OpCode(OpCode.STA_OPCODE), new DataAddress(
+						128)));
+		program.getInstructions().add(
+				new Instruction(new OpCode(OpCode.LDI_OPCODE), new Data(5)));
+		program.getInstructions().add(
+				new Instruction(new OpCode(OpCode.STA_OPCODE), new DataAddress(
+						129)));
+		program.getInstructions().add(
+				new Instruction(new OpCode(OpCode.LDA_OPCODE), new DataAddress(
+						128)));
+		program.getInstructions().add(
+				new Instruction(new OpCode(OpCode.AND_OPCODE), new DataAddress(
+						129)));
+		program.getInstructions().add(
+				new Instruction(new OpCode(OpCode.STA_OPCODE), new DataAddress(
+						130)));
+		program.getInstructions().add(
+				new Instruction(new OpCode(OpCode.OUT_OPCODE), new DataAddress(
+						130)));
+		program.getInstructions().add(
+				new Instruction(new OpCode(OpCode.HLT_OPCODE), null));
+		return program;
+	}
+
+	private static final Program or() {
+		// LDI 3
+		// STA 128 ;A = 00000011
+		// LDI 5
+		// STA 129 ;B = 00000101
+		// LDA 128
+		// AND 129
+		// STA 130 ;C = A or B = 00000001
+		// OUT 130
+		// HLT
+
+		Program program = new Program();
+		program.setSourceCode(null);
+		program.getInstructions().add(
+				new Instruction(new OpCode(OpCode.LDI_OPCODE), new Data(3)));
+		program.getInstructions().add(
+				new Instruction(new OpCode(OpCode.STA_OPCODE), new DataAddress(
+						128)));
+		program.getInstructions().add(
+				new Instruction(new OpCode(OpCode.LDI_OPCODE), new Data(5)));
+		program.getInstructions().add(
+				new Instruction(new OpCode(OpCode.STA_OPCODE), new DataAddress(
+						129)));
+		program.getInstructions().add(
+				new Instruction(new OpCode(OpCode.LDA_OPCODE), new DataAddress(
+						128)));
+		program.getInstructions().add(
+				new Instruction(new OpCode(OpCode.OR_OPCODE), new DataAddress(
+						129)));
+		program.getInstructions().add(
+				new Instruction(new OpCode(OpCode.STA_OPCODE), new DataAddress(
+						130)));
+		program.getInstructions().add(
+				new Instruction(new OpCode(OpCode.OUT_OPCODE), new DataAddress(
+						130)));
+		program.getInstructions().add(
+				new Instruction(new OpCode(OpCode.HLT_OPCODE), null));
+		return program;
+	}
+
 	public static final Program getExample(Example name) {
 		switch (name) {
 		case ADD:
@@ -175,6 +257,10 @@ public class Examples {
 			return not();
 		case CRASH:
 			return crash();
+		case AND:
+			return and();
+		case OR:
+			return or();
 		default:
 			return null;
 		}

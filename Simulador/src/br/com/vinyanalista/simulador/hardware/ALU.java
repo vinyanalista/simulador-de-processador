@@ -47,7 +47,7 @@ public class ALU {
 	}
 
 	private char and(char bit1, char bit2) {
-		if (bit1 == bit2)
+		if ((bit1 == bit2) && (bit2 == '0'))
 			return '0';
 		else
 			return '1';
@@ -63,15 +63,15 @@ public class ALU {
 			resultingByte += and(bit1, bit2);
 		}
 		if (resultingByte.charAt(0) == '0')
-			return new Data(Integer.parseInt(resultingByte, 2));
+			out = new Data(Integer.parseInt(resultingByte, 2));
 		else {
-			return new Data(Integer.parseInt(resultingByte.substring(1), 2)
-					* -1);
+			out = new Data(Integer.parseInt(resultingByte.substring(1), 2) * -1);
 		}
+		return out;
 	}
 
 	private char or(char bit1, char bit2) {
-		if (bit1 == bit2 && bit2 == '1')
+		if ((bit1 == bit2) && (bit2 == '1'))
 			return '1';
 		else
 			return '0';
@@ -87,10 +87,10 @@ public class ALU {
 			resultingByte += or(bit1, bit2);
 		}
 		if (resultingByte.charAt(0) == '0')
-			return new Data(Integer.parseInt(resultingByte, 2));
+			out = new Data(Integer.parseInt(resultingByte, 2));
 		else {
-			return new Data(Integer.parseInt(resultingByte.substring(1), 2)
-					* -1);
+			out = new Data(Integer.parseInt(resultingByte.substring(1), 2) * -1);
 		}
+		return out;
 	}
 }
