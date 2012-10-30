@@ -2,7 +2,6 @@ package br.com.vinyanalista.simulador.gui.android;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import android.content.ContentValues;
@@ -18,9 +17,12 @@ public class RecentFilesDAO {
 		// http://www.mkyong.com/java/how-to-check-if-a-file-exists-in-java/
 		return new File(filePath).exists();
 	}
-
+	
 	private class RecentFile {
+		@SuppressWarnings("unused")
 		long id;
+		
+		@SuppressWarnings("unused")
 		String filePath;
 
 		public RecentFile(long id, String filePath) {

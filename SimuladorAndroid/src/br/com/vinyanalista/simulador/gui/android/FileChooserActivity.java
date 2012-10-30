@@ -10,31 +10,40 @@ import java.util.List;
 import br.com.vinyanalista.simulador.gui.android.R;
 
 import com.actionbarsherlock.app.SherlockListActivity;
-import com.actionbarsherlock.view.ActionMode;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 
-import android.app.ListActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
-public class FileChooserActivity extends SherlockListActivity {
+public class FileChooserActivity extends SherlockListActivity implements
+		OnClickListener {
+
+	public static final String OPERATION = "operation";
+
+	public static final int OPERATION_OPEN_FILE = 0;
+	public static final int OPERATION_SAVE_FILE = 1;
 
 	private class Option implements Comparable<Option> {
 
 		public static final int TYPE_FOLDER = 0;
 		public static final int TYPE_FILE = 1;
 
-		public static final String FILE_EXTENSION = ".jpg";
+		public static final String FILE_EXTENSION = ".aes";
 
 		private String name;
 		private String path;
@@ -114,14 +123,43 @@ public class FileChooserActivity extends SherlockListActivity {
 	private File initialDir;
 	private File currentDir;
 	private FileArrayAdapter adapter;
+	private int operation;
 
-	public static final String FILE_NAME = "FILE_NAME";
+	public static final String FILE_PATH = "file_path";
+
+	private LinearLayout fileNameBar;
+	private EditText fileName;
+	private Button save;
+	private LinearLayout folderIsEmpty;
 
 	private MenuItem goUp;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
+		operation = getIntent().getIntExtra(OPERATION, OPERATION_OPEN_FILE);
+
+		setContentView(R.layout.file_chooser);
+
+		fileNameBar = (LinearLayout) findViewById(R.id.enter_filename_bar);
+		fileNameBar.setVisibility(View.GONE);
+
+		fileName = (EditText) findViewById(R.id.filename);
+		save = (Button) findViewById(R.id.button_save);
+		save.setOnClickListener(this);
+
+		folderIsEmpty = (LinearLayout) findViewById(R.id.folder_is_empty);
+
+		getListView().setEmptyView(folderIsEmpty);
+		getListView().requestFocus();
+		getListView().requestFocusFromTouch();
+
+		if (operation == OPERATION_OPEN_FILE)
+			getSupportActionBar().setIcon(R.drawable.document_open);
+		else
+			getSupportActionBar().setIcon(R.drawable.document_save_as);
+
 		initialDir = Environment.getExternalStorageDirectory();
 		currentDir = initialDir;
 		fillInList(currentDir);
@@ -155,7 +193,8 @@ public class FileChooserActivity extends SherlockListActivity {
 					dir.add(new Option(ff.getName(), ff.getAbsolutePath(),
 							Option.TYPE_FOLDER));
 				else if (ff.getName().endsWith(Option.FILE_EXTENSION)) {
-					fls.add(new Option(ff.getName(), ff.getAbsolutePath(),
+					fls.add(new Option(ff.getName().replace(
+							Option.FILE_EXTENSION, ""), ff.getAbsolutePath(),
 							Option.TYPE_FILE));
 				}
 			}
@@ -171,6 +210,9 @@ public class FileChooserActivity extends SherlockListActivity {
 		this.setListAdapter(adapter);
 		if (goUp != null)
 			goUp.setVisible(currentDir.getParent() != null);
+		if (operation == OPERATION_SAVE_FILE) {
+			fileNameBar.setVisibility(View.VISIBLE);
+		}
 	}
 
 	@Override
@@ -187,12 +229,69 @@ public class FileChooserActivity extends SherlockListActivity {
 	}
 
 	private void onFileClick(Option o) {
+		switch (operation) {
+		case OPERATION_OPEN_FILE:
+			returnFileName(o.getPath());
+			break;
+		case OPERATION_SAVE_FILE:
+			fileName.setText(o.getName());
+			break;
+		}
+	}
+
+	private static int REQUEST_CONFIRM_OVERWRITE = 1;
+
+	@Override
+	public void onClick(View v) {
+		String fileName = this.fileName.getText().toString();
+		if (fileName.length() == 0) {
+			Toast.makeText(this, "You must provide a file name!",
+					Toast.LENGTH_LONG).show();
+			return;
+		}
+		if (!fileName.endsWith(Option.FILE_EXTENSION))
+			fileName += Option.FILE_EXTENSION;
+		File file = new File(currentDir, fileName);
+		boolean fileExists = file.exists();
+		File parent = file.getParentFile();
+		if (!fileExists && !parent.canWrite()) {
+			Toast.makeText(this, "Access denied!", Toast.LENGTH_LONG).show();
+			return;
+		}
+		if (fileExists) {
+			Intent i = new Intent(this, TwoButtonDialog.class);
+			i.putExtra(TwoButtonDialog.TITLE, "File exists");
+			i.putExtra(TwoButtonDialog.TEXT,
+					"Are you sure you want to overwrite this file?");
+			i.putExtra(TwoButtonDialog.OPTION_1, "Overwrite");
+			i.putExtra(TwoButtonDialog.OPTION_2, "Cancel");
+			startActivityForResult(i, REQUEST_CONFIRM_OVERWRITE);
+		} else {
+			returnFileName(file.getAbsolutePath());
+		}
+	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if (requestCode == REQUEST_CONFIRM_OVERWRITE) {
+			if (resultCode == TwoButtonDialog.RESULT_1) {
+				returnFileName(new File(currentDir, fileName.getText()
+						.toString()).getAbsolutePath());
+			}
+		}
+	}
+
+	private void returnFileName(String filePath) {
+		if (!filePath.endsWith(Option.FILE_EXTENSION))
+			filePath += Option.FILE_EXTENSION;
+
 		RecentFilesDAO dao = new RecentFilesDAO(this);
 		dao.open();
-		dao.addRecentFile(o.getPath());
+		dao.addRecentFile(filePath);
 		dao.close();
+
 		Intent i = new Intent();
-		i.putExtra(FILE_NAME, o.getName());
+		i.putExtra(FILE_PATH, filePath);
 		setResult(RESULT_OK, i);
 		finish();
 	}

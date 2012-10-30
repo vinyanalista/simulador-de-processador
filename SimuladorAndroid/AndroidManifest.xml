@@ -29,6 +29,12 @@
         <activity android:name=".simulador.MemoryActivity" />
         <activity android:name=".editor.ProgramEditorActivity" />
         <activity
+            android:name=".TwoButtonDialog"
+            android:theme="@style/Theme.Sherlock.Dialog" />
+        <activity
+            android:name=".ThreeButtonDialog"
+            android:theme="@style/Theme.Sherlock.Dialog" />
+        <activity
             android:name=".simulador.SimulationActivity"
             android:label="@string/app_name"
             android:screenOrientation="landscape" >

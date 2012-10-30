@@ -29,6 +29,7 @@ public class MemoryActivity extends SherlockListActivity implements
 		super.onCreate(savedInstanceState);
 		setTitle("Memory");
 
+		getSupportActionBar().setIcon(R.drawable.media_flash);
 		getSupportActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 
 		instrucionMemoryTab = getSupportActionBar().newTab();

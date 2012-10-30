@@ -21,7 +21,7 @@ import android.widget.SimpleAdapter;
 
 public class RecentFilesActivity extends SherlockListActivity {
 
-	public static final String FILE_NAME = "file_name";
+	public static final String FILE_PATH = "file_path";
 
 	private RecentFilesDAO dao;
 	List<String> recentFiles;
@@ -33,7 +33,7 @@ public class RecentFilesActivity extends SherlockListActivity {
 		fetchRecentFiles();
 		fillInList();
 	}
-	
+
 	private void fetchRecentFiles() {
 		dao = new RecentFilesDAO(this);
 		dao.open();
@@ -50,7 +50,8 @@ public class RecentFilesActivity extends SherlockListActivity {
 		for (String recentFile : recentFiles) {
 			HashMap<String, String> hashMap = new HashMap<String, String>();
 			hashMap.put("icon", Integer.toString(R.drawable.application_x_m4));
-			hashMap.put(RecentFilesDAO.KEY_PATH, new File(recentFile).getName());
+			hashMap.put(RecentFilesDAO.KEY_PATH, new File(recentFile).getName()
+					.replace(".aes", ""));
 			aList.add(hashMap);
 		}
 
@@ -64,7 +65,7 @@ public class RecentFilesActivity extends SherlockListActivity {
 	protected void onListItemClick(ListView l, View v, int position, long id) {
 		super.onListItemClick(l, v, position, id);
 		Intent i = new Intent();
-		i.putExtra(FILE_NAME, recentFiles.get(position));
+		i.putExtra(FILE_PATH, recentFiles.get(position));
 		setResult(RESULT_OK, i);
 		finish();
 	}

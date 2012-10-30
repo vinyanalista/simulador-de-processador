@@ -4,7 +4,6 @@ import java.util.List;
 
 import com.actionbarsherlock.app.SherlockActivity;
 
-import br.com.vinyanalista.simulador.data.Byte;
 import br.com.vinyanalista.simulador.examples.Example;
 import br.com.vinyanalista.simulador.examples.Examples;
 import br.com.vinyanalista.simulador.gui.android.R;
@@ -14,7 +13,6 @@ import br.com.vinyanalista.simulador.simulation.Animator.AnimationListener;
 import br.com.vinyanalista.simulador.simulation.Simulation;
 import br.com.vinyanalista.simulador.simulation.Simulation.SimulationListener;
 import br.com.vinyanalista.simulador.software.Instruction;
-import br.com.vinyanalista.simulador.software.ProgramParser;
 import br.com.vinyanalista.simulador.software.Program;
 
 import android.os.Bundle;
@@ -24,7 +22,6 @@ import android.content.Intent;
 
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
-import com.actionbarsherlock.view.SubMenu;
 
 import android.view.LayoutInflater;
 import android.view.View;

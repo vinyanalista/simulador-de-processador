@@ -88,33 +88,23 @@ public class WelcomeActivity extends SherlockListActivity {
 
 	}
 
-	// @Override
-	// public boolean onCreateOptionsMenu(Menu menu) {
-	// getMenuInflater().inflate(R.menu.welcome, menu);
-	// return true;
-	// }
-
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		switch (requestCode) {
 		case OPCAO_ABRIR:
 			if (resultCode == RESULT_OK) {
-				Toast.makeText(
-						this,
-						"File Clicked: "
-								+ data.getStringExtra(FileChooserActivity.FILE_NAME),
-						Toast.LENGTH_SHORT).show();
-				// startActivity(new Intent(this, SimulationActivity.class));
+				Intent i = new Intent(this, ProgramEditorActivity.class);
+				i.putExtra(ProgramEditorActivity.FILE_PATH,
+						data.getStringExtra(FileChooserActivity.FILE_PATH));
+				startActivity(i);
 			}
 			break;
 		case OPCAO_RECENTES:
 			if (resultCode == RESULT_OK) {
-				Toast.makeText(
-						this,
-						"File Clicked: "
-								+ data.getStringExtra(RecentFilesActivity.FILE_NAME),
-						Toast.LENGTH_SHORT).show();
-				// startActivity(new Intent(this, SimulationActivity.class));
+				Intent i = new Intent(this, ProgramEditorActivity.class);
+				i.putExtra(ProgramEditorActivity.FILE_PATH,
+						data.getStringExtra(FileChooserActivity.FILE_PATH));
+				startActivity(i);
 			}
 			break;
 		}
