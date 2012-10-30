@@ -6,23 +6,38 @@ package br.com.vinyanalista.simulador.gui.jse.editor;
 import java.text.DateFormat;
 import java.util.Date;
 
-import br.com.vinyanalista.simulador.gui.jse.editor.CodeHighlighter;
 import br.com.vinyanalista.simulador.gui.jse.simulador.ChooseQWindow;
 import br.com.vinyanalista.simulador.gui.jse.simulador.SimulatorQMainWindow;
+import br.com.vinyanalista.simulador.parser.ParsingException;
+import br.com.vinyanalista.simulador.parser.ProgramParser;
 
 import com.trolltech.qt.QtBlockedSlot;
-import com.trolltech.qt.core.*;
-//import com.trolltech.qt.core.Qt.Key;
-//import com.trolltech.qt.core.Qt.KeyboardModifier;
-//import com.trolltech.qt.core.Qt.KeyboardModifiers;
-import com.trolltech.qt.gui.*;
+import com.trolltech.qt.core.QFile;
+import com.trolltech.qt.core.QTextStream;
+import com.trolltech.qt.core.Qt.DockWidgetArea;
+import com.trolltech.qt.gui.QAbstractPrintDialog;
+import com.trolltech.qt.gui.QAction;
+import com.trolltech.qt.gui.QApplication;
+import com.trolltech.qt.gui.QCloseEvent;
+import com.trolltech.qt.gui.QDialog;
+import com.trolltech.qt.gui.QDockWidget;
+import com.trolltech.qt.gui.QFileDialog;
+import com.trolltech.qt.gui.QHBoxLayout;
+import com.trolltech.qt.gui.QIcon;
 import com.trolltech.qt.gui.QKeySequence.StandardKey;
+import com.trolltech.qt.gui.QLabel;
+import com.trolltech.qt.gui.QMainWindow;
+import com.trolltech.qt.gui.QMenu;
+import com.trolltech.qt.gui.QMessageBox;
+import com.trolltech.qt.gui.QPrintDialog;
+import com.trolltech.qt.gui.QPrinter;
+import com.trolltech.qt.gui.QToolBar;
 
 public class ProgramEditor extends QMainWindow {
-
+	private ConsoleTab console = new ConsoleTab(this, "");
 	private CodeEditor editor = new CodeEditor();
 	public String fileName = null;
-
+	
 	private boolean textHasChanged = false;
 
 	private String wordToFind = null;
@@ -217,6 +232,50 @@ public class ProgramEditor extends QMainWindow {
 	}
 	
 	private void play() {
+		String sourceCode = editor.toPlainText();
+		ProgramParser parse = ProgramParser.getParser();
+		try{
+			if(sourceCode.length()>5){
+				new SimulatorQMainWindow(parse.parseFrom(sourceCode));
+			}else{
+				console.close();
+				console = new ConsoleTab(this, "Nothing to play");
+				addConsole(console);
+			}
+			//throw new RuntimeException();
+		}catch(ParsingException e){
+			console.close();
+			console = new ConsoleTab(this, e.getMessage());
+			addConsole(console);
+		}
+		catch(Exception e){
+			console.close();
+			console = new ConsoleTab(this, e.getMessage());
+			addConsole(console);
+		}
+		
+		
+		
+		
+//		System.out.println(editor.toPlainText());
+//		StringTokenizer toke = new StringTokenizer(texto);
+//		
+//		while (toke.hasMoreTokens())  
+//	      {  
+//	        toke.nextToken();  
+//	      }
+		
+		
+//		if(!console.isEnabled()){
+//			this.addDockWidget(DockWidgetArea.BottomDockWidgetArea, console);
+//		}else{
+//			console = new ConsoleTab(this);
+//			this.addDockWidget(DockWidgetArea.BottomDockWidgetArea, console);
+//		}
+//		new ChooseQWindow();
+	}
+	
+	private void samplers(){
 		new ChooseQWindow();
 	}
 
@@ -289,9 +348,15 @@ public class ProgramEditor extends QMainWindow {
 		QAction playAction = new MyAction(
 				new QIcon("icons/arrow_right.png"), "Valida o codigo e inicia a simulação", this, this,
 				"play()");//TODO
-		playAction.setShortcut(StandardKey.Print);
+		playAction.setShortcut(StandardKey.Forward);
 		fileMenu.addAction(playAction);
 		toolbar.addAction(playAction);
+		
+		QAction samplersAction = new MyAction(
+				new QIcon("icons/cpu.png"), "Show Samplers List", this, this,
+				"samplers()");//TODO
+		samplersAction.setShortcut(StandardKey.FindPrevious);
+		fileMenu.addAction(samplersAction);
 		
 		fileMenu.addSeparator();
 
@@ -434,9 +499,11 @@ public class ProgramEditor extends QMainWindow {
 		editor.selectionChanged.connect(this, "selectionChanged()");
 
 		new CodeHighlighter(editor.document());
-		
+				
 		setCentralWidget(editor);
-
+		
+		//this.addDockWidget(DockWidgetArea.BottomDockWidgetArea, new ConsoleTab(this, "Teste 12 \n 123 \n sajkljdkljdlkjaskljdkljsakldj "));
+			
 		resize(600, 300);
 		// http://www.qtcentre.org/threads/3399-set-QMainWindow-in-the-center-of-my-desktop
 		move(QApplication.desktop().screen().rect().center().x()
@@ -445,7 +512,11 @@ public class ProgramEditor extends QMainWindow {
 				- this.rect().center().y());
 		show();
 	}
-
+	
+	private void addConsole(ConsoleTab cons){
+		this.addDockWidget(DockWidgetArea.BottomDockWidgetArea, cons);
+	}
+	
 	public static void main(String[] args) {
 		QApplication.initialize(args);
 		new ProgramEditor();
@@ -456,5 +527,40 @@ public class ProgramEditor extends QMainWindow {
 		cutAction.setEnabled(editor.textCursor().hasSelection());
 		copyAction.setEnabled(cutAction.isEnabled());
 	}
+	
+	private class ConsoleTab extends QDockWidget {
+		public ConsoleTab(QMainWindow parent, String msg) {
+			this.setWindowTitle("Console");
+			this.setWindowIcon(new QIcon("icons/console.png"));
+			//this.set
+			
+			QHBoxLayout mainLayout = new QHBoxLayout();
+
+//			QFormLayout layoutLeft = new QFormLayout();
+//			layoutLeft.setSpacing(10);
+//			
+//			QLineEdit findLineEdit1 = new QLineEdit();
+//			QLineEdit findLineEdit2 = new QLineEdit();
+//			
+//			layoutLeft.addRow(tr("Replace:"), findLineEdit1);
+//			layoutLeft.addRow(tr("Find what:"), findLineEdit2);
+//			
+			QLabel label = new QLabel(this);
+			label.setGeometry(3, 20, parent.width(), 50);
+			label.setText(msg);
+			label.show();
+			
+			
+		//	layoutLeft.addRow(label, layoutLeft);
+			
+		//	mainLayout.addItem(layoutLeft);
+			
+			mainLayout.addWidget(label);
+			
+			setLayout(mainLayout);
+			this.setSizeIncrement(0, 300);
+		}
+	}
+	
 
 }

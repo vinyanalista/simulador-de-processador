@@ -41,7 +41,7 @@ public class ProgramParser {
 		try {
 			engine.setTheory(new Theory(
 					ProgramParser.class
-							.getResourceAsStream("/br/com/vinyanalista/simulador/prolog/valida-novo.pl")));
+							.getResourceAsStream("/br/com/vinyanalista/simulador/prolog/valida.pl")));
 		} catch (InvalidTheoryException ite) {
 			System.err.println(ite.getMessage());
 			throw new RuntimeException("Erro no arquivo prolog!", ite);
