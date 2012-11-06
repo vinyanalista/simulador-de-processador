@@ -167,7 +167,7 @@ public class SimulatorQMainWindow extends QMainWindow implements AnimationListen
 		labelMBR.show();
 	}
 	
-	private void zeraLabels(){
+	public void zeraLabels(){
 		labelLed.setText("00000000");
 		labelAcc.setText(simulation.getProcessor().getRegister(Processor.ACC).getValue().getValueAsPreferredRepresentation());
 		labelALU1.setText(simulation.getProcessor().getALU().getIn1().getValueAsPreferredRepresentation());
@@ -214,13 +214,13 @@ public class SimulatorQMainWindow extends QMainWindow implements AnimationListen
 	
 	private void config(){
 		exibirAguarde("Aguarde...");
-		simulation.stop();
+		simulation.pause();
 		zeraLabels();
 		tablePrincipal.selectRow(0);
 		bt[2].setEnabled(false);
 		bt[1].hide();
 		bt[0].show();
-		
+		new ChooseREPWindow(simulation, this);		
 	}
 	
 	private void exibirAguarde(String texto){
@@ -260,6 +260,7 @@ public void table_data_memory(){
 		
 		simulation = new Simulation(program, animator);
 		simulation.addSimulationListener(this);
+		
 		
 		//***************************************************	
 		//*               Colocando a fonte                 *
@@ -355,7 +356,7 @@ public void table_data_memory(){
 		bt[5].clicked.connect(this, "config()");
 		bt[5].setIcon(new QIcon("icons/system_run.png"));
 		bt[5].setGeometry(815+32, bt[0].height()+25, 60, bt[0].height());
-		bt[5].setEnabled(false);
+		bt[5].setEnabled(true);
 				
 		statusBar = statusBar();
 		status = new QLabel("Click Play to start simulation.");
@@ -400,12 +401,12 @@ public void table_data_memory(){
 		painter.drawPixmap(0, 0, fundo);
 	}
 
-	public static void main(String[] args) {
-		QApplication.initialize(args);
-		new SimulatorQMainWindow(Examples.getExample(Example.CRASH));
-		QApplication.exec();
-		
-	}
+//	public static void main(String[] args) {
+//		QApplication.initialize(args);
+//		new SimulatorQMainWindow(Examples.getExample(Example.CRASH));
+//		QApplication.exec();
+//		
+//	}
 
 	@Override
 	public void onAnimationEnd() {

@@ -98,7 +98,7 @@ public class ProgramEditor extends QMainWindow {
 			}
 		}
 		String fileName = QFileDialog.getOpenFileName(this, tr("Open"), "",
-				new QFileDialog.Filter("Text files (*.txt)"));
+				new QFileDialog.Filter("Text files (*.aes)"));
 		if (!fileName.equals("")) {
 			QFile file = new QFile(fileName);
 			if (!file.open(new QFile.OpenMode(QFile.OpenModeFlag.ReadWrite))) {
@@ -135,7 +135,7 @@ public class ProgramEditor extends QMainWindow {
 	private void saveAs() {
 		// http://qt-project.org/doc/qt-4.8/gettingstartedqt.html#hello-notepad
 		String fileName = QFileDialog.getSaveFileName(this, tr("Save As"), "",
-				new QFileDialog.Filter("Text files (*.txt)"));
+				new QFileDialog.Filter("Text files (*.aes)"));
 		if (!fileName.equals("")) {
 			QFile file = new QFile(fileName);
 			if (!file.open(QFile.OpenModeFlag.WriteOnly)) {
@@ -234,7 +234,7 @@ public class ProgramEditor extends QMainWindow {
 		String sourceCode = editor.toPlainText();
 		ProgramParser parse = ProgramParser.getParser();
 		try{
-			if(sourceCode.length()>4){
+			if(!(sourceCode.length()<3)){
 				new SimulatorQMainWindow(parse.parseFrom(sourceCode));
 				console.close();
 				console = new ConsoleTab(this, "Run");
@@ -341,7 +341,8 @@ public class ProgramEditor extends QMainWindow {
 		fileMenu.addAction(samplersAction);
 		
 		fileMenu.addSeparator();
-
+		toolbar.addSeparator();
+		toolbar.addAction(samplersAction);
 		QAction exitAction = new MyAction(new QIcon(
 				"icons/application-exit.png"), "Exit", this, this, "close()");
 		exitAction.setShortcut("Alt+F4");

@@ -144,10 +144,10 @@ public class ChooseQWindow extends QMainWindow {
 
 	}
 
-	public static void main(String[] args) {
-		QApplication.initialize(args);
-		new ChooseQWindow();
-		QApplication.exec();
-	}
+//	public static void main(String[] args) {
+//		QApplication.initialize(args);
+//		new ChooseQWindow();
+//		QApplication.exec();
+//	}
 
 }
